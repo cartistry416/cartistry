@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet'
 
+// https://react-leaflet.js.org/docs/example-popup-marker/
 // https://github.com/CodingWith-Adam/geoJson-map-with-react-leaflet/blob/master/src/components/MyMap.jsx
 function GeoJSONMap() {
     const [geoData, setGeoData] = useState(null)
