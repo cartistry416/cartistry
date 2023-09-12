@@ -47,9 +47,10 @@ function App() {
               const arrayBuffer = e.target.result;
               console.log(arrayBuffer)
               const readShapeFile = async (arrayBuffer) => {
-                await shp.parseZip(arrayBuffer)
+                return await shp.parseZip(arrayBuffer)
               }
               readShapeFile(arrayBuffer).then(geoJSON => {
+                console.log(geoJSON)
                 setMapData(geoJSON)
                 setFileExtension(ext)
               })
