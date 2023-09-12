@@ -1,3 +1,10 @@
+
+# IMPORTANT! PLEASE READ BEFORE RUNNING!!!!!!!!!!
+Our project uses [shpjs](https://www.npmjs.com/package/shpjs), a library used to parse and convert shapefiles into geojson. However, usage requires the use of the Node.js [Buffer](https://nodejs.org/api/buffer.html) API, which is not available in a browser environment. To fix this, we followed this [article](https://viglucci.io/articles/how-to-polyfill-buffer-with-webpack-5) and edited our `webpack.config.js` in order to set a fallback to use a browser-compatible Buffer API identical to Node's. 
+
+TLDR: After installing the dependencies via `npm i`, please replace the contents of `node_modules/react-scripts/config/webpack.config.js` with the contents of `WEBPACK_CONFIG_SEE_README.txt`
+---------------------------------------------------------------------------------------------------------------------------------------
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

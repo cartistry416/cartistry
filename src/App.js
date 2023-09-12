@@ -3,10 +3,7 @@ import {useState} from 'react'
 import GeoJSONMap from './components/GeoJSONMap';
 import KMLMap from './components/KML';
 import './App.css';
-//import ShapefileMap from './components/ShapefileMap';
-// import * as shp from 'shpjs';
-// const xml2js = require('xml2js');
-import toGeoJSON from 'togeojson';
+import shp from 'shpjs';
 
 function App() {
 
@@ -46,25 +43,28 @@ function App() {
           setMapData(xml)
           setFileExtension(ext)
         }
-        else if (ext === 'shp') {
-              const shapefileContent = e.target.result;
-              // console.log(arrayBuffer)
-              // const readShapeFile = async (arrayBuffer) => {
-              //   await shp(arrayBuffer)
-              // }
-              // readShapeFile(arrayBuffer).then(geoJSON => {
-              //   setMapData(geoJSON)
-              //   setFileExtension(ext)
-              // })
-              const shapefileDom = new DOMParser().parseFromString(shapefileContent, 'text/xml')
-              const geojson = toGeoJSON.kml(shapefileDom)
-              console.log(geojson)
-              setMapData(geojson)
+        else if (ext === 'zip') {
+              const arrayBuffer = e.target.result;
+              console.log(arrayBuffer)
+              const readShapeFile = async (arrayBuffer) => {
+                await shp.parseZip(arrayBuffer)
+              }
+              readShapeFile(arrayBuffer).then(geoJSON => {
+                setMapData(geoJSON)
+                setFileExtension(ext)
+              })
         }
       }
-        
-      reader.readAsText(file)
-
+      
+      if(ext === "zip") {
+        reader.readAsArrayBuffer(file)
+      }
+      else if (ext === "json" || ext === "kml") {
+        reader.readAsText(file)
+      }
+      else {
+        alert("Invalid file type. Only upload the following types: .json, .kml, or .zip containing relevant shapefile(s)")
+      }
     }
   }
 
@@ -77,7 +77,7 @@ function App() {
   else if (fileExtension === "kml") {
     map = <KMLMap kmlData={mapData}> </KMLMap>
   }
-  else if (fileExtension === "shp") {
+  else if (fileExtension === "zip") {
     console.log("rendering shp")
     const position = [40.74739, -50] 
     map = <GeoJSONMap geoData={mapData} position={position}> </GeoJSONMap>
@@ -86,7 +86,7 @@ function App() {
   return (
     <div className="App">
           <h1> Map Viewer</h1>
-          <input type="file" id="geojsonFile" accept=".json .kml .shp .geo" onChange={handleFileUpload} />
+          <input type="file" id="geojsonFile" accept="*" onChange={handleFileUpload} />
           {map}
     </div>
   );
