@@ -1,6 +1,20 @@
 import React, { useState } from 'react'
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet'
 
+
+function getNameFromConvertedShapeFile(properties) {
+
+    let keyBase = "NAME_"
+
+    for (let i=3; i>=0; i--) {
+        const key = `${keyBase}${i}`
+        if (key in properties){
+            return properties[key]
+        } 
+    }
+    return "MISSING_NAME"
+}
+
 // https://react-leaflet.js.org/docs/example-popup-marker/
 // https://github.com/CodingWith-Adam/geoJson-map-with-react-leaflet/blob/master/src/components/MyMap.jsx
 function GeoJSONMap(props) {
@@ -8,7 +22,14 @@ function GeoJSONMap(props) {
     const {geoData, position} = props
     
     const onEachFeature = (feature, layer) => {
-        layer.bindTooltip(feature.properties.name, { permanent: true, direction: 'center' });
+        let name = null;
+        if ('name' in feature.properties) {
+            name = feature.properties.name
+        }
+        else {
+            name = getNameFromConvertedShapeFile(feature.properties)
+        }
+        layer.bindTooltip(name, { permanent: true, direction: 'center' });
     }
 
     // const position = [39.74739, -105]
