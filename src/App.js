@@ -1,7 +1,7 @@
 
 import {useState} from 'react'
 import GeoJSONMap from './components/GeoJSONMap';
-import KMLMap from './components/KML';
+// import KMLMap from './components/KML';
 import './App.css';
 
 import MapFileParserFactory from './classes/mapFileParser.ts';
@@ -9,7 +9,7 @@ import MapFileParserFactory from './classes/mapFileParser.ts';
 function App() {
 
   const [mapData, setMapData] = useState(null)
-  const [fileExtension, setFileExtension] = useState("Nothing")
+  const [fileExtension, setFileExtension] = useState(null)
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0]
@@ -29,7 +29,7 @@ function App() {
 
     reader.onload = (e) => {
       mapFileParser.parse(e.target.result).then(data => {
-        console.log("done parsing map data")
+        // console.log(data)
         setMapData(data)
       })
     }
@@ -38,17 +38,9 @@ function App() {
     mapFileParser.readFile(file)
   }
 
-  let map = null;
-  
-  if (fileExtension === "json") {
-    const position = [40.74739, -50] 
-    map = <GeoJSONMap geoData={mapData} position={position}> </GeoJSONMap>
-  }
-  else if (fileExtension === "kml") {
-    map = <KMLMap kmlData={mapData}> </KMLMap>
-  }
-  else if (fileExtension === "zip") {
-    const position = [40.74739, -50] 
+  let map = null
+  if (fileExtension) {
+    const position = [0,0]
     map = <GeoJSONMap geoData={mapData} position={position}> </GeoJSONMap>
   }
 
