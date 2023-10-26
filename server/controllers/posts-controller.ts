@@ -236,6 +236,12 @@ const commentOnPost = async (req, res) => {
 
 }
 
+
+const editComment = async (req, res) => {
+
+    
+}
+
 const updatePostLikes = async(req, res) => {
 
     const body = req.body;
@@ -300,6 +306,8 @@ const deleteComment = async (req, res) => {
 }
 
 
+
+
 module.exports = {
     createPost,
     deletePost,
@@ -313,5 +321,6 @@ module.exports = {
     searchPostsByTags,
     deleteComment,
     editPost,
+    editComment,
 
 }
