@@ -1,9 +1,12 @@
-import mongoose, { Document, Model, Schema, Types } from 'mongoose';
+import mongoose, { Document, Model, Schema} from 'mongoose';
 import { UserDocument } from './user-model'; 
+
+const ObjectId = Schema.Types.ObjectId
+
 
 const postSchema = new Schema<PostDocument>({
   title: { type: String, required: true },
-  owner: { type: Types.ObjectId, ref: 'User', required: true },
+  owner: { type: ObjectId, ref: 'User', required: true },
   ownerUserName: { type: String, required: true },
   textContent: {type: String, required: true},
   thumbnail: {
@@ -25,21 +28,21 @@ const postSchema = new Schema<PostDocument>({
   ],
   likes: { type: Number, default: 0 },
   forks: { type: Number, default: 0 },
-  mapMetadata: { type: Types.ObjectId, ref: 'MapMetadata'},
+  mapMetadata: { type: ObjectId, ref: 'MapMetadata'},
   tags: [{ type: String }],
   publishDate: { type: Date },
 }, { timestamps: true });
 
 interface PostDocument extends Document {
   title: string;
-  owner: Types.ObjectId; 
+  owner: Schema.Types.ObjectId; 
   ownerUserName: string;
   thumbnail: Image;
   comments: Comment[];
   images: Image[];
   likes: number;
   forks: number;
-  mapMetadata: Types.ObjectId;
+  mapMetadata: Schema.Types.ObjectId;
   tags: string[];
   publishDate: Date;
 }

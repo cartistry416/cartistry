@@ -1,19 +1,30 @@
 const auth = require('../auth')
-const User = require('../models/user-model')
+import { UserModel, UserDocument } from '../models/user-model';
+import { Request, Response } from 'express';
+
 const bcrypt = require('bcryptjs')
 
-getLoggedIn = async (req, res) => {
+
+
+const getLoggedIn = async (req: Request, res: Response) => {
     try {
         let userId = auth.verifyUser(req);
         if (!userId) {
-            return res.status(200).json({
+            return res.status(500).json({
                 loggedIn: false,
                 user: null,
                 errorMessage: "???"
             })
         }
 
-        const loggedInUser = await User.findOne({ _id: userId });
+        const loggedInUser = await UserModel.findOne({ _id: userId });
+        if (!loggedInUser) {
+            return res.status(500).json({
+                loggedIn: false,
+                user: null,
+                errorMessage: "???"
+            })
+        }
         console.log("loggedInUser: " + loggedInUser);
 
         return res.status(200).json({ 
@@ -29,7 +40,7 @@ getLoggedIn = async (req, res) => {
     }
 }
 
-loginUser = async (req, res) => {
+const loginUser = async (req: Request, res: Response) => {
     console.log("loginUser");
     try {
         const { email, password } = req.body;
@@ -40,7 +51,7 @@ loginUser = async (req, res) => {
                 .json({ errorMessage: "Please enter all required fields." });
         }
 
-        const existingUser = await User.findOne({ email: email });
+        const existingUser = await UserModel.findOne({ email: email });
         console.log("existingUser: " + existingUser);
         if (!existingUser) {
             return res
@@ -83,7 +94,7 @@ loginUser = async (req, res) => {
     }
 }
 
-logoutUser = async (req, res) => {
+const logoutUser = async (req: Request, res: Response) => {
     res.cookie("token", "", {
         httpOnly: true,
         expires: new Date(0),
@@ -92,7 +103,7 @@ logoutUser = async (req, res) => {
     }).send();
 }
 
-registerUser = async (req, res) => {
+const registerUser = async (req: Request, res: Response) => {
     try {
         const { userName, firstName, lastName, email, password, passwordVerify } = req.body;
         console.log("create user: " + firstName + " " + lastName + " " + email + " " + password + " " + passwordVerify);
@@ -121,7 +132,7 @@ registerUser = async (req, res) => {
                 })
         }
         console.log("password and password verify match");
-        let existingUser = await User.findOne({ email: email });
+        let existingUser = await UserModel.findOne({ email: email });
 
         if (existingUser) {
             return res
@@ -131,7 +142,7 @@ registerUser = async (req, res) => {
                     errorMessage: "An account with this email address already exists."
                 })
         }
-        existingUser = await User.findOne({userName: userName});
+        existingUser = await UserModel.findOne({userName: userName});
         if (existingUser) {
             return res
             .status(400)
@@ -146,10 +157,11 @@ registerUser = async (req, res) => {
         const passwordHash = await bcrypt.hash(password, salt);
         console.log("passwordHash: " + passwordHash);
 
-        const newUser = new User({
+        const newUser = ({
             userName, email, passwordHash
         });
-        const savedUser = await newUser.save();
+        const savedUser = new UserModel({})
+        await savedUser.save()
         console.log("new user saved: " + savedUser._id);
 
         return res.status(200).json({
@@ -165,9 +177,13 @@ registerUser = async (req, res) => {
     }
 }
 
-module.exports = {
-    getLoggedIn,
-    registerUser,
-    loginUser,
-    logoutUser
-}
+
+const AuthController = {getLoggedIn, registerUser, loginUser, logoutUser}
+export {AuthController}
+
+// module.exports = {
+//     getLoggedIn,
+//     registerUser,
+//     loginUser,
+//     logoutUser
+// }

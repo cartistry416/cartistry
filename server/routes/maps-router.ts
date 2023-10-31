@@ -5,7 +5,8 @@
     @author McKilla Gorilla
 */
 const express = require('express')
-const MapsController = require('../controllers/map-controller')
+
+import {MapsController} from '../controllers/maps-controller'
 const router = express.Router()
 const auth = require('../auth')
 
@@ -22,7 +23,7 @@ router.post('/maps/:id/publish', auth.verify, MapsController.publishMap)
 
 
 
-router.put('/maps/:id/favorite', auth.verify, favoriteMap)
+router.put('/maps/:id/favorite', auth.verify, MapsController.favoriteMap)
 router.put('/maps/:id/rename', auth.verify, MapsController.renameMap)
 
 router.delete('/maps/:id', auth.verify, MapsController.deleteMap)

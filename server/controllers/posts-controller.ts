@@ -306,9 +306,7 @@ const deleteComment = async (req, res) => {
 }
 
 
-
-
-module.exports = {
+const PostsController = {
     createPost,
     deletePost,
     commentOnPost,
@@ -322,5 +320,6 @@ module.exports = {
     deleteComment,
     editPost,
     editComment,
-
 }
+
+export {PostsController}

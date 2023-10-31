@@ -5,7 +5,7 @@
     @author McKilla Gorilla
 */
 const express = require('express')
-const PostsController = require('../controllers/posts-controller')
+import {PostsController} from '../controllers/posts-controller'
 const router = express.Router()
 const auth = require('../auth')
 
