@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { randomUUID } from 'crypto';
 axios.defaults.withCredentials = true;
 const api = axios.create({
     baseURL: 'http://localhost:4000',
@@ -54,10 +53,6 @@ export const createPost = (title, textContent, images) => {
 }
 
 
-
-
-
-
 export const uploadMap = (formData) => {
     return api.post(`/maps-api/maps/upload`, formData, {
         headers: {
@@ -66,6 +61,28 @@ export const uploadMap = (formData) => {
     })
 }
 
+export const deletePost = () => {}
+
+export const updatePostLikes = () => {}
+
+export const deleteComment = () => {}
+
+export const commentOnPost = () => {} 
+
+export const editPost = () => {}
+
+export const renameMap = () => {}
+export const forkMap = () => {}
+export const exportMap = () => {}
+export const favoriteMap = () => {}
+export const deleteMap = () => {}
+export const updateMapPrivacy = () => {}
+export const saveMapEdits = () => {}
+export const publishMap = () => {}
+export const getMapMetadataOwnedByUser = () => {}
+export const getPublicMapMetadataOwnedByUser = () => {}
+export const getMapData = () => {}
+ 
 const apis = {
     createPost,
     deletePost,

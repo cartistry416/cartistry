@@ -1,5 +1,5 @@
 
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import GeoJSONMap from './components/GeoJSONMap';
 // import KMLMap from './components/KML';
 import './App.css';
@@ -9,7 +9,24 @@ import JSZip from 'jszip';
 import api from './store/store-request-api'
 
 function App() {
+  // const [turfLoaded, setTurfLoaded] = useState(false);
 
+  // useEffect(() => {
+  //   const script = document.createElement('script');
+  //   script.src = 'turf.min.js'; // Relative path to the script
+  //   script.async = true;
+  //   script.onload = () => {
+  //     console.log(window.turf)
+  //     setTurfLoaded(true);
+  //   };
+  //   document.head.appendChild(script);
+
+  //   return () => {
+  //     // Clean up if needed
+  //     document.head.removeChild(script);
+  //   };
+  // }, []);
+  
   const [mapData, setMapData] = useState(null)
   const [fileExtension, setFileExtension] = useState(null)
 
@@ -77,10 +94,8 @@ function App() {
   }
 
   let map = null
-  if (fileExtension) {
-    const position = [0,0]
-    map = <GeoJSONMap geoData={mapData} position={position}> </GeoJSONMap>
-  }
+  const position = [0,0]
+  map = <GeoJSONMap geoData={mapData} position={position}> </GeoJSONMap>
 
   return (
     <div className="App">
