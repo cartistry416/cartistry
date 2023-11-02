@@ -13,7 +13,7 @@
 import axios from 'axios'
 axios.defaults.withCredentials = true;
 const api = axios.create({
-    baseURL: 'http://localhost:4000/auth',
+    baseURL:'http://CartistryExpressServer-env-1.eba-fmapfype.us-east-1.elasticbeanstalk.com:4000' //'http://localhost:4000/auth',
 })
 
 // THESE ARE ALL THE REQUESTS WE`LL BE MAKING, ALL REQUESTS HAVE A
