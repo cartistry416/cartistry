@@ -29,6 +29,7 @@ function App() {
   
   const [mapData, setMapData] = useState(null)
   const [fileExtension, setFileExtension] = useState(null)
+  const [dummyData, setDummyData] = useState(null)
 
   /*
   const handleFileUpload = (event) => {
@@ -97,12 +98,25 @@ function App() {
   const position = [0,0]
   map = <GeoJSONMap geoData={mapData} position={position}> </GeoJSONMap>
 
+  const handleDummyOnClick = () => {
+    api.getDummyData().then((res) => {
+      setDummyData(res.data)
+    })
+  }
+  let dummyNode = <div> </div>
+  if (dummyData) {
+    dummyNode = <div> {JSON.stringify(dummyData)} </div>
+  }
+
   return (
     <div className="App">
           <h1> Map Viewer</h1>
           <input type="file" id="geojsonFile" accept="*" onChange={handleFileUpload} />
           <p> Only upload the following types: .json, .kml, or .zip containing relevant shapefile(s) </p>
           <p> Note: shapefiles take a bit longer to load, so please wait a moment! </p>
+          <button onClick={handleDummyOnClick}> dummy </button>
+          {dummyNode}
+
           {map}
     </div>
   );

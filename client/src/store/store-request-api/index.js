@@ -1,7 +1,7 @@
 import axios from 'axios'
 axios.defaults.withCredentials = true;
 const api = axios.create({
-    baseURL: 'http://localhost:4000',
+    baseURL: 'CartistryExpressServer-env-1.eba-fmapfype.us-east-1.elasticbeanstalk.com',// http://localhost:4000',
 })
 
 export const searchPostsByTitle = (title, limit) => {
@@ -60,6 +60,9 @@ export const uploadMap = (formData) => {
         }
     })
 }
+export const getDummyData = () => {
+    return api.get('/') 
+}
 
 export const deletePost = () => {}
 
@@ -108,7 +111,8 @@ const apis = {
     publishMap,
     getMapMetadataOwnedByUser,
     getPublicMapMetadataOwnedByUser,
-    getMapData
+    getMapData,
+    getDummyData,
 }
 
 export default apis
