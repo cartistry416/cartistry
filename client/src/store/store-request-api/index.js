@@ -1,7 +1,7 @@
 import axios from 'axios'
 axios.defaults.withCredentials = true;
 const api = axios.create({
-    baseURL: 'http://CartistryExpressServer-env-1.eba-fmapfype.us-east-1.elasticbeanstalk.com:4000',// http://localhost:4000',
+    baseURL: 'https://cartistry-express.vercel.app',// http://localhost:4000',
 })
 
 export const searchPostsByTitle = (title, limit) => {
