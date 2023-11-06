@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet'
-const turf = window.turf
-
 function getNameFromConvertedShapeFile(properties) {
 
     let keyBase = "NAME_"
@@ -20,7 +18,7 @@ function getNameFromConvertedShapeFile(properties) {
 function GeoJSONMap(props) {
     //const [geoData, setGeoData] = useState(null)
     const {geoData, position} = props
-    
+
     const onEachFeature = (feature, layer) => {
         let name = null;
         if ('name' in feature.properties) {
@@ -57,7 +55,6 @@ function GeoJSONMap(props) {
                   /> 
               )}
           </MapContainer>
-          <p> {JSON.stringify(turf)} </p>
         </div>
     )
 }

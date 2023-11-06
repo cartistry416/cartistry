@@ -43,8 +43,8 @@ export const createPost = (title, textContent, images) => {
     
     const formData = new FormData()
 
-    for (const image in images) {
-        FormData.append(`image`)
+    for (let i=0; i<images.length; i++) {
+        formData.append(images[i])
     }
     return api.post(`/posts-api/posts`, {
         title,

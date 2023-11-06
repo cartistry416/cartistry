@@ -1,9 +1,8 @@
 import React, { createContext, useEffect, useState } from "react";
-import { useHistory } from 'react-router-dom'
+// import { useHistory } from 'react-router-dom'
 import api from './auth-request-api'
 
 const AuthContext = createContext();
-console.log("create AuthContext: " + AuthContext);
 
 // THESE ARE ALL THE TYPES OF UPDATES TO OUR AUTH STATE THAT CAN BE PROCESSED
 export const AuthActionType = {
@@ -20,11 +19,11 @@ function AuthContextProvider(props) {
         loggedIn: false,
         guest: false,
     });
-    const history = useHistory();
+    // const history = useHistory();
 
-    useEffect(() => {
-        auth.getLoggedIn();
-    }, []);
+    // useEffect(() => {
+    //     auth.getLoggedIn();
+    // }, []);
 
     const authReducer = (action) => {
         const { type, payload } = action;
@@ -98,7 +97,7 @@ function AuthContextProvider(props) {
                 }
             })
             // history.push("/login");
-            history.push("/");
+            // history.push("/");
             return {success: true, errorMessage: ""}
         }
         else {
@@ -107,20 +106,25 @@ function AuthContextProvider(props) {
     }
 
     auth.loginUser = async function(email, password) {
-        const response = await api.loginUser(email, password).catch(err => {
-            return err.response.data
-        });
-        if (response.status === 200) {
-            authReducer({
-                type: AuthActionType.LOGIN_USER,
-                payload: {
-                    user: response.data.user
-                }
-            })
-            //history.push("/playlister");
-            return {success: true, errorMessage: ""}
+
+        let response;
+        try {
+            response = await api.loginUser(email, password)
+            if (response.status === 200) {
+                authReducer({
+                    type: AuthActionType.LOGIN_USER,
+                    payload: {
+                        user: response.data.user
+                    }
+                })
+                //history.push("/playlister");
+                return {success: true, errorMessage: ""}
+            }
         }
-        return {success: false, errorMessage: response.errorMessage}
+        catch (err) {
+            console.error(err)
+            return {success: false, errorMessage: ""}
+        }
     }
 
     auth.logoutUser = async function() {
@@ -130,7 +134,7 @@ function AuthContextProvider(props) {
                 type: AuthActionType.LOGOUT_USER,
                 payload: null
             })
-            history.push("/");
+            // history.push("/");
         }
     }
 
