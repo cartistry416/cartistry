@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 import React, { useState } from 'react'
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet'
 function getNameFromConvertedShapeFile(properties) {

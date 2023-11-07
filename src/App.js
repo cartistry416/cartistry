@@ -1,18 +1,23 @@
-
+// eslint-disable-next-line
 import {useState, useEffect} from 'react'
 import GeoJSONMap from './components/GeoJSONMap';
 import LoginModal from './components/LoginModal.jsx';
 import './App.css';
+// eslint-disable-next-line
 import api from './store/store-request-api'
 // import MapFileParserFactory from './classes/mapFileParser.ts';
+// eslint-disable-next-line
 import JSZip from 'jszip';
 import { AuthContextProvider } from './auth';
+// eslint-disable-next-line
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 
 
 function App() {
   
+  // eslint-disable-next-line
   const [mapData, setMapData] = useState(null)
+  // eslint-disable-next-line
   const [fileExtension, setFileExtension] = useState(null)
   const [dummyData, setDummyData] = useState(null)
 
