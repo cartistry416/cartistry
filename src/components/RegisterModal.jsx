@@ -17,6 +17,7 @@ function RegisterModal(props) {
     const passwordVerify = e.target[3].value
 
     const {success, errorMessage} = await auth.registerUser(email, password, passwordVerify, username)
+    console.log(errorMessage)
     setSuccessfulRegister(success)
     setErrorMessage(errorMessage)
   };
