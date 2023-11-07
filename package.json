@@ -54,7 +54,6 @@
   },
   "devDependencies": {
     "buffer": "^6.0.3",
-    "cypress": "^13.4.0",
-    "typescript": "^5.2.2"
+    "cypress": "^13.4.0"
   }
 }
