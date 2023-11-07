@@ -22,13 +22,14 @@ function App() {
   map = <GeoJSONMap geoData={mapData} position={position}> </GeoJSONMap>
 
   const handleDummyOnClick = () => {
-    api.getDummyData().then((res) => {
-      setDummyData(res.data)
-    })
+    // api.getDummyData().then((res) => {
+    //   setDummyData(res.data)
+    // })
+    setDummyData('dummyData')
   }
   let dummyNode = <div> </div>
   if (dummyData) {
-    dummyNode = <div> {JSON.stringify(dummyData)} </div>
+    dummyNode = <div id="dummyText">{dummyData}</div>
   }
 
   return (
@@ -36,7 +37,7 @@ function App() {
       <AuthContextProvider>
       <div className="App">
             <h1> Map Viewer</h1>
-              <button onClick={handleDummyOnClick}> dummy </button>
+              <button id="dummy" onClick={handleDummyOnClick}> dummy </button>
               {dummyNode}
               <LoginModal> </LoginModal>
 

@@ -13,7 +13,7 @@
 import axios from 'axios'
 axios.defaults.withCredentials = true;
 const api = axios.create({
-    baseURL:'https://cartistry-express.vercel.app' //'http://localhost:4000/auth',
+    baseURL:'https://cartistry-express.vercel.app/auth' //'http://localhost:4000/auth',
 })
 
 // THESE ARE ALL THE REQUESTS WE`LL BE MAKING, ALL REQUESTS HAVE A
