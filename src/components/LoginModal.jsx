@@ -17,6 +17,11 @@ function LoginModal(props) {
       setSuccessfulLogin(success)
       setErrorMessage(errorMessage)
     };
+
+    let dummyNode = <div></div>
+    if(successfulLogin){
+      dummyNode = <div id="dummyLoginData"></div>
+    }
   
     return (
       <div hidden={successfulLogin}>
@@ -42,6 +47,7 @@ function LoginModal(props) {
             <button type="submit">Log In</button>
           </div>
         </form>
+        {dummyNode}
         <div> {errorMessage} </div>
       </div>
     );

@@ -2,6 +2,7 @@
 import {useState, useEffect} from 'react'
 import GeoJSONMap from './components/GeoJSONMap';
 import LoginModal from './components/LoginModal.jsx';
+import RegisterModal from './components/RegisterModal.jsx'
 import './App.css';
 // eslint-disable-next-line
 import api from './store/store-request-api'
@@ -37,6 +38,12 @@ function App() {
     dummyNode = <div id="dummyText">{dummyData}</div>
   }
 
+  const dummyRequest = () => {
+    api.getDummyData().then((res) => {
+      setDummyData(res.data)
+    })
+  }
+
   return (
     <BrowserRouter>
       <AuthContextProvider>
@@ -44,8 +51,9 @@ function App() {
             <h1> Map Viewer</h1>
               <button id="dummy" onClick={handleDummyOnClick}> dummy </button>
               {dummyNode}
+              <RegisterModal></RegisterModal>
               <LoginModal> </LoginModal>
-
+              <button onClick={dummyRequest}>dummy get request</button>
               {map}
 
             {/* <Switch>
