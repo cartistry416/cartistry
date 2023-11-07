@@ -4,6 +4,8 @@ import React from "react";
 
 function PostCard(props) {
 
+
+    // eslint-disable-next-line
     const {title, ownerUsername, textContent, owner, likes, forks, tags} = props
     return (
         <li>

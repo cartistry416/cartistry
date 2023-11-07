@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 import AuthContext from '../auth';
-function LoginModal(props) {
+function LoginModal() {
 
     const {auth} = useContext(AuthContext);
 

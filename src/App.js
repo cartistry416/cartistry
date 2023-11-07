@@ -33,15 +33,18 @@ function App() {
     // })
     setDummyData('dummyData')
   }
-  let dummyNode = <div> </div>
-  if (dummyData) {
-    dummyNode = <div id="dummyText">{dummyData}</div>
-  }
 
   const dummyRequest = () => {
-    api.getDummyData().then((res) => {
-      setDummyData(res.data)
+    // api.getDummyData().then((res) => {
+    //   setDummyData(res.data)
+    // })
+    api.getMostRecentPosts(10).then(res => {
+      setDummyData(res.data.posts)
     })
+  }
+  let dummyNode = <div> </div>
+  if (dummyData) {
+    dummyNode = <div id="dummyText">{JSON.stringify(dummyData)}</div>
   }
 
   return (
@@ -53,7 +56,7 @@ function App() {
               {dummyNode}
               <RegisterModal></RegisterModal>
               <LoginModal> </LoginModal>
-              <button onClick={dummyRequest}>dummy get request</button>
+              <button onClick={dummyRequest}>Get Most Recent Posts</button>
               {map}
 
             {/* <Switch>
