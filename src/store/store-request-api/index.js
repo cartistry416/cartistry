@@ -28,9 +28,7 @@ export const getPost = (postId) => {
 }
 
 export const getMostRecentPosts = (limit) => {
-    return api.get(`/posts-api/posts/most-recent`, {
-        limit
-    }) 
+    return api.get(`/posts-api/posts/most-recent`,  { params: { limit } }) 
 }
 
 export const getMostLikedPosts = (limit) => {
