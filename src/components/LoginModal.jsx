@@ -20,11 +20,12 @@ function LoginModal(props) {
 
     let dummyNode = <div></div>
     if(successfulLogin){
-      dummyNode = <div id="dummyLoginData">{auth.user.userName}</div>
+      dummyNode = <div id="dummyLoginData">Hello! {auth.user.userName}</div>
     }
   
     return (
-      <div hidden={successfulLogin}>
+      <div>
+        {dummyNode}
         <h2>Login</h2>
         <form onSubmit={handleSubmit}>
           <div>
@@ -47,7 +48,6 @@ function LoginModal(props) {
             <button type="submit">Log In</button>
           </div>
         </form>
-        {dummyNode}
         <div> {errorMessage} </div>
       </div>
     );

@@ -22,8 +22,14 @@ function RegisterModal(props) {
     setErrorMessage(errorMessage)
   };
 
+  let dummyNode = <div></div>
+  if(successfulRegister){
+    dummyNode = <div id="registered">Registered</div>
+  }
+
   return (
     <div>
+      {dummyNode}
       <h2>Register</h2>
       <form onSubmit={handleSubmit}>
         <div>
