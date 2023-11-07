@@ -4,7 +4,7 @@ import GeoJSONMap from './components/GeoJSONMap';
 import LoginModal from './components/LoginModal.jsx';
 import './App.css';
 import api from './store/store-request-api'
-import MapFileParserFactory from './classes/mapFileParser.ts';
+// import MapFileParserFactory from './classes/mapFileParser.ts';
 import JSZip from 'jszip';
 import { AuthContextProvider } from './auth';
 import { BrowserRouter, Route, Switch } from 'react-router-dom'

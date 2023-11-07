@@ -1,3 +1,4 @@
+
 describe('Dummy Test', () => {
   it('Dummy button', () => {
       cy.visit('http://localhost:3000/');
@@ -10,3 +11,7 @@ describe('Dummy Test', () => {
       cy.get('#email').type('McKillaGorilla').should('have.value', 'McKillaGorilla')
   })
 });
+
+
+
+
