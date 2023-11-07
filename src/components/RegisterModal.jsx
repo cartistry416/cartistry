@@ -4,7 +4,9 @@ import AuthContext from '../auth';
 function RegisterModal(props) {
   const { auth } = useContext(AuthContext);
 
+    // eslint-disable-next-line
   const [successfulRegister, setSuccessfulRegister] = useState(false)
+    // eslint-disable-next-line
   const [errorMessage, setErrorMessage] = useState("")
 
   const handleSubmit = async (e) => {
