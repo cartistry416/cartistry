@@ -20,7 +20,7 @@ function LoginModal(props) {
 
     let dummyNode = <div></div>
     if(successfulLogin){
-      dummyNode = <div id="dummyLoginData"></div>
+      dummyNode = <div id="dummyLoginData">{auth.user.userName}</div>
     }
   
     return (
