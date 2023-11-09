@@ -86,8 +86,7 @@ function AuthContextProvider(props) {
     auth.registerUser = async function(email, password, passwordVerify, username) {
         const response = await api.registerUser(email, password, passwordVerify, username)
         .catch(err => {
-            //console.log(err.response.data)
-            return err.response.data // this will set response to the error response
+            return {success: false, errorMessage: JSON.stringify(err)}// this will set response to the error response
         });  
         //console.log(response)  
         if (response.status === 200) {

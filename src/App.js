@@ -47,6 +47,39 @@ function App() {
     dummyNode = <div id="dummyText">{JSON.stringify(dummyData)}</div>
   }
 
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0]
+    if (!file) {
+      console.error("No file uploaded?")
+      return 
+    }
+
+    const ext = file.name.split('.').pop().toLowerCase()
+
+    let blob = file;
+    const formData = new FormData()
+    if (ext === "json" || ext === "kml") {
+
+      const zip = new JSZip()
+      zip.file(file.name, file)
+
+      blob = await zip.generateAsync({type: 'blob'})
+    }
+    else if (ext !== "zip") {
+      console.error("Unsupported file extension: " + ext)
+      return
+    }
+
+    formData.append('zipFile', blob )
+    formData.append('fileExtension', ext)
+    formData.append('title', "testMap")
+    formData.append('templateType', "heat")
+    const res = await api.uploadMap(formData)
+    console.log(res)
+
+  }
+
   return (
     <BrowserRouter>
       <AuthContextProvider>
@@ -57,6 +90,7 @@ function App() {
               <RegisterModal></RegisterModal>
               <LoginModal> </LoginModal>
               <button onClick={dummyRequest}>Get Most Recent Posts</button>
+              <input type="file" id="geojsonFile" accept="*" onChange={handleFileUpload} />
               {map}
 
             {/* <Switch>

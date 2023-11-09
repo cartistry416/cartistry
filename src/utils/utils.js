@@ -1,6 +1,6 @@
-// TODO MOVE THESE TO APPROPRIATE PLACES LATER
+// // TODO MOVE THESE TO APPROPRIATE PLACES LATER
 
-// <input type="file" id="geojsonFile" accept="*" onChange={handleFileUpload} />
+// // <input type="file" id="geojsonFile" accept="*" onChange={handleFileUpload} />
 // const handleFileUpload = (event) => {
 //     const file = event.target.files[0]
 //     if (!file) {

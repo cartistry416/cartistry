@@ -11,9 +11,10 @@
 */
 
 import axios from 'axios'
+const baseURL = process.env.NODE_ENV !== 'development' ? 'https://cartistry-express.vercel.app/auth' : 'http://localhost:4000/auth'
 axios.defaults.withCredentials = true;
 const api = axios.create({
-    baseURL:'https://cartistry-express.vercel.app/auth' //'http://localhost:4000/auth',
+    baseURL
 })
 
 // THESE ARE ALL THE REQUESTS WE`LL BE MAKING, ALL REQUESTS HAVE A
