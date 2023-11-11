@@ -1,3 +1,20 @@
+
+import {create as createDiffPatcher} from 'jsondiffpatch'
+
+function generateDiff(originalGeoJSON, editedGeoJSON) {
+    const diffPatcher = createDiffPatcher({
+        objectHash: function(obj, index) {
+            if (obj.properties !== undefined) {
+                return JSON.stringify(obj.properties)
+            }
+            return '$$index:' + index;
+        }
+    })
+    return diffPatcher.diff(originalGeoJSON, editedGeoJSON)
+}
+
+export {generateDiff}
+
 // // TODO MOVE THESE TO APPROPRIATE PLACES LATER
 
 // // <input type="file" id="geojsonFile" accept="*" onChange={handleFileUpload} />

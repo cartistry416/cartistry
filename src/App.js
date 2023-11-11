@@ -12,6 +12,7 @@ import JSZip from 'jszip';
 import { AuthContextProvider } from './auth';
 // eslint-disable-next-line
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { generateDiff } from './utils/utils.js';
 
 
 function App() {
@@ -75,9 +76,8 @@ function App() {
     formData.append('fileExtension', ext)
     formData.append('title', "testMap")
     formData.append('templateType', "heat")
+    // eslint-disable-next-line
     const res = await api.uploadMap(formData)
-    console.log(res)
-
   }
 
   return (
