@@ -12,7 +12,6 @@ import JSZip from 'jszip';
 import { AuthContextProvider } from './auth';
 // eslint-disable-next-line
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
-import { generateDiff } from './utils/utils.js';
 
 
 function App() {
