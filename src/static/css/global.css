@@ -1,0 +1,34 @@
+:root{
+    --main-text-color: #E0CA3C;
+    --background-color: #3E2F5B;
+    --accent1: #B7ADCF;
+    --accent2:#292929;
+    --accent3: #EBEBEB;
+
+    --title: 'Inter', serif;
+}
+
+html,
+body,
+main,
+div#root {
+	min-width: 100%;
+	width: 100%;
+    margin: 0;
+	justify-content: flex-start;
+}
+
+html,
+div#root {
+	min-height: 100vh;
+    width: 100%;
+	background: var(--accent1);
+}
+
+h1{
+    margin: 0;
+    font-family: var(--title);
+    font-size: 1.5rem;
+    font-weight: 800;
+    font-style: italic;
+}
