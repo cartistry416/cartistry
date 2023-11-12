@@ -26,9 +26,32 @@ div#root {
 }
 
 h1{
-    margin: 0;
+    margin: none;
     font-family: var(--title);
     font-size: 1.5rem;
     font-weight: 800;
     font-style: italic;
+}
+
+button{
+    background-color: var(--accent2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--accent3);
+    border: none;
+    height: 1.8rem;
+    width: auto;
+    padding: 0.2rem 1rem 0.2rem 1rem;
+    font-family: var(--title);
+    font-weight: 500;
+    border-radius: 1rem;
+    white-space: nowrap;
+}
+
+input{
+    border: none;
+    background-color: var(--accent2);
+    color: var(--accent3);
+    outline: none;
 }
