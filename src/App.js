@@ -11,7 +11,12 @@ import api from './store/store-request-api'
 import JSZip from 'jszip';
 import { AuthContextProvider } from './auth';
 // eslint-disable-next-line
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import {BrowserRouter, Route, Routes} from "react-router-dom";
+import HomeWrapper from './components/HomeWrapper/HomeWrapper'
+import NavBar from './components/NavBar';
+import './static/css/global.css'
+import './static/css/fonts.css'
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
 
 function App() {
@@ -83,21 +88,21 @@ function App() {
     <BrowserRouter>
       <AuthContextProvider>
       <div className="App">
-            <h1> Map Viewer</h1>
+            {/* <h1> Map Viewer</h1>
               <button id="dummy" onClick={handleDummyOnClick}> dummy </button>
               {dummyNode}
               <RegisterModal></RegisterModal>
               <LoginModal> </LoginModal>
               <button onClick={dummyRequest}>Get Most Recent Posts</button>
               <input type="file" id="geojsonFile" accept="*" onChange={handleFileUpload} />
-              {map}
-
-            {/* <Switch>
-                        <Route path="/" exact component={HomeWrapper} />
-                        <Route path="/login/" exact component={LoginScreen} />
+              {map} */}
+            <NavBar/>
+            <Routes>
+                        <Route path="/home/" element={<HomeWrapper/>} />
+                        {/* <Route path="/login/" exact component={LoginScreen} />
                         <Route path="/register/" exact component={RegisterScreen} />
-                        <Route path="/playlist/:id" exact component={WorkspaceScreen} />
-            </Switch> */}
+                        <Route path="/playlist/:id" exact component={WorkspaceScreen} /> */}
+            </Routes>
       </div>
       </AuthContextProvider>
     </BrowserRouter>
