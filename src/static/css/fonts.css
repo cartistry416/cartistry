@@ -10,7 +10,7 @@
 	font-family: 'Material Icons';
 	font-weight: normal;
 	font-style: normal;
-	font-size: 2rem;
+	font-size: 1rem;
 	line-height: 1;
 	letter-spacing: normal;
 	text-transform: none;
@@ -25,6 +25,14 @@
 @font-face {
 	font-family: 'Inter';
 	font-style: normal;
+	font-weight: 200;
+	src: url(../fonts/inter/Inter-ExtraLight.ttf);
+	-webkit-font-smoothing: antialiased;
+}
+
+@font-face {
+	font-family: 'Inter';
+	font-style: normal;
 	font-weight: 400;
 	src: url(../fonts/inter/Inter-Regular.ttf);
 	-webkit-font-smoothing: antialiased;
@@ -33,8 +41,8 @@
 @font-face {
 	font-family: 'Inter';
 	font-style: normal;
-	font-weight: 200;
-	src: url(../fonts/inter/Inter-ExtraLight.ttf);
+	font-weight: 500;
+	src: url(../fonts/inter/Inter-Medium.ttf);
 	-webkit-font-smoothing: antialiased;
 }
 

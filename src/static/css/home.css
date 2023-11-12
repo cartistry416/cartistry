@@ -1,0 +1,56 @@
+#homeWrapper{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.functionsWrapper{
+    width: 65%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1rem 0 1rem 0;
+    padding-left: 5vw;
+}
+
+.functionsWrapper button,
+.functionsWrapper div
+{
+    margin-right: 0.5rem;
+}
+
+#createPostButton{
+    padding: 0.2rem 2rem 0.2rem 2rem;
+}
+
+.searchBarWrapper{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 30vw;
+    height: 1.4rem;
+    background-color: var(--accent2);
+    color: var(--accent3);
+    padding: 0.2rem 2rem 0.2rem 2rem;
+    border-radius: 1rem;
+}
+
+.searchIcon{
+    position: absolute;
+    font-size: 1rem !important;
+    transform: translateX(-1.2rem);
+}
+
+#searchInput{
+    width: 100%;
+}
+
+.contentWrapper{
+    display: flex;
+}
+
+.postListWrapper{
+    display: flex;
+    flex-direction: column;
+}
