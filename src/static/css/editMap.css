@@ -1,0 +1,56 @@
+.editMapWrapper {
+    display: flex;
+}
+
+.mapScreen {
+    flex-grow: 1;
+    position: relative;
+}
+
+.rightPanel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 250px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    padding: 10px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+}
+
+.toolbox-header, .legend-header {
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: var(--background-color);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+.toolbox, .legend {
+    border-radius: 15px;
+    background-color: var(--accent1);
+}
+
+.toolbox {
+    flex-direction: column;
+    border-left: 1px solid #ccc;
+}
+
+.toolbox-body {
+    padding: 10px;
+}
+
+.legend {
+    margin-top: 20px;
+    border-top: 1px solid #ccc;
+}
+
+.toolButton, .textInput, .colorInput {
+    margin-bottom: 10px;
+}
