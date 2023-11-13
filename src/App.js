@@ -18,6 +18,8 @@ import './static/css/global.css'
 import './static/css/fonts.css'
 import ForgotPasswordModal from './components/modals/ForgotPasswordModal';
 import ErrorModal from './components/modals/ErrorModal';
+import EditMapWrapper from './components/EditMapWrapper/EditMapWrapper.jsx';
+import PostScreen from './components/Posts/PostScreen.jsx';
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
 
@@ -101,6 +103,8 @@ function App() {
             <NavBar/>
             <Routes>
                         <Route path="/home/" element={<HomeWrapper/>} />
+                        <Route path="/editMap/" element={<EditMapWrapper/>} />
+                        <Route path="/post/" element={<PostScreen/>} />
                         {/* <Route path="/login/" exact component={LoginScreen} />
                         <Route path="/register/" exact component={RegisterScreen} />
                         <Route path="/playlist/:id" exact component={WorkspaceScreen} /> */}
