@@ -11,8 +11,10 @@ const EditMapWrapper = () =>{
                     <Toolbox />
                     <Legend />
                     <div className="sideControls">
-                        <button className="undoButton">Undo</button>
-                        <button className="redoButton">Redo</button>
+                    <div className="iconGroup">
+                        <span className="material-icons">undo</span>
+                        <span className="material-icons">redo</span>
+                    </div>
                     </div>
                 </div>
             </div>
