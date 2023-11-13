@@ -6,9 +6,8 @@
 }
 
 .functionsWrapper{
-    width: 65%;
+    width: auto;
     display: flex;
-    justify-content: space-between;
     align-items: center;
     margin: 1rem 0 1rem 0;
     padding-left: 5vw;
@@ -29,7 +28,7 @@
     justify-content: flex-start;
     align-items: center;
     width: 30vw;
-    height: 1.4rem;
+    height: 2rem;
     background-color: var(--accent2);
     color: var(--accent3);
     padding: 0.2rem 2rem 0.2rem 2rem;
@@ -38,19 +37,53 @@
 
 .searchIcon{
     position: absolute;
-    font-size: 1rem !important;
     transform: translateX(-1.2rem);
 }
 
 #searchInput{
     width: 100%;
+    padding-left: 0.5rem;
+    font-size: 1rem;
 }
 
 .contentWrapper{
     display: flex;
+    justify-content: space-between;
 }
 
-.postListWrapper{
+#postListWrapper{
     display: flex;
     flex-direction: column;
+    width: 100%;
+    padding-left: 5vw;
+}
+
+.tagWrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-right: 5vw;
+    margin-left: 5vw;
+    height: 30rem;
+    width: 20rem;
+    background-color: var(--accent3);
+    border-radius: 1rem;
+}
+
+.tagTitle{
+    background-color: var(--accent2);
+    color: var(--accent3);
+    border-radius: 1rem 1rem 0 0;
+    height: 3rem;
+    width: 100%;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tagWrapper .tag{
+    margin: 0 0 1rem 1rem;
 }
