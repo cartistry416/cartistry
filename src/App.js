@@ -16,6 +16,8 @@ import HomeWrapper from './components/HomeWrapper/HomeWrapper'
 import NavBar from './components/NavBar';
 import './static/css/global.css'
 import './static/css/fonts.css'
+import ForgotPasswordModal from './components/modals/ForgotPasswordModal';
+import ErrorModal from './components/modals/ErrorModal';
 import EditMapWrapper from './components/EditMapWrapper/EditMapWrapper.jsx';
 import PostScreen from './components/Posts/PostScreen.jsx';
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
@@ -109,6 +111,8 @@ function App() {
             </Routes>
             <LoginModal/>
             <RegisterModal/>
+            <ForgotPasswordModal/>
+            <ErrorModal/>
       </div>
       </AuthContextProvider>
     </BrowserRouter>
