@@ -19,9 +19,18 @@ function HomeWrapper() {
           <PostCard />
           <PostCard />
           <PostCard />
+          <PostCard />
+          <PostCard />
+          <PostCard />
+          <PostCard />
+          <PostCard />
+          <PostCard />
         </div>
         <div className="tagWrapper">
-            BOX
+            <div className="tagTitle">Tags</div>
+            <button className="tag">Tag Twenty</button>
+            <button className="tag">Tag One</button>
+            <button className="tag">Tag Forty</button>
         </div>
       </div>
     </div>
