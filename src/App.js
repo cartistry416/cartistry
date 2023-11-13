@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 import {useState, useEffect} from 'react'
 import GeoJSONMap from './components/GeoJSONMap';
-import LoginModal from './components/LoginModal.jsx';
+import LoginModal from './components/modals/LoginModal.jsx';
 import RegisterModal from './components/RegisterModal.jsx'
 import './App.css';
 // eslint-disable-next-line
@@ -105,6 +105,7 @@ function App() {
                         <Route path="/register/" exact component={RegisterScreen} />
                         <Route path="/playlist/:id" exact component={WorkspaceScreen} /> */}
             </Routes>
+            <LoginModal/>
       </div>
       </AuthContextProvider>
     </BrowserRouter>

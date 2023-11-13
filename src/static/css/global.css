@@ -34,6 +34,12 @@ h1{
     font-style: italic;
 }
 
+h2{
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 0;
+}
+
 button{
     background-color: var(--accent2);
     display: flex;
@@ -57,4 +63,19 @@ input{
     background-color: var(--accent2);
     color: var(--accent3);
     outline: none;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+form input{
+    height: 2rem;
+    width: 25rem;
+    margin-bottom: 1rem;
+    border-bottom: var(--main-text-color) 0.2rem solid;
+    background-color: var(--background-color);
+    font-size: 1.5rem;
 }
