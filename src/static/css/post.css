@@ -1,0 +1,123 @@
+.post-wrapper {
+  display: flex;
+  padding: 25px;
+  justify-content: space-around;
+}
+
+.post-content-wrapper {
+  width: 70%;
+  background-color: var(--accent3);
+  border-radius: 16px;
+}
+
+.post-image-wrapper {
+  width: 300px;
+  height: 300px;
+  border-radius: 16px;
+  background-color: #000;
+}
+
+.post-container {
+  display: block;
+  background-color: var(--accent3);
+  border-radius: 8px;
+  margin: 16px;
+  padding: 10px 20px;
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.post-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.post-details h2 {
+  font-size: 32px;
+  color: var(--accent2);
+  margin: 0;
+}
+
+.post-username {
+  font-size: 14px;
+  color: #666;
+}
+
+.fork-button {
+  font-size: 28px;
+  color: var(--accent2);
+  cursor: pointer;
+}
+
+.post-content {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.post-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.post-interactions {
+  display: flex;
+  align-items: center;
+}
+
+.like-button,
+.comment-button {
+  background: var(--accent1);
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  color: #000;
+}
+
+.like-button:focus,
+.comment-button:focus {
+  outline: none;
+}
+
+.post-add-comment {
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--accent1);
+  border-radius: 20px;
+}
+
+.post-add-comment input {
+  flex-grow: 1;
+  margin-right: 8px;
+  padding: 8px 10px;
+  font-size: 14px;
+  border: none;
+  border-radius: 20px;
+  background: none;
+  color: var(--accent2);
+}
+
+.post-add-comment button {
+  background: none;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  color: var(--accent2);
+}
+
+.post-add-comment button span {
+  display: block;
+}
