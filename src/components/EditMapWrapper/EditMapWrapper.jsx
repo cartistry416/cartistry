@@ -1,4 +1,4 @@
-import "../../static/css/editMap.css";
+import "../../static/css/editMap/editMap.css";
 import MapContainer from './MapContainer';
 import Toolbox from './Toolbox';
 import Legend from './Legend';

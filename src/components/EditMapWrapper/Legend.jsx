@@ -1,3 +1,4 @@
+import "../../static/css/editMap/legend.css";
 const Legend = () => {
     return (
       <div className="legend">
