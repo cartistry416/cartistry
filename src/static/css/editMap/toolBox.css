@@ -1,0 +1,28 @@
+.toolbox {
+    flex-direction: column;
+    border-left: 1px solid #ccc;
+}
+.rightPanel .material-icons {
+    font-size: 2.2rem; 
+}
+.toolbox-body .material-icons {
+    color: var(--background-color); 
+}
+.toolbox-body {
+    justify-content: space-between; /* This will space your items evenly */
+    align-items: center; /* This will align your items vertically */
+
+}
+.toolbox-header .dropdown-list{
+    color: black;
+}
+.toolbox-body .material-icons {
+    width: 33%; /* Gives each icon 1/3 of the container width */
+    text-align: center; /* This will center the icons if they are not full width */
+    padding: 1rem 0; /* Adjust the padding as needed */
+    box-sizing: border-box; /* Makes sure padding is included in width */
+}
+.toolbox-separator {
+    border-bottom: .2rem solid var(--background-color); /* Adjust color as needed */
+    margin: 0rem 1rem 1rem 1rem; /* Adjust margins as needed */
+}
