@@ -3,21 +3,18 @@ const Toolbox = () => {
       <div className="toolbox">
         <div className="toolbox-header">
           <h2 className="map-title">Map Title</h2>
-          <button className="menu-button">☰</button>
+          <span className="material-icons">more_vert</span>
         </div>
         <div className="toolbox-body">
-            <button className="toolButton pan">Pan</button>
-            <button className="toolButton fill">Fill</button>
-            <button className="toolButton point">Point</button>
-
+            <span className="material-icons">pan_tool</span>
+            <span className="material-icons">format_color_fill</span>
+            <span className="material-icons">pin_drop</span>
+            <span className="material-icons">gradient</span>
+            <span className="material-icons">start</span>
+            <span className="material-icons">polyline</span>
             
-            <button className="toolButton gradient">Gradient</button>
-            <button className="toolButton line">Line</button>
-            <button className="toolButton polygon">Polygon</button>
-            
-            <button className="toolButton landmark">Landmark</button>
-            <input type="text" placeholder="Label" className="textInput" />
-            <input type="color" className="colorInput" />
+            {/* <input type="text" placeholder="Label" className="textInput" />
+            <input type="color" className="colorInput" /> */}
         </div>
         
 
