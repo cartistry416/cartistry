@@ -2,7 +2,7 @@
 import {useState, useEffect} from 'react'
 import GeoJSONMap from './components/GeoJSONMap';
 import LoginModal from './components/modals/LoginModal.jsx';
-import RegisterModal from './components/RegisterModal.jsx'
+import RegisterModal from './components/modals/RegisterModal.jsx'
 import './App.css';
 // eslint-disable-next-line
 import api from './store/store-request-api'
@@ -106,6 +106,7 @@ function App() {
                         <Route path="/playlist/:id" exact component={WorkspaceScreen} /> */}
             </Routes>
             <LoginModal/>
+            <RegisterModal/>
       </div>
       </AuthContextProvider>
     </BrowserRouter>

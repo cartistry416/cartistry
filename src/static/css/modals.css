@@ -1,9 +1,14 @@
 .modalWrapper{
+    display: none;
     position: fixed;
     height: 100vh;
     width: 100vw;
     top: 0;
     left: 0;
+}
+
+.modalWrapper.show{
+    display: block;
 }
 
 .modal{
@@ -45,11 +50,17 @@
     margin-top: 2rem;
 }
 
-.modalFooter .forgotPassModalButton{
+.forgotPassModalButton{
     color: var(--accent3);
     border-bottom: var(--accent3) 0.2rem solid;
     padding: 0;
     background-color: var(--background-color);
     border-radius: 0;
     font-size: 1.2rem;
+}
+
+.formSubmitButton{
+    background-color: var(--main-text-color);
+    color: var(--background-color);
+    font-weight: 800;
 }
