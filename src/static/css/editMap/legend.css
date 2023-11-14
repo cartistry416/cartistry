@@ -1,3 +1,49 @@
 .legend {
     margin-top: 1.25rem; /* 20px / 16 = 1.25rem */
 }
+.legend-bin, .legend-landmark, .legend-gradient, .legend-lines, .legend-cadastral{
+    justify-content: space-between; /* This will space your items evenly */
+    padding: 1rem 1rem 1rem 1rem;
+}
+.legend-bin-color{
+    width: 2rem; /* Width of the rectangle */
+    height: 2rem; /* Height of the rectangle */
+    background-color: red;
+}
+.legend-bin-color2{
+    width: 2rem; /* Width of the rectangle */
+    height: 2rem; /* Height of the rectangle */
+    background-color: rgb(89, 0, 255);
+}
+.legend-bin-color-label, .legend-landmark-label, .legend-gradient-label,
+.legend-lines-label, .legend-cadastral-label {
+    color: var(--background-color); /* Color of the text */
+    width: 7rem;
+    font-size: 1.25rem;
+    background-color: var(--accent1)
+}
+.legend table {
+    width: 100%;
+    table-layout: fixed;
+}
+.legend-gradient1-color{
+    width: 2rem; /* Width of the rectangle */
+    height: 2rem; /* Height of the rectangle */
+    background-color: #FF0000;
+}
+.legend-gradient2-color{
+    width: 2rem; /* Width of the rectangle */
+    height: 2rem; /* Height of the rectangle */
+    background-color: #CC3333;
+}
+.legend-gradient3-color{
+    width: 2rem; /* Width of the rectangle */
+    height: 2rem; /* Height of the rectangle */
+    background-color: #D86161;
+}
+.legend-gradient4-color{
+    width: 2rem; /* Width of the rectangle */
+    height: 2rem; /* Height of the rectangle */
+    background-color: #D89090;
+}
+  

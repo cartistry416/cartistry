@@ -38,7 +38,10 @@
     border-radius: 1rem; 
     background-color: var(--accent1);
 }
-
+.toolbox-separator, .legend-separator {
+    border-bottom: .2rem solid var(--background-color); /* Adjust color as needed */
+    margin: 0rem 1rem 1rem 1rem; /* Adjust margins as needed */
+}
 .sideControls{
     width: 50%;
     justify-content: center;
