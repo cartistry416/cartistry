@@ -17,4 +17,37 @@
 .profileIcon{
     margin-right: 5vw;
     font-size: 2rem !important;
+    cursor: pointer;
+}
+
+.nav-dropdown {
+  position: absolute;
+  top: 3.5rem;
+  right: 80px;
+  background-color: var(--background-color);
+  border-radius: 0px 0px 20px 20px;
+  width: auto;
+  z-index: 999;
+}
+
+.nav-dropdown-list {
+  padding: 0;
+  margin: 0;
+}
+
+.nav-dropdown-option {
+  padding: 8px 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: var(--accent3)
+}
+
+.nav-dropdown-option:hover {
+ color: var(--main-text-color);
+}
+
+.nav-dropdown-option span {
+  font-size: 16px;
+  font-weight: bold;
 }

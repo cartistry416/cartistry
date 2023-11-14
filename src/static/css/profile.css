@@ -1,0 +1,21 @@
+.profileContainer {
+  margin-top: 60px;
+}
+
+.profileHeader span {
+  font-size: 96px;
+}
+
+.profileHeader h3 {
+  font-size: 28px;
+  margin-top: 0px;
+  color: var(--accent2);
+}
+
+.mapListWrapper {
+  display: grid;
+  margin: 3rem 5vw 0 5vw;
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  justify-content: space-between;
+  grid-gap: 4rem;
+}
