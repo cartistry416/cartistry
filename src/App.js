@@ -18,6 +18,7 @@ import './static/css/global.css'
 import './static/css/fonts.css'
 import EditMapWrapper from './components/EditMapWrapper/EditMapWrapper.jsx';
 import PostScreen from './components/Posts/PostScreen.jsx';
+import PostEditor from './components/Posts/PostEditor.jsx';
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
 
@@ -103,6 +104,7 @@ function App() {
                         <Route path="/home/" element={<HomeWrapper/>} />
                         <Route path="/editMap/" element={<EditMapWrapper/>} />
                         <Route path="/post/" element={<PostScreen/>} />
+                        <Route path="/editPost/" element={<PostEditor/>} />
                         {/* <Route path="/login/" exact component={LoginScreen} />
                         <Route path="/register/" exact component={RegisterScreen} />
                         <Route path="/playlist/:id" exact component={WorkspaceScreen} /> */}
