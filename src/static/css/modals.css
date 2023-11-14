@@ -64,7 +64,7 @@
     font-weight: 800;
 }
 
-.errorModalMessage{
+.alertModalMessage{
     display: flex;
     width: 20rem;
     color: var(--accent3);
