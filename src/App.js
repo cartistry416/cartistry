@@ -106,7 +106,7 @@ function App() {
               {map} */}
             <NavBar/>
             <Routes>
-                        <Route path="/home/" element={<HomeWrapper/>} />
+                        <Route path="/" element={<HomeWrapper/>} />
                         <Route path="/editMap/" element={<EditMapWrapper/>} />
                         <Route path="/post/" element={<PostScreen/>} />
                         <Route path="/resetPassword/" element={<ResetPassWordWrapper/>}/>
