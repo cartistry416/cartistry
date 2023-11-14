@@ -37,13 +37,14 @@
 
 .mapCardMore{
     cursor: pointer;
+    position: relative;
 }
 
 .mapCardMenu{
     position: absolute;
     background-color: var(--accent3);
-    display: none;
     transform: translate(-50%, -105%);
+    z-index: 999;
 }
 
 .mapCardMenuItem{

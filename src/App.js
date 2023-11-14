@@ -26,6 +26,8 @@ import ResetPassWordWrapper from './components/ResetPasswordWrapper';
 import ResetPasswordModal from './components/modals/ResetPasswordModal';
 import MyMapsWrapper from './components/MyMapsWrapper';
 import PostEditor from './components/Posts/PostEditor.jsx';
+import ProfileScreen from './components/ProfileScreen.jsx';
+import MyPostsScreen from './components/MyPostsScreen.jsx';
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
 
@@ -113,7 +115,9 @@ function App() {
                         <Route path="/post/" element={<PostScreen/>} />
                         <Route path="/resetPassword/" element={<ResetPassWordWrapper/>}/>
                         <Route path="/myMaps/" element={<MyMapsWrapper/>}/>
+                        <Route path="/myPosts/" element={<MyPostsScreen/>}/>
                         <Route path="/editPost/" element={<PostEditor/>} />
+                        <Route path="/profile/" element={<ProfileScreen/>} />
                         {/* <Route path="/login/" exact component={LoginScreen} />
                         <Route path="/register/" exact component={RegisterScreen} />
                         <Route path="/playlist/:id" exact component={WorkspaceScreen} /> */}
