@@ -1,0 +1,92 @@
+#homeWrapper{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.functionsWrapper{
+  width: 70vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 1rem 0 1rem 0;
+  padding-left: 5vw;
+}
+
+.functionsWrapper button,
+.functionsWrapper div
+{
+  margin-right: 0.5rem;
+}
+
+#myPostsHeader{
+  padding: 0.2rem 2rem 0.2rem 2rem;
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.searchBarWrapper{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 30vw;
+  height: 2rem;
+  background-color: var(--accent2);
+  color: var(--accent3);
+  padding: 0.2rem 2rem 0.2rem 2rem;
+  border-radius: 1rem;
+}
+
+.searchIcon{
+  position: absolute;
+  transform: translateX(-1.2rem);
+}
+
+#searchInput{
+  width: 100%;
+  padding-left: 0.5rem;
+  font-size: 1rem;
+}
+
+.contentWrapper{
+  display: flex;
+  justify-content: space-between;
+}
+
+#postListWrapper{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding-left: 5vw;
+}
+
+.tagWrapper{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-right: 5vw;
+  margin-left: 5vw;
+  height: 30rem;
+  width: 20rem;
+  background-color: var(--accent3);
+  border-radius: 1rem;
+}
+
+.tagTitle{
+  background-color: var(--accent2);
+  color: var(--accent3);
+  border-radius: 1rem 1rem 0 0;
+  height: 3rem;
+  width: 100%;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tagWrapper .tag{
+  margin: 0 0 1rem 1rem;
+}
