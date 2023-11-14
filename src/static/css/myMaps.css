@@ -1,0 +1,40 @@
+.mapListWrapper {
+  display: grid;
+  margin: 3rem 5vw 0 5vw;
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  justify-content: space-between;
+  grid-gap: 4rem;
+}
+
+.createPostMenu,
+.sortByMenu {
+  display: none;
+  position: absolute;
+  background-color: var(--accent2);
+  color: var(--accent3);
+  padding: 0.5rem 0 0 0;
+  border-radius: 0 0 1rem 1rem;
+}
+
+.sortByMenu{
+    transform: translateY(0%);
+}
+
+.createPostMenu.show,
+.sortByMenu.show{
+  display: block;
+}
+
+.createPostMenuItem,
+.sortByMenuItem{
+  margin-right: 0 !important;
+}
+
+.sortByButton{
+    width: 9rem !important;
+}
+
+.createMapButton.open,
+.sortByButton.open{
+  border-radius: 1rem 1rem 0 0;
+}

@@ -17,9 +17,12 @@ import NavBar from './components/NavBar';
 import './static/css/global.css'
 import './static/css/fonts.css'
 import ForgotPasswordModal from './components/modals/ForgotPasswordModal';
-import ErrorModal from './components/modals/ErrorModal';
+import AlertModal from './components/modals/AlertModal';
 import EditMapWrapper from './components/EditMapWrapper/EditMapWrapper.jsx';
 import PostScreen from './components/Posts/PostScreen.jsx';
+import ResetPassWordWrapper from './components/ResetPasswordWrapper';
+import ResetPasswordModal from './components/modals/ResetPasswordModal';
+import MyMapsWrapper from './components/MyMapsWrapper';
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
 
@@ -105,6 +108,8 @@ function App() {
                         <Route path="/home/" element={<HomeWrapper/>} />
                         <Route path="/editMap/" element={<EditMapWrapper/>} />
                         <Route path="/post/" element={<PostScreen/>} />
+                        <Route path="/resetPassword/" element={<ResetPassWordWrapper/>}/>
+                        <Route path="/myMaps/" element={<MyMapsWrapper/>}/>
                         {/* <Route path="/login/" exact component={LoginScreen} />
                         <Route path="/register/" exact component={RegisterScreen} />
                         <Route path="/playlist/:id" exact component={WorkspaceScreen} /> */}
@@ -112,7 +117,8 @@ function App() {
             <LoginModal/>
             <RegisterModal/>
             <ForgotPasswordModal/>
-            <ErrorModal/>
+            <ResetPasswordModal/>
+            <AlertModal/>
       </div>
       </AuthContextProvider>
     </BrowserRouter>

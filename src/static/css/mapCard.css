@@ -1,0 +1,65 @@
+.mapCardWrapper{
+    height: 20rem;
+    width: 20rem;
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.mapCardImagePreview{
+    background-color: black;
+    height: 15rem;
+    width: 20rem;
+}
+
+.mapCardDescription{
+    height: 3rem;
+    padding: 1rem;
+    width: 18rem;
+    background-color: var(--accent3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mapCardInfo{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.mapCardTitle{
+    font-weight: 700;
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+}
+
+.mapCardMore{
+    cursor: pointer;
+}
+
+.mapCardMenu{
+    position: absolute;
+    background-color: var(--accent3);
+    display: none;
+    transform: translate(-50%, -105%);
+}
+
+.mapCardMenuItem{
+    display: flex;
+    align-items: flex-start;
+    padding: 0.6rem;
+}
+
+.mapCardMenuItem:hover{
+    background-color: rgb(228, 228, 228);
+}
+
+.mapCardMenuItem span{
+    margin-right: 1rem;
+}
+
+.mapCardMenu.show{
+    display: block;
+}

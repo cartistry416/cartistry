@@ -2,7 +2,7 @@
 
 const errorMessage = "No account assocaiated with email"
 
-function ErrorModal() {
+function AlertModal() {
   return (
     <div className="modalWrapper">
       <div className="modal">
@@ -10,7 +10,7 @@ function ErrorModal() {
           <h2>Error</h2>
           <div className="material-icons">cancel</div>
         </div>
-        <div className="errorModalMessage">
+        <div className="alertModalMessage">
             {errorMessage}
         </div>
         <div className="modalFooter">
@@ -24,4 +24,4 @@ function ErrorModal() {
   );
 }
 
-export default ErrorModal;
+export default AlertModal;
