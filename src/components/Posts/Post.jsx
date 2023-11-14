@@ -29,7 +29,7 @@ function Post() {
           </button>
         </div>
         <div class="post-add-comment">
-          <input type="text" placeholder="Add Comment" />
+          <input id="commentInput" type="text" placeholder="Add Comment" />
           <button type="submit">
             <span className="material-icons">send</span>
           </button>

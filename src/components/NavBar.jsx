@@ -1,11 +1,15 @@
 import { useState } from "react";
 import "../static/css/navBar.css";
 
+function redirect(){
+  window.location.href = '/';
+}
+
 function NavBar() {
   const [showDropdown, setShowDropdown] = useState(false)
   return (
     <div id="navBarWrapper">
-      <h1 id="logotype">Cartistry</h1>
+      <h1 id="logotype" onClick={redirect}>Cartistry</h1>
       <div className="profileIcon material-icons" onClick={() => setShowDropdown(!showDropdown)}>account_circle</div>
       {showDropdown && (
         <div className="nav-dropdown">
