@@ -18,6 +18,8 @@ import './static/css/global.css'
 import './static/css/fonts.css'
 import ForgotPasswordModal from './components/modals/ForgotPasswordModal';
 import AlertModal from './components/modals/AlertModal';
+import ConfirmDeleteModal from './components/modals/ConfirmDeleteModal';
+import ConfirmPublishModal from './components/modals/ConfirmPublishModal';
 import EditMapWrapper from './components/EditMapWrapper/EditMapWrapper.jsx';
 import PostScreen from './components/Posts/PostScreen.jsx';
 import ResetPassWordWrapper from './components/ResetPasswordWrapper';
@@ -121,6 +123,8 @@ function App() {
             <ForgotPasswordModal/>
             <ResetPasswordModal/>
             <AlertModal/>
+            <ConfirmPublishModal/>
+            <ConfirmDeleteModal/>
       </div>
       </AuthContextProvider>
     </BrowserRouter>
