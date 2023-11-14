@@ -1,4 +1,3 @@
-// comment for github actions
 describe("Frontend Tests", () => {
 
   it("Search Bar", () => {
