@@ -2,11 +2,13 @@ import "../../static/css/editMap/editMap.css";
 import MapContainer from './MapContainer';
 import Toolbox from './Toolbox';
 import Legend from './Legend';
+import GeoJSONMap from "../GeoJSONMap";
+
 const EditMapWrapper = () =>{
     return (
         <div className="editMapWrapper">
             <div className="mapScreen">
-                <MapContainer />
+                <GeoJSONMap position={[39.74739, -105]}/>
                 <div className="rightPanel">
                     <Toolbox />
                     <Legend />

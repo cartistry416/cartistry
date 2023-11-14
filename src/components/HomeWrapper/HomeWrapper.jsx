@@ -10,9 +10,16 @@ function HomeWrapper() {
           <input id="searchInput" type="text" placeholder="Search..."></input>
         </div>
         <button>Maps Only</button>
-        <button>
-          Sort By <span className="material-icons">expand_more</span>
-        </button>
+        <div>
+          <button>
+            Sort By <span className="material-icons">expand_more</span>
+          </button>
+          <div className="sortByMenu show">
+            <button className="sortByMenuItem">Newest</button>
+            <button className="sortByMenuItem">Oldest</button>
+            <button className="sortByMenuItem">Liked</button>
+          </div>
+        </div>
       </div>
       <div className="contentWrapper">
         <div id="postListWrapper">
@@ -27,10 +34,10 @@ function HomeWrapper() {
           <PostCard />
         </div>
         <div className="tagWrapper">
-            <div className="tagTitle">Tags</div>
-            <button className="tag">Tag Twenty</button>
-            <button className="tag">Tag One</button>
-            <button className="tag">Tag Forty</button>
+          <div className="tagTitle">Tags</div>
+          <button className="tag">Tag Twenty</button>
+          <button className="tag">Tag One</button>
+          <button className="tag">Tag Forty</button>
         </div>
       </div>
     </div>
