@@ -20,10 +20,6 @@
     padding: 1rem 0; /* Adjust the padding as needed */
     box-sizing: border-box; /* Makes sure padding is included in width */
 }
-.toolbox-separator {
-    border-bottom: .2rem solid var(--background-color); /* Adjust color as needed */
-    margin: 0rem 1rem 1rem 1rem; /* Adjust margins as needed */
-}
 .toolbox-pan-range {
     -webkit-appearance: none; /* Override default CSS styles */
     appearance: none;
