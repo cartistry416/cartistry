@@ -5,6 +5,6 @@ module.exports = defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
     },
-    baseUrl: "https://main.d2cpsfn3mxqyu2.amplifyapp.com",
+    baseUrl: "http://localhost:3000"//"https://main.d2cpsfn3mxqyu2.amplifyapp.com",
   },
 });

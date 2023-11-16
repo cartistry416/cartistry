@@ -9,7 +9,7 @@ on:
 
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -18,3 +18,11 @@ jobs:
         with:
           build: npm run build
           start: npm start
+  deploy:
+    needs: cypress-run
+    runs-on: ubuntu-latest
+    steps:
+    - name: deploy
+      run: |
+          URL="${{ secrets.AMPLIFY_URL }}"
+          curl -X POST -d {} "$URL" -H "Content-Type: application/json"
