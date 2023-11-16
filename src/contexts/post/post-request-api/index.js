@@ -6,13 +6,20 @@ const api = axios.create({
     baseURL
 })
 
+
 export const searchPostsByTitle = (title, limit) => {
+    if (!limit) {
+        limit = 20
+    }
     return api.get(`/posts-api/posts/search-tags${title}`, {
         limit
     })
 }
 
 export const searchPostsByTags = (tags, limit) => {
+    if (!limit) {
+        limit = 20
+    }
     return api.get(`/posts-api/posts/search-tags`, {
         tags, 
         limit
@@ -20,20 +27,29 @@ export const searchPostsByTags = (tags, limit) => {
 }
 
 export const getPostsOwnedByUser = (userId, limit) => {
+    if (!limit) {
+        limit = 20
+    }
     return api.get(`/posts-api/posts/${userId}`, {
         limit
     })
 }
 
-export const getPost = (postId) => {
+export const getPostData = (postId) => {
     return api.get(`/posts-api/posts/${postId}`) 
 }
 
 export const getMostRecentPosts = (limit) => {
+    if (!limit) {
+        limit = 20
+    }
     return api.get(`/posts-api/posts/most-recent`,  { params: { limit } }) 
 }
 
 export const getMostLikedPosts = (limit) => {
+    if (!limit) {
+        limit = 20
+    }
     return api.get(`/posts-api/posts/most-liked`, {
         limit
     }) 
@@ -53,16 +69,6 @@ export const createPost = (title, textContent, images) => {
 }
 
 
-export const uploadMap = (formData) => {
-    return api.post(`/maps-api/maps/upload`, formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-        }
-    })
-}
-export const getDummyData = () => {
-    return api.get('/') 
-}
 
 export const deletePost = () => {}
 
@@ -74,45 +80,19 @@ export const commentOnPost = () => {}
 
 export const editPost = () => {}
 
-export const renameMap = () => {}
-export const forkMap = () => {}
-export const exportMap = () => {}
-export const favoriteMap = () => {}
-export const deleteMap = () => {}
-export const updateMapPrivacy = () => {}
-export const saveMapEdits = () => {}
-export const publishMap = () => {}
-export const getMapMetadataOwnedByUser = () => {}
-export const getPublicMapMetadataOwnedByUser = () => {}
-export const getMapData = () => {}
- 
 const apis = {
-    createPost,
-    deletePost,
-    commentOnPost,
-    updatePostLikes,
-    getMostRecentPosts,
-    getMostLikedPosts,
-    getPost,
-    getPostsOwnedByUser,
     searchPostsByTitle,
     searchPostsByTags,
+    getPostsOwnedByUser,
+    getPostData,
+    getMostRecentPosts,
+    getMostLikedPosts,
+    createPost,
+    deletePost,
+    updatePostLikes,
     deleteComment,
+    commentOnPost,
     editPost,
-
-    uploadMap,
-    renameMap,
-    forkMap,
-    exportMap,
-    favoriteMap,
-    deleteMap,
-    updateMapPrivacy,
-    saveMapEdits,
-    publishMap,
-    getMapMetadataOwnedByUser,
-    getPublicMapMetadataOwnedByUser,
-    getMapData,
-    getDummyData,
 }
 
 export default apis
