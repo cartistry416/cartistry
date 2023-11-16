@@ -9,6 +9,7 @@ function RegisterModal(props) {
   // eslint-disable-next-line
   const [errorMessage, setErrorMessage] = useState("");
 
+  // eslint-disable-next-line
   const handleSubmit = async (e) => {
     e.preventDefault();
     const email = e.target[0].value;
@@ -26,7 +27,8 @@ function RegisterModal(props) {
     setSuccessfulRegister(success);
     setErrorMessage(errorMessage);
   };
-
+  
+// eslint-disable-next-line
   let dummyNode = <div></div>;
   if (successfulRegister) {
     dummyNode = <div id="registered">Registered</div>;

@@ -58,7 +58,8 @@ const Legend = () => {
               </tr>
               <tr>
                 <td><div class="legend-gradient1-color"></div></td>
-                <td><input type="text" className="legend-gradient-label" value="75-100" readonly="readonly" readonly="readonly"/></td>
+                // eslint-disable-next-line
+                <td><input type="text" className="legend-gradient-label" value="75-100" readonly="readonly"/></td>
               </tr>
               <tr>
                 <td><div class="legend-gradient2-color"></div></td>

@@ -43,8 +43,10 @@ function App() {
 
   let map = null
   const position = [0,0]
+  // eslint-disable-next-line
   map = <GeoJSONMap geoData={mapData} position={position}> </GeoJSONMap>
 
+  // eslint-disable-next-line
   const handleDummyOnClick = () => {
     // api.getDummyData().then((res) => {
     //   setDummyData(res.data)
@@ -52,6 +54,7 @@ function App() {
     setDummyData('dummyData')
   }
 
+  // eslint-disable-next-line
   const dummyRequest = () => {
     // api.getDummyData().then((res) => {
     //   setDummyData(res.data)
@@ -60,12 +63,14 @@ function App() {
       setDummyData(res.data.posts)
     })
   }
+
+  // eslint-disable-next-line
   let dummyNode = <div> </div>
   if (dummyData) {
     dummyNode = <div id="dummyText">{JSON.stringify(dummyData)}</div>
   }
 
-
+// eslint-disable-next-line
   const handleFileUpload = async (event) => {
     const file = event.target.files[0]
     if (!file) {

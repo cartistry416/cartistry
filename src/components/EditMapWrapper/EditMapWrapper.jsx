@@ -1,4 +1,5 @@
 import "../../static/css/editMap/editMap.css";
+// eslint-disable-next-line
 import MapContainer from './MapContainer';
 import Toolbox from './Toolbox';
 import Legend from './Legend';
