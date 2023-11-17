@@ -1,5 +1,28 @@
 
 import {create as createDiffPatcher} from 'jsondiffpatch'
+import JSZip from 'jszip';
+
+async function unzipBlobToJSON(blob) {
+    const zip = await JSZip.loadAsync(zipFile);
+    const [firstFileName] = Object.keys(zip.files);
+    try {
+        if (firstFileName) {
+            let content = await zip.file(firstFileName).async('uint8array')
+            content = new TextDecoder().decode(content)
+            return JSON.parse(content)
+          }
+    }
+    catch (err) {
+        console.error(err)
+        return null
+    }
+}
+
+async function jsonToZip(obj) {
+    const zip = new JSZip()
+    zip.file('geoJSON.json', JSON.stringify(obj));
+    return await zip.generateAsync({type: 'blob', mimeType:'application/zip', compressionOptions:{level: 9}})
+}
 
 function generateDiff(originalGeoJSON, editedGeoJSON) {
     const diffPatcher = createDiffPatcher({
@@ -13,7 +36,7 @@ function generateDiff(originalGeoJSON, editedGeoJSON) {
     return diffPatcher.diff(originalGeoJSON, editedGeoJSON)
 }
 
-export {generateDiff}
+export {generateDiff, unzipBlobToJSON, jsonToZip}
 
 // // TODO MOVE THESE TO APPROPRIATE PLACES LATER
 
