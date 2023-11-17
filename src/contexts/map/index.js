@@ -8,16 +8,9 @@ import { generateDiff, unzipBlobToJSON, jsonToZip} from '../../utils/utils'
 
 export const GlobalMapContext = createContext({});
 export const GlobalMapActionType = {
-    CHANGE_LIST_NAME: "CHANGE_LIST_NAME",
-    CLOSE_CURRENT_LIST: "CLOSE_CURRENT_LIST",
-    CREATE_NEW_LIST: "CREATE_NEW_LIST",
-    LOAD_ID_NAME_PAIRS: "LOAD_ID_NAME_PAIRS",
-    MARK_LIST_FOR_DELETION: "MARK_LIST_FOR_DELETION",
-    SET_CURRENT_LIST: "SET_CURRENT_LIST",
-    SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
-    EDIT_SONG: "EDIT_SONG",
-    REMOVE_SONG: "REMOVE_SONG",
     HIDE_MODALS: "HIDE_MODALS",
+    DELETE_MAP: "DELETE_MAP",
+    UPDATE_MAP_PRIVACY: "UPDATE_MAP_PRIVACY",
 }
 
 const tps = new jsTPS();
@@ -28,20 +21,6 @@ const tps = new jsTPS();
 //     EDIT_SONG : "EDIT_SONG",
 //     REMOVE_SONG : "REMOVE_SONG"
 // }
-const mapReducer = (action) => {
-    const { type, payload } = action;
-    switch (type) {
-        // LIST UPDATE OF ITS NAME
-        case GlobalMapActionType.CHANGE_LIST_NAME: {
-            return setMap({
-              ...map,
-              mapCardsInfo: payload.mapCards,
-            })
-        }
-        default:
-          return map;
-    }
-}
 
 function GlobalMapContextProvider(props) {
     const [map, setMap] = useState({
@@ -61,30 +40,74 @@ function GlobalMapContextProvider(props) {
     const mapReducer = (action) => {
         const { type, payload } = action;
         switch (type) {
-            // LIST UPDATE OF ITS NAME
-            case GlobalMapActionType.CHANGE_LIST_NAME: {
-                return setMap({})
+            case GlobalMapActionType.LOAD_MAP_CARDS: {
+              return setMap({
+                ...map,
+                mapCardsInfo: payload.mapCards,
+              })
             }
+            case GlobalMapActionType.DELETE_MAP: {
+              return setMap({
+                ...map,
+                mapCardsInfo: [
+                  ...map.mapCardsInfo.filter((mapCard) => mapCard._id !== payload.mapId)
+                ]
+              })
+            }
+            case GlobalMapActionType.UPDATE_MAP_PRIVACY: {
+              return setMap({
+                ...map,
+                mapCardsInfo: [
+                  ...map.mapCardsInfo.map((mapCard) => {
+                    if (mapCard._id === payload.mapId) {
+                      return {
+                        ...mapCard,
+                        isPrivated: payload.isPriv,
+                      };
+                    }
+                    return mapCard;
+                  })
+                ]
+              })
+            }
+            case GlobalMapActionType.PUBLISH_MAP: {
+              return setMap({
+                ...map,
+                mapCardsInfo: [
+                  ...map.mapCardsInfo.map((mapCard) => {
+                    if (mapCard._id === payload.mapId) {
+                      return {
+                        ...mapCard,
+                        isPrivated: false,
+                      };
+                    }
+                    return mapCard;
+                  })
+                ]
+              })
+            }
+            default:
+              return map
         }
     }
     // load all map cards associated with a user
     map.loadMapCards = async (userId) => {
         try {
-        let response;
-        if (auth.loggedIn && auth.user.userId === userId) {
-            response = await api.getMapMetadataOwnedByUser(userId)
-        } else {
-            response = await api.getPublicMapMetadataOwnedByUser(userId)
-        }
-        if (response.status === 200) {
-            mapReducer({
-            type: MapActionType.LOAD_MAP_CARDS,
-            payload: { mapCards: response.data.mapMetadatas }
-            })
-        }
+          let response;
+          if (auth.loggedIn && auth.user.userId === userId) {
+              response = await api.getMapMetadataOwnedByUser(userId)
+          } else {
+              response = await api.getPublicMapMetadataOwnedByUser(userId)
+          }
+          if (response.status === 200) {
+              mapReducer({
+              type: GlobalMapActionType.LOAD_MAP_CARDS,
+              payload: { mapCards: response.data.mapMetadatas }
+              })
+          }
         } catch (error) {
             mapReducer({
-                type: MapActionType.ERROR_MODAL,
+                type: GlobalMapActionType.ERROR_MODAL,
                 payload: { hasError: true, errorMessage: error.response.data.errorMessage }
             })
         }
@@ -96,14 +119,14 @@ function GlobalMapContextProvider(props) {
             if (response.status === 200) {
                 const geoJSON = await unzipBlobToJSON(response.data)
                 mapReducer({
-                    type: MapActionType.LOAD_MAP,
+                    type: GlobalMapActionType.LOAD_MAP,
                     payload: {geoJSON}
                 })
             }
         }
-        catch (err) {
+        catch (error) {
             mapReducer({
-                type: MapActionType.ERROR_MODAL,
+                type: GlobalMapActionType.ERROR_MODAL,
                 payload: { hasError: true, errorMessage: error.response.data.errorMessage }
             })
         }
@@ -125,7 +148,7 @@ function GlobalMapContextProvider(props) {
         }
         catch (error) { 
             mapReducer({
-                type: MapActionType.ERROR_MODAL,
+                type: GlobalMapActionType.ERROR_MODAL,
                 payload: { hasError: true, errorMessage: error.response.data.errorMessage }
             })
         }
@@ -136,14 +159,14 @@ function GlobalMapContextProvider(props) {
             const response = await api.renameMap(id, title)
             if (response.status === 200) {
                 mapReducer({
-                    type: MapActionType.RENAME_MAP,
+                    type: GlobalMapActionType.RENAME_MAP,
                     payload: {index, title}
                 })
             }
         }
         catch (error) {
             mapReducer({
-                type: MapActionType.ERROR_MODAL,
+                type: GlobalMapActionType.ERROR_MODAL,
                 payload: { hasError: true, errorMessage: error.response.data.errorMessage }
             })
         }
@@ -158,7 +181,7 @@ function GlobalMapContextProvider(props) {
         }
         catch (error) {
             mapReducer({
-                type: MapActionType.ERROR_MODAL,
+                type: GlobalMapActionType.ERROR_MODAL,
                 payload: { hasError: true, errorMessage: error.response.data.errorMessage }
             })
         }
@@ -188,7 +211,7 @@ function GlobalMapContextProvider(props) {
             }
             catch (error) {
                 mapReducer({
-                    type: MapActionType.ERROR_MODAL,
+                    type: GlobalMapActionType.ERROR_MODAL,
                     payload: { hasError: true, errorMessage: error.response.data.errorMessage }
                 })
             }
@@ -209,22 +232,56 @@ function GlobalMapContextProvider(props) {
             const response = await api.favoriteMap(id)
             if (response.status === 200) {
                 mapReducer({
-                    type: MapActionType.FAVORITE_MAP,
+                    type: GlobalMapActionType.FAVORITE_MAP,
                     payload: { index }
                 })
             }
         }
         catch (error) {
             mapReducer({
-                type: MapActionType.ERROR_MODAL,
+                type: GlobalMapActionType.ERROR_MODAL,
                 payload: { hasError: true, errorMessage: error.response.data.errorMessage }
             })
         }
     }
 
+    map.deleteMap = async (mapId) => {
+      try {
+        const response = await api.deleteMap(mapId)
+        if (response.status === 200) {
+          mapReducer({
+            type: GlobalMapActionType.DELETE_MAP,
+            payload: { mapId: mapId }
+          })
+          if (!location.pathname.endsWith('/mymaps')) {
+            navigate(`/mymaps`)
+          }
+        }
+      } catch (error) {
+        mapReducer({
+            type: GlobalMapActionType.ERROR_MODAL,
+            payload: { hasError: true, errorMessage: error.response.data.errorMessage }
+        })
+      }
+    }
+  
+    map.updateMapPrivacy = async (mapId) => {
+      try {
+        const response = await api.updateMapPrivacy(mapId)
+        if (response.status === 200) {
+          mapReducer({
+            type: GlobalMapActionType.UPDATE_MAP_PRIVACY,
+            payload: { mapId: mapId, isPriv: response.data.isPrivated }
+          })
+        }
+      } catch (error) {
+        mapReducer({
+            type: GlobalMapActionType.ERROR_MODAL,
+            payload: { hasError: true, errorMessage: error.response.data.errorMessage }
+        })
+      }
+    }
 
-    map.deleteMap = (id) => {}
-    map.updateMapPrivacy = (id, privacyStatus) => {}
     map.saveMapEdits = async (id) => {
 
         const delta1 = generateDiff(map.currentMapGeoJSONOriginal, map.currentMapGeoJSON)
@@ -235,13 +292,13 @@ function GlobalMapContextProvider(props) {
         }
 
         try {
-            const proprietaryJSON = delta2 ? currentMapProprietaryJSON : null
+            const proprietaryJSON = delta2 ? map.currentMapProprietaryJSON : null
             const response = await api.saveMapEdits(id, delta1, proprietaryJSON)
             if (response.status === 200) {
                 tps.clearAllTransactions()
                 alert("Map edits saved successfully. Clearing TPS stack and setting original geoJSON to current geoJSON")
                 mapReducer({
-                    type: MapActionType.SAVE_MAP_EDITS, // in the reducer, update original geoJSON and original proprietary geoJSON
+                    type: GlobalMapActionType.SAVE_MAP_EDITS, // in the reducer, update original geoJSON and original proprietary geoJSON
                     payload: {}
                 })
             }
@@ -249,13 +306,33 @@ function GlobalMapContextProvider(props) {
         }
         catch (error) {
             mapReducer({
-                type: MapActionType.ERROR_MODAL,
+                type: GlobalMapActionType.ERROR_MODAL,
                 payload: { hasError: true, errorMessage: error.response.data.errorMessage }
             })
         }
     }
 
-    map.publishMap = (id) => {}
+    map.publishMap = async (mapId, title, textContent, tags) => {
+      try {
+        const response = await api.publishMap(mapId, {
+          title,
+          textContent,
+          tags,
+        })
+        if (response.status === 200) {
+          mapReducer({
+            type: GlobalMapActionType.PUBLISH_MAP,
+            payload: { mapId: mapId }
+          })
+          navigate(`/post/${response.data.postId}`)
+        }
+      } catch (error) {
+        mapReducer({
+            type: GlobalMapActionType.ERROR_MODAL,
+            payload: { hasError: true, errorMessage: error.response.data.errorMessage }
+        })
+      }
+    }
 
     map.addEditFeaturePropertiesTransaction = (newProperties, oldProperties, index) => {
         
