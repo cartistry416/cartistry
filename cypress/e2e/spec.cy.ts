@@ -1,13 +1,13 @@
 describe("Frontend Tests", () => {
 
   it("Search Bar", () => {
-    cy.visit("/");
+    cy.visit("/home");
     cy.get("#searchInput")
       .type("McKillaGorilla")
       .should("have.value", "McKillaGorilla");
   });
   it("visits /home", () => {
-    cy.visit("/");
+    cy.visit("/home");
     cy.get("#postListWrapper").should("exist");
     cy.get(".sortByMenuItem").should("exist").should("have.length", 3);
   });

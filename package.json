@@ -17,7 +17,7 @@
     "react-leaflet-kml": "^2.1.1",
     "react-quill": "^2.0.0",
     "react-router": "^6.18.0",
-    "react-router-dom": "^6.18.0",
+    "react-router-dom": "^6.19.0",
     "react-scripts": "5.0.1",
     "shapefile": "^0.6.6",
     "shpjs": "^4.0.4",

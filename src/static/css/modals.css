@@ -49,16 +49,7 @@
     margin-top: 2rem;
 }
 
-.forgotPassModalButton{
-    color: var(--accent3);
-    border-bottom: var(--accent3) 0.2rem solid;
-    padding: 0;
-    background-color: var(--background-color);
-    border-radius: 0;
-    font-size: 1.2rem;
-}
-
-.formSubmitButton{
+.modalButton{
     background-color: var(--main-text-color);
     color: var(--background-color);
     font-weight: 800;
