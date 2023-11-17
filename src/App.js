@@ -2,11 +2,7 @@
 // eslint-disable-next-line
 import {useState, useEffect} from 'react'
 import GeoJSONMap from './components/GeoJSONMap';
-import LoginModal from './components/modals/LoginModal.jsx';
-import RegisterModal from './components/modals/RegisterModal.jsx'
 import './App.css';
-// eslint-disable-next-line
-import api from './store/store-request-api'
 // import MapFileParserFactory from './classes/mapFileParser.ts';
 // eslint-disable-next-line
 import JSZip from 'jszip';
@@ -17,18 +13,22 @@ import HomeWrapper from './components/HomeWrapper/HomeWrapper'
 import NavBar from './components/NavBar';
 import './static/css/global.css'
 import './static/css/fonts.css'
-import ForgotPasswordModal from './components/modals/ForgotPasswordModal';
 import AlertModal from './components/modals/AlertModal';
 import ConfirmDeleteModal from './components/modals/ConfirmDeleteModal';
 import ConfirmPublishModal from './components/modals/ConfirmPublishModal';
 import EditMapWrapper from './components/EditMapWrapper/EditMapWrapper.jsx';
 import PostScreen from './components/Posts/PostScreen.jsx';
-import ResetPassWordWrapper from './components/ResetPasswordWrapper';
-import ResetPasswordModal from './components/modals/ResetPasswordModal';
 import MyMapsWrapper from './components/MyMapsWrapper';
 import PostEditor from './components/Posts/PostEditor.jsx';
 import ProfileScreen from './components/ProfileScreen.jsx';
 import MyPostsScreen from './components/MyPostsScreen.jsx';
+import LoginScreen from './components/LoginScreen.jsx';
+import RegisterScreen from './components/RegisterScreen.jsx';
+import ForgotPasswordScreen from './components/ForgotPasswordScreen.jsx';
+import ResetPasswordScreen from './components/ResetPasswordScreen.jsx';
+import RequestPasswordScreen from './components/requestPasswordScreen.jsx';
+import '../src/static/css/modals.css'
+import '../src/static/css/authScreens.css'
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
 
@@ -59,9 +59,6 @@ function App() {
     // api.getDummyData().then((res) => {
     //   setDummyData(res.data)
     // })
-    api.getMostRecentPosts(10).then(res => {
-      setDummyData(res.data.posts)
-    })
   }
 
   // eslint-disable-next-line
@@ -116,10 +113,14 @@ function App() {
               {map} */}
             <NavBar/>
             <Routes>
-                        <Route path="/" element={<HomeWrapper/>} />
+                        <Route path="/" element={<LoginScreen/>} />
+                        <Route path="/register/" element={<RegisterScreen/>} />
+                        <Route path="/forgotPassword/" element={<ForgotPasswordScreen/>}/>
+                        <Route path="/resetPassword/" element={<ResetPasswordScreen/>}/>
+                        <Route path="/requestPassword/" element={<RequestPasswordScreen/>}/>
+                        <Route path="/home/" element={<HomeWrapper/>} />
                         <Route path="/editMap/" element={<EditMapWrapper/>} />
                         <Route path="/post/" element={<PostScreen/>} />
-                        <Route path="/resetPassword/" element={<ResetPassWordWrapper/>}/>
                         <Route path="/myMaps/" element={<MyMapsWrapper/>}/>
                         <Route path="/myPosts/" element={<MyPostsScreen/>}/>
                         <Route path="/editPost/" element={<PostEditor/>} />
@@ -128,10 +129,6 @@ function App() {
                         <Route path="/register/" exact component={RegisterScreen} />
                         <Route path="/playlist/:id" exact component={WorkspaceScreen} /> */}
             </Routes>
-            <LoginModal/>
-            <RegisterModal/>
-            <ForgotPasswordModal/>
-            <ResetPasswordModal/>
             <AlertModal/>
             <ConfirmPublishModal/>
             <ConfirmDeleteModal/>

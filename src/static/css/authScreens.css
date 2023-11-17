@@ -1,0 +1,63 @@
+.authScreenWrapper{
+    height: 90vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.authScreenLogotype{
+    font-size: 6rem;
+    font-weight: 800;
+    font-style: italic;
+    color: var(--background-color);
+}
+
+.authWrapper{
+    color: var(--main-text-color);
+    padding: 3rem;
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.authWrapper input{
+    background-color: var(--accent1);
+    color: var(--background-color);
+    border-bottom: var(--background-color) 0.2rem solid;
+}
+
+.authWrapper button{
+    background-color: var(--background-color);
+}
+
+.authWrapper .authAltButton{
+    color: var(--background-color);
+    border-bottom: var(--background-color) 0.2rem solid;
+    padding: 0;
+    background-color: var(--accent1);
+    border-radius: 0;
+    font-size: 1.2rem;
+}
+
+.authFooter{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.authFooterContent{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 3rem;
+}
+
+.authTopButton,
+.authBottomButton
+{
+    width: 100%;
+    margin-bottom: 1rem;
+}

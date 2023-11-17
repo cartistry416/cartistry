@@ -1,6 +1,4 @@
-
-
-const errorMessage = "No account assocaiated with email"
+const errorMessage = "No account assocaiated with email";
 
 function AlertModal() {
   return (
@@ -10,12 +8,9 @@ function AlertModal() {
           <h2>Error</h2>
           <div className="material-icons">cancel</div>
         </div>
-        <div className="alertModalMessage">
-            {errorMessage}
-        </div>
+        <div className="alertModalMessage">{errorMessage}</div>
         <div className="modalFooter">
-          <div></div>
-          <button className="formSubmitButton" type="submit">
+          <button className="modalButton" type="submit">
             Reset
           </button>
         </div>

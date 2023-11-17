@@ -1,8 +1,10 @@
 import React, { useState, useContext } from "react";
-import AuthContext from "../../auth";
+import AuthContext from "../auth";
+import { useNavigate } from "react-router";
 
-function RegisterModal(props) {
+function RegisterScreen(props) {
   const { auth } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   // eslint-disable-next-line
   const [successfulRegister, setSuccessfulRegister] = useState(false);
@@ -27,20 +29,21 @@ function RegisterModal(props) {
     setSuccessfulRegister(success);
     setErrorMessage(errorMessage);
   };
-  
-// eslint-disable-next-line
+
+  // eslint-disable-next-line
   let dummyNode = <div></div>;
   if (successfulRegister) {
     dummyNode = <div id="registered">Registered</div>;
   }
 
+  const redirectTo = (path) => {
+    navigate(path);
+  };
+
   return (
-    <div className="modalWrapper">
-      <div className="modal">
-        <div className="modalHeader">
-          <h2>Register</h2>
-          <div className="material-icons">cancel</div>
-        </div>
+    <div className="authScreenWrapper">
+      <span className="authScreenLogotype">Cartistry</span>
+      <div className="authWrapper">
         <form>
           <div>
             <input
@@ -78,11 +81,12 @@ function RegisterModal(props) {
               required
             />
           </div>
-          <div className="modalFooter">
-            <div></div>
-            <button className="formSubmitButton" type="submit">
-              Register
-            </button>
+          <div className="authFooter">
+            <div className="authFooterContent">
+              <button className="authAltButton" onClick={() => redirectTo('/')}>Login</button>
+              <button type="submit" onClick={handleSubmit}>Register</button>
+            </div>
+            <button className="authTopButton" onClick={() => redirectTo('/home')}>Continue as guest</button>
           </div>
         </form>
       </div>
@@ -90,4 +94,4 @@ function RegisterModal(props) {
   );
 }
 
-export default RegisterModal;
+export default RegisterScreen;
