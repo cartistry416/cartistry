@@ -31,8 +31,10 @@ export const uploadMap = (formData) => {
         }
     })
 }
-export const publishMap = (id) => {
-    return api.post(`/maps/${id}/publish`)
+export const publishMap = (id, postData) => {
+    return api.post(`/maps/${id}/publish`, {
+        postData
+    })
 }
 export const forkMap = (id) => {
     return api.post(`/maps/${id}/fork`)
