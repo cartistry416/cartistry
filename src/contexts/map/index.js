@@ -4,34 +4,46 @@ import api from './map-request-api'
 import AuthContext from '../../auth'
 import jsTPS from '../../common/jsTPS'
 import { generateDiff, unzipBlobToJSON, jsonToZip} from '../../utils/utils'
+import _ from 'lodash'
 
 
 export const GlobalMapContext = createContext({});
 export const GlobalMapActionType = {
-    HIDE_MODALS: "HIDE_MODALS",
     DELETE_MAP: "DELETE_MAP",
+    ERROR_MODAL: "ERROR_MODAL",
+    FAVORITE_MAP: "FAVORITE_MAP",
+    HIDE_MODALS: "HIDE_MODALS",
+    LOAD_MAP: "LOAD_MAP",
+    LOAD_MAP_CARDS: "LOAD_MAP_CARDS",
+    PUBLISH_MAP: "PUBLISH_MAP",
+    RENAME_MAP: "RENAME_MAP",
+    SAVE_MAP_EDITS: "SAVE_MAP_EDITS",
+    SET_CURRENT_MAP_METADATA: "SET_CURRENT_MAP_METADATA",
     UPDATE_MAP_PRIVACY: "UPDATE_MAP_PRIVACY",
-}
+  }
 
 const tps = new jsTPS();
 
-// const CurrentModal = {
-//     NONE : "NONE",
-//     DELETE_LIST : "DELETE_LIST",
-//     EDIT_SONG : "EDIT_SONG",
-//     REMOVE_SONG : "REMOVE_SONG"
-// }
+const CurrentModal = {
+    NONE : "NONE",
+    ERROR: "ERROR"
+    // DELETE_LIST : "DELETE_LIST",
+    // EDIT_SONG : "EDIT_SONG",
+    // REMOVE_SONG : "REMOVE_SONG"
+}
 
 function GlobalMapContextProvider(props) {
     const [map, setMap] = useState({
         currentModal : CurrentModal.NONE,
+        errorMessage: "",
         mapCardsInfo: [],
+        currentMapMetadata: null,
         currentMapGeoJSONOriginal: null,
         currentMapGeoJSON: null,
         currentMapProprietaryJSON: null,
         currentMapProprietaryJSONOriginal: null,
-        mapCardIndexMarkedForDeletion: null,
-        mapCardMarkedForDeletion: null,
+        // mapCardIndexMarkedForDeletion: null, // Don't think we need these
+        // mapCardMarkedForDeletion: null,
     });
 
     const navigate = useNavigate();
@@ -40,50 +52,102 @@ function GlobalMapContextProvider(props) {
     const mapReducer = (action) => {
         const { type, payload } = action;
         switch (type) {
+            case GlobalMapActionType.DELETE_MAP: {
+                return setMap({
+                  ...map,
+                  mapCardsInfo: [
+                    ...map.mapCardsInfo.filter((mapCard) => mapCard._id !== payload.mapId)
+                  ]
+                })
+              }
+            
+            case GlobalMapActionType.ERROR_MODAL: {
+                return setMap({
+                    ...map,
+                    currentModal: CurrentModal.ERROR,
+                    errorMessage: payload.errorMessage
+                })
+            }
+
+            case GlobalMapActionType.FAVORITE_MAP: {
+                const updatedMapCardsInfo = [...map.mapCardsInfo]
+                updatedMapCardsInfo[payload.index].ownerFavorited = payload.ownerFavorited
+                return setMap({
+                    ...map,
+                    mapCardsInfo: updatedMapCardsInfo
+                })
+            }
+            
+            case GlobalMapActionType.HIDE_MODALS: {}
+
+            case GlobalMapActionType.LOAD_MAP: {
+                return setMap({
+                    ...map,
+                    currentMapGeoJSONOriginal: payload.originalGeoJSON,
+                    currentMapGeoJSON: payload.currentGeoJSON
+                })
+            }
+
             case GlobalMapActionType.LOAD_MAP_CARDS: {
               return setMap({
                 ...map,
                 mapCardsInfo: payload.mapCards,
               })
             }
-            case GlobalMapActionType.DELETE_MAP: {
-              return setMap({
-                ...map,
-                mapCardsInfo: [
-                  ...map.mapCardsInfo.filter((mapCard) => mapCard._id !== payload.mapId)
-                ]
-              })
-            }
-            case GlobalMapActionType.UPDATE_MAP_PRIVACY: {
-              return setMap({
-                ...map,
-                mapCardsInfo: [
-                  ...map.mapCardsInfo.map((mapCard) => {
-                    if (mapCard._id === payload.mapId) {
-                      return {
-                        ...mapCard,
-                        isPrivated: payload.isPriv,
-                      };
-                    }
-                    return mapCard;
-                  })
-                ]
-              })
-            }
+
             case GlobalMapActionType.PUBLISH_MAP: {
+                return setMap({
+                  ...map,
+                  mapCardsInfo: [
+                    ...map.mapCardsInfo.map((mapCard) => {
+                      if (mapCard._id === payload.mapId) {
+                        return {
+                          ...mapCard,
+                          isPrivated: false,
+                        };
+                      }
+                      return mapCard;
+                    })
+                  ]
+                })
+            }
+
+            case GlobalMapActionType.RENAME_MAP: {
+                const updatedMapCardsInfo = [...map.mapCardsInfo]
+                updatedMapCardsInfo[payload.index].title = payload.title
+                return setMap({
+                    ...map,
+                    mapCardsInfo: updatedMapCardsInfo
+                })
+            }
+
+            case GlobalMapActionType.SAVE_MAP_EDITS: {
+                return setMap({
+                    ...map,
+                    currentMapGeoJSONOriginal: map.currentMapGeoJSON,
+                    currentMapGeoJSON: _.cloneDeep(map.currentMapGeoJSON),
+                    currentMapProprietaryJSONOriginal: map.currentMapProprietaryJSON,
+                    currentMapProprietaryJSON: _.cloneDeep(map.currentMapProprietaryJSON)
+                })
+            }
+
+            case GlobalMapActionType.SET_CURRENT_MAP_METADATA: {
+                // only occurs from fork and upload, so set the geoJSON to null too
+                return setMap({
+                    ...map,
+                    currentMapMetadata: payload.mapMetadata,
+                    currentMapGeoJSON: null,
+                    currentMapGeoJSONOriginal: null,
+                })
+
+            }
+
+            case GlobalMapActionType.UPDATE_MAP_PRIVACY: {
+              const updatedMapCardsInfo = [...map.mapCardsInfo]
+              updatedMapCardsInfo[payload.index].isPrivated = payload.isPrivated
               return setMap({
                 ...map,
-                mapCardsInfo: [
-                  ...map.mapCardsInfo.map((mapCard) => {
-                    if (mapCard._id === payload.mapId) {
-                      return {
-                        ...mapCard,
-                        isPrivated: false,
-                      };
-                    }
-                    return mapCard;
-                  })
-                ]
+                mapCardsInfo: updatedMapCardsInfo
               })
             }
             default:
@@ -117,10 +181,10 @@ function GlobalMapContextProvider(props) {
         try {
             const response = await api.getMapData(id)
             if (response.status === 200) {
-                const geoJSON = await unzipBlobToJSON(response.data)
+                const {currentGeoJSON, originalGeoJSON} = await unzipBlobToJSON(response.data)
                 mapReducer({
                     type: GlobalMapActionType.LOAD_MAP,
-                    payload: {geoJSON}
+                    payload: {currentGeoJSON, originalGeoJSON}
                 })
             }
         }
@@ -142,9 +206,12 @@ function GlobalMapContextProvider(props) {
         try {
             const response = await api.uploadMap(formData)
             if (response.status === 200) {
-                navigate(`/editMap/${response.data.mapMetadataId}`)
+                mapReducer({
+                    type: GlobalMapActionType.SET_CURRENT_MAP_METADATA,
+                    payload: {mapMetadata: response.data.mapMetadata}
+                })
+                navigate(`/editMap/${response.data.mapMetadata._id}`)
             }
-
         }
         catch (error) { 
             mapReducer({
@@ -176,7 +243,12 @@ function GlobalMapContextProvider(props) {
         try {
             const response = await api.forkMap(id)
             if (response.status === 200) {
-                navigate(`/editMap/${response.data.mapMetadataId}`)
+                mapReducer({
+                    type: GlobalMapActionType.SET_CURRENT_MAP_METADATA,
+                    payload: {mapMetadata: response.data.mapMetadata}
+                })
+
+                navigate(`/editMap/${response.data.mapMetadata._id}`)
             }
         }
         catch (error) {
@@ -208,17 +280,21 @@ function GlobalMapContextProvider(props) {
                 if (response.status === 200) { 
                     zipData = new Blob([response.data], {type: 'application/zip'})
                 }
+                else {
+                    console.error("Export Map Error: no zipData created")
+                }
             }
             catch (error) {
                 mapReducer({
                     type: GlobalMapActionType.ERROR_MODAL,
                     payload: { hasError: true, errorMessage: error.response.data.errorMessage }
                 })
+                return
             }
         }
         try {
             const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
+            link.href = URL.createObjectURL(zipData);
             link.download = 'geoJSON.zip';
             link.click()
             document.body.removeChild(link)
@@ -233,7 +309,7 @@ function GlobalMapContextProvider(props) {
             if (response.status === 200) {
                 mapReducer({
                     type: GlobalMapActionType.FAVORITE_MAP,
-                    payload: { index }
+                    payload: { index, ownerFavorited: response.data.ownerFavorited }
                 })
             }
         }
@@ -249,12 +325,14 @@ function GlobalMapContextProvider(props) {
       try {
         const response = await api.deleteMap(mapId)
         if (response.status === 200) {
-          mapReducer({
-            type: GlobalMapActionType.DELETE_MAP,
-            payload: { mapId: mapId }
-          })
           if (!location.pathname.endsWith('/mymaps')) {
             navigate(`/mymaps`)
+          }
+          else { // still on /myaps so just delete on client side
+            mapReducer({
+                type: GlobalMapActionType.DELETE_MAP,
+                payload: { mapId }
+              })
           }
         }
       } catch (error) {
@@ -265,13 +343,13 @@ function GlobalMapContextProvider(props) {
       }
     }
   
-    map.updateMapPrivacy = async (mapId) => {
+    map.updateMapPrivacy = async (mapId, index) => {
       try {
         const response = await api.updateMapPrivacy(mapId)
         if (response.status === 200) {
           mapReducer({
             type: GlobalMapActionType.UPDATE_MAP_PRIVACY,
-            payload: { mapId: mapId, isPriv: response.data.isPrivated }
+            payload: {isPrivated: response.data.isPrivated, index}
           })
         }
       } catch (error) {
@@ -335,7 +413,7 @@ function GlobalMapContextProvider(props) {
     }
 
     map.addEditFeaturePropertiesTransaction = (newProperties, oldProperties, index) => {
-        
+
     }
     map.addCreateFeatureTransaction = (newFeature, index) => {
 
