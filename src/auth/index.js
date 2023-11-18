@@ -86,24 +86,31 @@ function AuthContextProvider(props) {
     auth.registerUser = async function(email, password, passwordVerify, username) {
         const response = await api.registerUser(email, password, passwordVerify, username)
         .catch(err => {
-            return {success: false, errorMessage: JSON.stringify(err)}// this will set response to the error response
+            if (err.response && err.response.data) {
+                // Extracting the errorMessage from the server response
+                const errorMessage = err.response.data.errorMessage;
+                return { success: false, errorMessage: errorMessage };
+            } else {
+                // Handle cases where the error is not from the server response
+                return { success: false, errorMessage: 'An unexpected error occurred' };
+            }
         });  
-        //console.log(response)  
-        if (response.status === 200) {
+        // console.log(response);
+        // Check if the response is successful
+        if (response.success) {
             authReducer({
                 type: AuthActionType.REGISTER_USER,
                 payload: {
                     user: response.data.user
                 }
-            })
-            // history.push("/login");
-            // history.push("/");
-            return {success: true, errorMessage: ""}
+            });
+            // Uncomment the next line to navigate to the login page or home page after successful registration
+            // history.push("/login"); // or history.push("/");
+            return { success: true, errorMessage: "" };
+        } else {
+            return { success: false, errorMessage: response.errorMessage };
         }
-        else {
-            return {success: false, errorMessage: response.errorMessage}
-        }
-    }
+    }    
 
     auth.loginUser = async function(email, password) {
 
