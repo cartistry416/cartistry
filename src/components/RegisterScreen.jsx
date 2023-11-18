@@ -44,7 +44,7 @@ function RegisterScreen(props) {
     <div className="authScreenWrapper">
       <span className="authScreenLogotype">Cartistry</span>
       <div className="authWrapper">
-        <form>
+        <form onSubmit={handleSubmit}>
           <div>
             <input
               placeholder="email"
@@ -84,7 +84,7 @@ function RegisterScreen(props) {
           <div className="authFooter">
             <div className="authFooterContent">
               <button className="authAltButton" onClick={() => redirectTo('/')}>Login</button>
-              <button type="submit" onClick={handleSubmit}>Register</button>
+              <button type="submit">Register</button>
             </div>
             <button className="authTopButton" onClick={() => redirectTo('/home')}>Continue as guest</button>
           </div>
