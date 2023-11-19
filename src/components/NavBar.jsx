@@ -30,7 +30,7 @@ function NavBar() {
   };
 
   const logoutUser = () => {
-    console.log("logoutUser");
+    // console.log("logoutUser");
     auth.logoutUser();
     navigate("/");
   };
