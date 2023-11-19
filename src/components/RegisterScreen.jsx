@@ -1,10 +1,11 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef } from "react";
 import AuthContext from "../auth";
 import { useNavigate } from "react-router";
 
 function RegisterScreen(props) {
   const { auth } = useContext(AuthContext);
   const navigate = useNavigate();
+  const formRef = useRef(); 
 
   // eslint-disable-next-line
   const [successfulRegister, setSuccessfulRegister] = useState(false);
@@ -25,16 +26,20 @@ function RegisterScreen(props) {
       passwordVerify,
       username
     );
-    console.log(errorMessage);
+    // console.log(errorMessage);
+    // console.log(success);
     setSuccessfulRegister(success);
     setErrorMessage(errorMessage);
+    if(success){
+      formRef.current.reset(); 
+    }
   };
 
   // eslint-disable-next-line
-  let dummyNode = <div></div>;
-  if (successfulRegister) {
-    dummyNode = <div id="registered">Registered</div>;
-  }
+  // let dummyNode = <div></div>;
+  // if (successfulRegister) {
+  //   dummyNode = <div id="registered">Registered</div>;
+  // }
 
   const redirectTo = (path) => {
     navigate(path);
@@ -44,7 +49,7 @@ function RegisterScreen(props) {
     <div className="authScreenWrapper">
       <span className="authScreenLogotype">Cartistry</span>
       <div className="authWrapper">
-        <form>
+        <form onSubmit={handleSubmit} ref={formRef}>
           <div>
             <input
               placeholder="email"
@@ -81,10 +86,16 @@ function RegisterScreen(props) {
               required
             />
           </div>
+          {/* Display success or error message */}
+          {successfulRegister ? (
+            <div className="success-message">Successfully registered</div>
+          ) : errorMessage ? (
+            <div className="error-message">{errorMessage}</div>
+          ) : null}
           <div className="authFooter">
             <div className="authFooterContent">
               <button className="authAltButton" onClick={() => redirectTo('/')}>Login</button>
-              <button type="submit" onClick={handleSubmit}>Register</button>
+              <button type="submit">Register</button>
             </div>
             <button className="authTopButton" onClick={() => redirectTo('/home')}>Continue as guest</button>
           </div>
