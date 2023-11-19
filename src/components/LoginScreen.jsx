@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect} from "react";
 import AuthContext from "../auth";
 import { useNavigate } from "react-router";
 
@@ -9,12 +9,19 @@ function LoginScreen() {
   const [successfulLogin, setSuccessfulLogin] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  useEffect(() => {
+    if (successfulLogin) {
+      navigate('/home');
+    }
+  }, [successfulLogin, navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const email = e.target[0].value;
     const password = e.target[1].value;
 
     const { success, errorMessage } = await auth.loginUser(email, password);
+    // console.log(success);
     setSuccessfulLogin(success);
     setErrorMessage(errorMessage);
   };
@@ -28,7 +35,7 @@ function LoginScreen() {
       <div className="authScreenWrapper">
         <span className="authScreenLogotype">Cartistry</span>
         <div className="authWrapper">
-          <form>
+          <form onSubmit={handleSubmit}>
             <div>
               <input
                 placeholder="email"
@@ -50,7 +57,7 @@ function LoginScreen() {
             <div className="authFooter">
               <div className="authFooterContent">
                 <button className="authAltButton" onClick={() => redirectTo('/requestPassword')}>Forgot Password</button>
-                <button type="submit" onClick={handleSubmit}>Login</button>
+                <button type="submit">Login</button>
               </div>
               <button className="authTopButton" onClick={() => redirectTo('/register')}>Register an account</button>
               <button className="authBottomButton" onClick={() => redirectTo('/home')}>Continue as guest</button>

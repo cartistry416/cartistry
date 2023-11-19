@@ -3,7 +3,7 @@ import React, { createContext, useEffect, useState } from "react";
 // import { useHistory } from 'react-router-dom'
 import api from './auth-request-api'
 
-const AuthContext = createContext();
+export const AuthContext = createContext();
 
 // THESE ARE ALL THE TYPES OF UPDATES TO OUR AUTH STATE THAT CAN BE PROCESSED
 export const AuthActionType = {
@@ -19,6 +19,7 @@ function AuthContextProvider(props) {
         user: null,
         loggedIn: false,
         guest: false,
+        showLoggedInModal: false,
     });
     // const history = useHistory();
 
