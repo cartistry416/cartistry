@@ -11,28 +11,21 @@ export const searchPostsByTitle = (title, limit) => {
     if (!limit) {
         limit = 20
     }
-    return api.get(`/posts-api/posts/search-tags${title}`, {
-        limit
-    })
+    return api.get(`/posts-api/posts/search-title`, { params: { limit, title } })
 }
 
 export const searchPostsByTags = (tags, limit) => {
     if (!limit) {
         limit = 20
     }
-    return api.get(`/posts-api/posts/search-tags`, {
-        tags, 
-        limit
-    })
+    return api.get(`/posts-api/posts/search-tags`, { params: { limit, tags } })
 }
 
 export const getPostsOwnedByUser = (userId, limit) => {
     if (!limit) {
         limit = 20
     }
-    return api.get(`/posts-api/posts/${userId}`, {
-        limit
-    })
+    return api.get(`/posts-api/posts/${userId}`,  { params: { limit } })
 }
 
 export const getPostData = (postId) => {
@@ -50,35 +43,53 @@ export const getMostLikedPosts = (limit) => {
     if (!limit) {
         limit = 20
     }
-    return api.get(`/posts-api/posts/most-liked`, {
-        limit
-    }) 
+    return api.get(`/posts-api/posts/most-liked`,  { params: { limit } }) 
 }
 
-export const createPost = (title, textContent, images) => {
-    
-    const formData = new FormData()
-
-    for (let i=0; i<images.length; i++) {
-        formData.append(images[i])
-    }
-    return api.post(`/posts-api/posts`, {
-        title,
-        textContent,
+export const createPost = (formData) => {
+    return api.post(`/posts-api/posts`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        }
     })
 }
 
 
+export const updatePostLikes = (id) => {
+    return api.put(`/posts/${id}/likes`)
+}
 
-export const deletePost = () => {}
+export const commentOnPost = (id, comment) => {
+    return api.put(`/posts/${id}/comment`, {
+        comment
+    })
+}
 
-export const updatePostLikes = () => {}
+// TODO
+// going to have to refractor and deal with editing images
+export const editPost = (id, title, textContent) => {
+    return api.put(`/posts/${id}`,{
+        title, textContent
+    })
+}
 
-export const deleteComment = () => {}
+export const editComment = (id, comment, index) => {
+    return api.put(`/posts/${id}/edit-comment`, {
+        comment, index
+    })
+}
 
-export const commentOnPost = () => {} 
+export const deletePost = (id) => {
+    return api.delete(`/posts/${id}`)
+}
 
-export const editPost = () => {}
+export const deleteComment = (id, index) => {
+    api.delete(`/posts/${id}/comment`, {
+        index
+    })
+}
+
+
 
 const apis = {
     searchPostsByTitle,
@@ -93,6 +104,7 @@ const apis = {
     deleteComment,
     commentOnPost,
     editPost,
+    editComment
 }
 
 export default apis
