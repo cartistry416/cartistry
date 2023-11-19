@@ -9,11 +9,6 @@ function LoginScreen() {
   const [successfulLogin, setSuccessfulLogin] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  useEffect(() => {
-    if (successfulLogin) {
-      navigate('/home');
-    }
-  }, [successfulLogin, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,6 +17,9 @@ function LoginScreen() {
 
     const { success, errorMessage } = await auth.loginUser(email, password);
     // console.log(success);
+    if (success) {
+      navigate('/home'); 
+    }
     setSuccessfulLogin(success);
     setErrorMessage(errorMessage);
   };
