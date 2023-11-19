@@ -1,7 +1,13 @@
 import MapCard from "./MapCard";
 import "../static/css/myMaps.css";
+import { useContext, useState } from "react";
+import { GlobalMapContext } from "../contexts/map";
+import ImportModal from "./modals/ImportModal";
 
 function MyMapsWrapper() {
+  const { mapCardsInfo } = useContext(GlobalMapContext)
+  const [showUploadModal, setShowUploadModal] = useState(false)
+
   return (
     <div id="myMapsWrapper">
       <div className="functionsWrapper">
@@ -10,11 +16,11 @@ function MyMapsWrapper() {
             Create Map<span className="material-icons">expand_more</span>
           </button>
           <div className="createPostMenu show">
-            <button className="createPostMenuItem">Bin Map</button>
-            <button className="createPostMenuItem">Heat Map</button>
-            <button className="createPostMenuItem">Subway Map</button>
-            <button className="createPostMenuItem">Cadastral Map</button>
-            <button className="createPostMenuItem">Landmark Map</button>
+            <button className="createPostMenuItem" onClick={() => setShowUploadModal(true)}>Bin Map</button>
+            <button className="createPostMenuItem" onClick={() => setShowUploadModal(true)}>Heat Map</button>
+            <button className="createPostMenuItem" onClick={() => setShowUploadModal(true)}>Subway Map</button>
+            <button className="createPostMenuItem" onClick={() => setShowUploadModal(true)}>Cadastral Map</button>
+            <button className="createPostMenuItem" onClick={() => setShowUploadModal(true)}>Landmark Map</button>
           </div>
         </div>
 
@@ -35,16 +41,14 @@ function MyMapsWrapper() {
         </div>
       </div>
       <div className="mapListWrapper">
-        <MapCard />
-        <MapCard />
-        <MapCard />
-        <MapCard />
-        <MapCard />
-        <MapCard />
-        <MapCard />
-        <MapCard />
-        <MapCard />
+        {/* {mapCardsInfo.map((map, index) => (
+          <MapCard key={index} title={map.title} updatedAt={map.updatedAt} thumbnail={map.thumbnail} />
+        ))} */}
+        <MapCard title="Map Title" updatedAt="October 11" />
       </div>
+      {showUploadModal && (
+        <ImportModal onClose={() => setShowUploadModal(false)} />
+      )}
     </div>
   );
 }

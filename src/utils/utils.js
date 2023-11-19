@@ -3,7 +3,7 @@ import {create as createDiffPatcher} from 'jsondiffpatch'
 import JSZip from 'jszip';
 
 async function unzipBlobToJSON(blob) {
-    const zip = await JSZip.loadAsync(zipFile);
+    const zip = await JSZip.loadAsync(blob);
     const [firstFileName] = Object.keys(zip.files);
     try {
         if (firstFileName) {
@@ -36,7 +36,19 @@ function generateDiff(originalGeoJSON, editedGeoJSON) {
     return diffPatcher.diff(originalGeoJSON, editedGeoJSON)
 }
 
-export {generateDiff, unzipBlobToJSON, jsonToZip}
+function getImage({ imageData }) {
+  if (!imageData) {
+    return null;
+  }
+
+  const blob = new Blob([imageData], { type: String });
+
+  const imageUrl = URL.createObjectURL(blob);
+
+  return  imageUrl;
+}
+
+export {generateDiff, unzipBlobToJSON, jsonToZip, getImage}
 
 // // TODO MOVE THESE TO APPROPRIATE PLACES LATER
 
