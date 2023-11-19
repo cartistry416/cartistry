@@ -26,15 +26,16 @@ function RegisterScreen(props) {
       username
     );
     console.log(errorMessage);
+    console.log(success);
     setSuccessfulRegister(success);
     setErrorMessage(errorMessage);
   };
 
   // eslint-disable-next-line
-  let dummyNode = <div></div>;
-  if (successfulRegister) {
-    dummyNode = <div id="registered">Registered</div>;
-  }
+  // let dummyNode = <div></div>;
+  // if (successfulRegister) {
+  //   dummyNode = <div id="registered">Registered</div>;
+  // }
 
   const redirectTo = (path) => {
     navigate(path);
@@ -81,6 +82,12 @@ function RegisterScreen(props) {
               required
             />
           </div>
+          {/* Display success or error message */}
+          {successfulRegister ? (
+            <div className="success-message">Successfully registered</div>
+          ) : errorMessage ? (
+            <div className="error-message">{errorMessage}</div>
+          ) : null}
           <div className="authFooter">
             <div className="authFooterContent">
               <button className="authAltButton" onClick={() => redirectTo('/')}>Login</button>

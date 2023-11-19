@@ -95,9 +95,9 @@ function AuthContextProvider(props) {
                 return { success: false, errorMessage: 'An unexpected error occurred' };
             }
         });  
-        // console.log(response);
+        console.log(response);
         // Check if the response is successful
-        if (response.success) {
+        if (response.status == 200) {
             authReducer({
                 type: AuthActionType.REGISTER_USER,
                 payload: {
