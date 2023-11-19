@@ -10,7 +10,7 @@ function SuccessfulLoginModal() {
       setShowModal(true);
       setTimeout(() => {
         setShowModal(false);
-      }, 2500);
+      }, 2000);
     }
   }, [auth.loggedIn]);
 
