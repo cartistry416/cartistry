@@ -98,7 +98,7 @@ function AuthContextProvider(props) {
         });  
         console.log(response);
         // Check if the response is successful
-        if (response.status == 200) {
+        if (response.status === 200) {
             authReducer({
                 type: AuthActionType.REGISTER_USER,
                 payload: {

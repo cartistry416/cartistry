@@ -430,3 +430,6 @@ function GlobalMapContextProvider(props) {
         return ((map.currentMapGeoJSONOriginal !== null) && tps.hasTransactionToRedo())
     }
 }
+
+export default GlobalMapContext ;
+export { GlobalMapContextProvider };
