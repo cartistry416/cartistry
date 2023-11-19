@@ -52,7 +52,8 @@ export const updateMapPrivacy = (id) => {
 }
 export const saveMapEdits = (id, delta, proprietaryJSON) => {
     return api.put(`/maps/${id}/save`, {
-        delta
+        delta,
+        proprietaryJSON
     })
 }
 

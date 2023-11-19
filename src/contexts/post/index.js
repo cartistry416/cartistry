@@ -41,48 +41,59 @@ function GlobalPostContextProvider(props) {
         }
     }
 
-    post.deleteComment = (id) => {
-
+    post.deleteComment = async (id) => {
+        api.deleteComment()
     }
     
-    post.deletePost = (id) => {
-
+    post.deletePost = async (id) => {
+        api.deletePost()
     }
 
-    post.editComent = (id, newText) => {
-
+    post.editComent = async (id, comment, index) => {
+        api.editComment()
     }
 
-    post.editPost = (id, newPost) => {
-
+    post.editPost = async (id, title, textContent) => {
+        api.editPost()
     }
 
     // load a specific post's details
-    post.loadPost = (id) => {
-
+    post.loadPost = async (id) => {
+        api.getPostData()
     }
 
-    post.loadPostCards = (options) => {
+    post.loadPostCards = async (options) => {
 
         api.getMostLikedPosts()
         api.getMostRecentPosts()
         api.getPostsOwnedByUser()
     }
 
-    post.searchPosts = (options) => {
+    post.searchPosts = async (options) => {
         api.searchPostsByTags()
         api.searchPostsByTitle()
     }
 
-    post.createPost = (post) => {
+    post.createPost = async (title, textContent, images) => {
+        const formData = new FormData()
+        formData.append('title', title)
+        formData.append('textContent', textContent)
+        if (images) {
+            for (let i=0; i<images.length; i++) {
+                formData.append(images[i])
+            }
+        }
+
+
+
 
     }
     
-    post.createComment = (comment) => {
-
+    post.createComment = async (comment) => {
+        api.commentOnPost()
     }
 
-    post.updatePostLikes = (id) => {
+    post.updatePostLikes = async (id) => {
         api.updatePostLikes()
     }
 
