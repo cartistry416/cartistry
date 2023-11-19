@@ -72,8 +72,22 @@ function AuthContextProvider(props) {
     }
 
     auth.getLoggedIn = async function () {
-        const response = await api.getLoggedIn();
-        if (response.status === 200) {
+        const response = await api.getLoggedIn()
+        .catch(err => {
+            if (err.response && err.response.data) {
+                // Extracting the errorMessage from the server response
+                const errorMessage = err.response.data.errorMessage;
+                console.error('Error in getLoggedIn:', errorMessage);
+                return { success: false, errorMessage: errorMessage };
+            } else {
+                // Handle cases where the error is not from the server response
+                console.error('Error in getLoggedIn: An unexpected error occurred');
+                return { success: false, errorMessage: 'An unexpected error occurred' };
+            }
+        });
+    
+        // Check if the response is successful
+        if (response && response.status === 200) {
             authReducer({
                 type: AuthActionType.GET_LOGGED_IN,
                 payload: {
@@ -81,8 +95,11 @@ function AuthContextProvider(props) {
                     user: response.data.user
                 }
             });
+            return { success: true, errorMessage: "" };
+        } else {
+            return response; // This contains the error message and success flag
         }
-    }
+    }    
 
     auth.registerUser = async function(email, password, passwordVerify, username) {
         const response = await api.registerUser(email, password, passwordVerify, username)
@@ -140,7 +157,11 @@ function AuthContextProvider(props) {
         if (response.status === 200) {
             authReducer( {
                 type: AuthActionType.LOGOUT_USER,
-                payload: null
+                payload: {
+                    user: null,
+                    loggedIn: false,
+                    guest: false,
+                }
             })
             // history.push("/");
         }

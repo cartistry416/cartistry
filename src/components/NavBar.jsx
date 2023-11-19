@@ -7,8 +7,7 @@ function NavBar() {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-  const auth = useContext(AuthContext);
-  const isLoggedIn = auth.getLoggedIn;
+  const { auth } = useContext(AuthContext);
 
   const handleOutsideClick = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -31,7 +30,7 @@ function NavBar() {
   };
 
   const logoutUser = () => {
-    console.log("logoutUser");
+    // console.log("logoutUser");
     auth.logoutUser();
     navigate("/");
   };
@@ -51,7 +50,7 @@ function NavBar() {
         {showDropdown && (
           <div className="nav-dropdown">
             <div className="nav-dropdown-list">
-              {isLoggedIn ? (
+              {auth.loggedIn ? (
                 <div>
                   <div
                     className="nav-dropdown-option"
