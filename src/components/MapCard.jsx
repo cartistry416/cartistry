@@ -1,16 +1,19 @@
 import { useState } from "react";
 import "../static/css/mapCard.css";
+import { getImage } from "../utils/utils";
 
-function MapCard() {
+function MapCard(props) {
   const [showOptions, setShowOptions] = useState(false)
+  const { title, updatedAt, thumbnail } = props
+  const imageUrl = thumbnail ? getImage(thumbnail.imageData) : '/'
 
   return (
     <div className="mapCardWrapper">
-      <img className="mapCardImagePreview"></img>
+      <img src={imageUrl} alt='map' className="mapCardImagePreview"></img>
       <div className="mapCardDescription">
         <div className="mapCardInfo">
-          <div className="mapCardTitle">Map Title</div>
-          <div className="mapCardDate">Opened Oct 6, 2023</div>
+          <div className="mapCardTitle">{title}</div>
+          <div className="mapCardDate">{'Opened '} {updatedAt}</div>
         </div>
         <div className="mapCardMore">
           {showOptions && (
