@@ -1,10 +1,11 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef } from "react";
 import AuthContext from "../auth";
 import { useNavigate } from "react-router";
 
 function RegisterScreen(props) {
   const { auth } = useContext(AuthContext);
   const navigate = useNavigate();
+  const formRef = useRef(); 
 
   // eslint-disable-next-line
   const [successfulRegister, setSuccessfulRegister] = useState(false);
@@ -25,10 +26,13 @@ function RegisterScreen(props) {
       passwordVerify,
       username
     );
-    console.log(errorMessage);
-    console.log(success);
+    // console.log(errorMessage);
+    // console.log(success);
     setSuccessfulRegister(success);
     setErrorMessage(errorMessage);
+    if(success){
+      formRef.current.reset(); 
+    }
   };
 
   // eslint-disable-next-line
@@ -45,7 +49,7 @@ function RegisterScreen(props) {
     <div className="authScreenWrapper">
       <span className="authScreenLogotype">Cartistry</span>
       <div className="authWrapper">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} ref={formRef}>
           <div>
             <input
               placeholder="email"
