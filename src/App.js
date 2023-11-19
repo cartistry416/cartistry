@@ -14,6 +14,7 @@ import NavBar from './components/NavBar';
 import './static/css/global.css'
 import './static/css/fonts.css'
 import AlertModal from './components/modals/AlertModal';
+import SuccessfulLoginModal from './components/modals/SuccessfulLoginModal';
 import ConfirmDeleteModal from './components/modals/ConfirmDeleteModal';
 import ConfirmPublishModal from './components/modals/ConfirmPublishModal';
 import EditMapWrapper from './components/EditMapWrapper/EditMapWrapper.jsx';
@@ -130,6 +131,7 @@ function App() {
                         <Route path="/playlist/:id" exact component={WorkspaceScreen} /> */}
             </Routes>
             <AlertModal/>
+            <SuccessfulLoginModal/>
             <ConfirmPublishModal/>
             <ConfirmDeleteModal/>
       </div>
