@@ -131,9 +131,9 @@ function App() {
                         <Route path="/playlist/:id" exact component={WorkspaceScreen} /> */}
             </Routes>
             <AlertModal/>
-            <SuccessfulLoginModal/>
             <ConfirmPublishModal/>
             <ConfirmDeleteModal/>
+            <SuccessfulLoginModal/>
       </div>
       </AuthContextProvider>
     </BrowserRouter>

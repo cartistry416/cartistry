@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect} from "react";
 import AuthContext from "../auth";
 import { useNavigate } from "react-router";
 
@@ -9,13 +9,19 @@ function LoginScreen() {
   const [successfulLogin, setSuccessfulLogin] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  useEffect(() => {
+    if (successfulLogin) {
+      navigate('/home');
+    }
+  }, [successfulLogin, navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const email = e.target[0].value;
     const password = e.target[1].value;
 
     const { success, errorMessage } = await auth.loginUser(email, password);
-    console.log(success);
+    // console.log(success);
     setSuccessfulLogin(success);
     setErrorMessage(errorMessage);
   };
