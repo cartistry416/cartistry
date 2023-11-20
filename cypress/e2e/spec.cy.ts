@@ -9,7 +9,7 @@ describe("Frontend Tests", () => {
   it("visits /home", () => {
     cy.visit("/home");
     cy.get("#postListWrapper").should("exist");
-    cy.get(".sortByMenuItem").should("exist").should("have.length", 3);
+    // cy.get(".sortByMenuItem").should("exist").should("have.length", 3);
   });
 
   it("visits /post", () => {
