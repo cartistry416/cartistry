@@ -3,10 +3,12 @@ import "../static/css/mapCard.css";
 import { formatDate, getImage } from "../utils/utils";
 import GlobalMapContext from "../contexts/map";
 import ConfirmDeleteModal from "./modals/ConfirmDeleteModal";
+import AuthContext from "../auth";
 
 function MapCard(props) {
+  const { auth } = useContext(AuthContext)
   const { map } = useContext(GlobalMapContext)
-  const { mapId, title, updatedAt, thumbnail } = props
+  const { index, mapId, title, updatedAt, thumbnail } = props
   const [showOptions, setShowOptions] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [isEditing, setIsEditing] = useState(false);
@@ -29,6 +31,7 @@ function MapCard(props) {
   };
 
   const handleRename = () => {
+    setShowOptions(false);
     setIsEditing(true);
   };
 
@@ -38,19 +41,19 @@ function MapCard(props) {
 
   const handleTitleSubmit = (event) => {
     if (event.key === 'Enter') {
-      map.updateMapTitle(mapId, newTitle);
+      map.renameMap(mapId, newTitle, index);
       setIsEditing(false);
     }
   };
 
   const handleExport = () => {
     setShowOptions(false)
-    map.exportMap(mapId)
+    map.exportMap(mapId, auth.user.userId)
   }
 
   const handlePublish = () => {
     setShowOptions(false)
-    map.publishMap(mapId)
+    // TODO: go to edit post screen
   }
 
   const handleFork = () => {
