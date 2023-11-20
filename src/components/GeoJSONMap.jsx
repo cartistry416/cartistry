@@ -1,5 +1,6 @@
 // eslint-disable-next-line
-import React, { useState } from 'react'
+import { map } from 'lodash'
+import React, { useEffect, useState, useContext } from 'react'
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet'
 function getNameFromConvertedShapeFile(properties) {
 
@@ -16,10 +17,14 @@ function getNameFromConvertedShapeFile(properties) {
 
 // https://react-leaflet.js.org/docs/example-popup-marker/
 // https://github.com/CodingWith-Adam/geoJson-map-with-react-leaflet/blob/master/src/components/MyMap.jsx
-function GeoJSONMap(props) {
-    //const [geoData, setGeoData] = useState(null)
-    const {geoData, position} = props
-
+function GeoJSONMap({mapMetadataId, position}) {
+    const { map } = useContext(GlobalMapContext)
+    const [loaded, setLoaded] = useState(false)
+    useEffect(() => {
+        map.loadMap(mapMetadataId).then(() => {
+            setLoaded(true)
+        })
+    },[])
     const onEachFeature = (feature, layer) => {
         let name = null;
         if ('name' in feature.properties) {
@@ -40,17 +45,19 @@ function GeoJSONMap(props) {
         fillOpacity: 0,
     }
 
-
     return (
         <div>
+            {
+                !loaded && <div> Map is loading... </div>
+            }
           <MapContainer center={position} zoom={4} style={{ width: '600px', height: '400px' }}>
               <TileLayer
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   maxZoom={19}
               />
-              {geoData && (
+              {map.currentMapGeoJSON && (
                   <GeoJSON
-                      data={geoData}
+                      data={map.currentMapGeoJSON}
                       style={myCustomStyle}
                       onEachFeature={onEachFeature}
                   /> 
