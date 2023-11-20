@@ -21,10 +21,17 @@ function GeoJSONMap({mapMetadataId, position}) {
     const { map } = useContext(GlobalMapContext)
     const [loaded, setLoaded] = useState(false)
     useEffect(() => {
-        map.loadMap(mapMetadataId).then(() => {
-            setLoaded(true)
-        })
-    },[])
+      const loadMapData = async () => {
+        try {
+          await map.loadmap(mapMetadataId);
+          setLoaded(true)
+        } catch (error) {
+          console.error("Failed to load map cards:", error);
+        }
+      };
+  
+      loadMapData();
+    }, [map, mapMetadataId])
     const onEachFeature = (feature, layer) => {
         let name = null;
         if ('name' in feature.properties) {
@@ -47,9 +54,6 @@ function GeoJSONMap({mapMetadataId, position}) {
 
     return (
         <div>
-            {
-                !loaded && <div> Map is loading... </div>
-            }
           <MapContainer center={position} zoom={4} style={{ width: '600px', height: '400px' }}>
               <TileLayer
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
