@@ -2,18 +2,18 @@ import { createContext, useContext, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import api from './post-request-api'
 import AuthContext from '../../auth'
+import { update } from 'lodash';
 
 export const GlobalPostContext = createContext({});
 export const GlobalPostActionType = {
-    CHANGE_LIST_NAME: "CHANGE_LIST_NAME",
-    CLOSE_CURRENT_LIST: "CLOSE_CURRENT_LIST",
-    CREATE_NEW_LIST: "CREATE_NEW_LIST",
-    LOAD_ID_NAME_PAIRS: "LOAD_ID_NAME_PAIRS",
-    MARK_LIST_FOR_DELETION: "MARK_LIST_FOR_DELETION",
-    SET_CURRENT_LIST: "SET_CURRENT_LIST",
-    SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
-    EDIT_SONG: "EDIT_SONG",
-    REMOVE_SONG: "REMOVE_SONG",
+    DELETE_COMMENT: "DELETE_COMMENT",
+    DELETE_POST: "DELETE_POST", 
+    EDIT_COMMENT: "EDIT_COMMENT",
+    EDIT_POST: "EDIT_POST",
+    LOAD_POST: "LOAD_POST",
+    LOAD_POST_CARDS: "LOAD_POST_CARDS",
+    CREATE_COMMENT: "CREATE_COMMENT",
+    UPDATE_POST_LIKES: "UPDATE_POST_LIKES",
     HIDE_MODALS: "HIDE_MODALS",
 }
 
@@ -34,44 +34,223 @@ function GlobalPostContextProvider(props) {
     const postReducer = (action) => {
         const { type, payload } = action;
         switch (type) {
-            // LIST UPDATE OF ITS NAME
-            case GlobalPostActionType.CHANGE_LIST_NAME: {
-                return setPost({})
+            case GlobalPostActionType.DELETE_COMMENT: {
+                const updatedCurrentPost = {...currentPost}
+                updatedCurrentPost.comments.splice(payload.index, 1)
+                return setPost({
+                    ...post,
+                    currentPost: updatedCurrentPost
+                })
             }
+            case GlobalPostActionType.DELETE_POST: {
+                const updatedPostCardsInfo = postCardsInfo.filter(card => card._id !== payload.id)
+                return setPost({
+                    ...post,
+                    postCardsInfo: updatedPostCardsInfo
+                })
+            }
+            case GlobalPostActionType.EDIT_COMMENT: {
+                const updatedCurrentPost = {...currentPost}
+                updatedCurrentPost.comments[payload.index] = payload.comment
+                return setPost({
+                    ...post,
+                    currentPost: updatedCurrentPost
+                })
+            }
+            case GlobalPostActionType.LOAD_POST: {
+                return setPost({
+                    ...post,
+                    currentPost: payload.post
+                })
+            }
+            case GlobalPostActionType.CREATE_COMMENT: {
+                const updatedCurrentPost = {...currentPost}
+                updatedCurrentPost.comments.splice(payload.index, 0, payload.comment)
+                return setPost({
+                    ...post,
+                    currentPost: updatedCurrentPost
+                })
+            }
+            case GlobalPostActionType.UPDATE_POST_LIKES: {
+                const updatedPostCardsInfo = [...postCardsInfo]
+                const updateIndex = postCardsInfo.findIndex(card => card._id === payload.id)
+                if (updateIndex !== -1) {
+                    updatedPostCardsInfo[updateIndex]["alreadyLiked"] = payload.alreadyLiked
+                    updatedPostCardsInfo[updateIndex].likes = payload.likes
+                }
+                return setPost({
+                    ...post,
+                    postCardsInfo: updatedPostCardsInfo
+                })
+            }
+
         }
     }
 
-    post.deleteComment = async (id) => {
-        api.deleteComment()
+    post.deleteComment = async (id, index) => {
+        try {
+            const response = await api.deleteComment(id, index)
+            if (response.status === 200) {
+                mapReducer({
+                    type: GlobalPostActionType.DELETE_COMMENT,
+                    payload: { id, index }
+                })
+            }
+        }
+        catch (error) {
+            mapReducer({
+                type: GlobalPostActionType.ERROR_MODAL,
+                payload: { hasError: true, errorMessage: error.response.data.errorMessage }
+            })
+        }
     }
     
     post.deletePost = async (id) => {
-        api.deletePost()
+        try {
+            const response = await api.deletePost(id)
+            if (response.status === 200) {
+                if (location.pathname.startsWith("/post")) {
+                    navigate('/home')
+                    return
+                }
+                mapReducer({
+                    type: GlobalPostActionType.DELETE_POST,
+                    payload: { id }
+                })
+            }
+        }
+        catch (error) {
+            mapReducer({
+                type: GlobalPostActionType.ERROR_MODAL,
+                payload: { hasError: true, errorMessage: error.response.data.errorMessage }
+            })
+        }
     }
 
-    post.editComent = async (id, comment, index) => {
-        api.editComment()
+    post.editComment = async (id, comment, index) => {
+        try {
+            const response = await api.editComment(id, comment, index)
+            if (response.status === 200) {
+                mapReducer({
+                    type: GlobalPostActionType.EDIT_COMMENT,
+                    payload: { id, comment, index }
+                })
+            }
+        }
+        catch (error) {
+            mapReducer({
+                type: GlobalPostActionType.ERROR_MODAL,
+                payload: { hasError: true, errorMessage: error.response.data.errorMessage }
+            })
+        }
     }
 
     post.editPost = async (id, title, textContent) => {
-        api.editPost()
+
+        try {
+            const response = await api.editPost(id, title, textContent)
+            if (response.status === 200) {
+                mapReducer({
+                    type: GlobalPostActionType.LOAD_POST,
+                    payload: {post: response.data.post}
+                })
+            }
+        }
+        catch (error) {
+            mapReducer({
+                type: GlobalPostActionType.ERROR_MODAL,
+                payload: { hasError: true, errorMessage: error.response.data.errorMessage }
+            })
+        }
+
     }
 
     // load a specific post's details
-    post.loadPost = async (id) => {
-        api.getPostData()
+    post.loadPost = async (id) => { 
+        try {
+            const response = await api.getPostData(id)
+            if (response.status === 200) {
+                mapReducer({
+                    type: GlobalPostActionType.LOAD_POST,
+                    payload: { post: response.data.post }
+                })
+            }
+        }
+        catch (error) {
+            mapReducer({
+                type: GlobalPostActionType.ERROR_MODAL,
+                payload: { hasError: true, errorMessage: error.response.data.errorMessage }
+            })
+        }
     }
 
-    post.loadPostCards = async (options) => {
+    post.loadPostCards = async (type, limit) => {
+        try {
+            let response;
+            if (type === "mostLiked") {
+                response = await api.getMostLikedPosts(limit)
+            }
+            else if (type === "mostRecent") {
+                response = await api.getMostRecentPosts(limit)
+            }
+            else if (type === "owned") {
+                response = await api.getPostsOwnedByUser(limit)
+            } 
+            else {
+                console.error("Unknown type of post card loading")
+            }
 
-        api.getMostLikedPosts()
-        api.getMostRecentPosts()
-        api.getPostsOwnedByUser()
+            if (response.status === 200) {
+                mapReducer({
+                    type: GlobalPostActionType.LOAD_POST_CARDS,
+                    payload: { postCards: response.data.posts }
+                }) 
+            }
+
+        }
+        catch (err) {
+            mapReducer({
+                type: GlobalPostActionType.ERROR_MODAL,
+                payload: { hasError: true, errorMessage: error.response.data.errorMessage }
+            })
+        }
     }
 
-    post.searchPosts = async (options) => {
-        api.searchPostsByTags()
-        api.searchPostsByTitle()
+    post.searchPostsByTags = async (tags, limit) => {
+        try {
+            const response = await api.searchPostsByTags(tags, limit)
+            if (response.status === 200) {
+                mapReducer({
+                    type: GlobalPostActionType.LOAD_POST_CARDS,
+                    payload: { postCards: response.data.posts }
+                }) 
+            }
+        }
+        catch (err) {
+            mapReducer({
+                type: GlobalPostActionType.ERROR_MODAL,
+                payload: { hasError: true, errorMessage: error.response.data.errorMessage }
+            })
+        }
+        
+    }
+    post.searchPostsByTitle = async (title, limit) => {
+
+        try {
+            const response = await api.searchPostsByTitle(title, limit)
+            if (response.status === 200) {
+                mapReducer({
+                    type: GlobalPostActionType.LOAD_POST_CARDS,
+                    payload: { postCards: response.data.posts }
+                }) 
+            }
+        }
+        catch (err) {
+            mapReducer({
+                type: GlobalPostActionType.ERROR_MODAL,
+                payload: { hasError: true, errorMessage: error.response.data.errorMessage }
+            })
+        }
     }
 
     post.createPost = async (title, textContent, images) => {
@@ -80,21 +259,57 @@ function GlobalPostContextProvider(props) {
         formData.append('textContent', textContent)
         if (images) {
             for (let i=0; i<images.length; i++) {
-                formData.append(images[i])
+                formData.append(images[i].fileExtension, images[i].data)
             }
         }
-
-
-
-
+        try {
+            const response = await api.createPost(formData)
+            if (response.status === 200) {
+                navigate(`/post/${response.data.postId}`)
+            }
+        }
+        catch (err) {
+            mapReducer({
+                type: GlobalPostActionType.ERROR_MODAL,
+                payload: { hasError: true, errorMessage: error.response.data.errorMessage }
+            })  
+        }
     }
     
-    post.createComment = async (comment) => {
-        api.commentOnPost()
+    post.createComment = async (id, comment) => {
+        try {
+            const response = await api.commentOnPost(id,comment)
+            if (response.status === 200) {
+                mapReducer({
+                    type: GlobalPostActionType.CREATE_COMMENT,
+                    payload: {comment: response.data.comment, index: response.data.index, id}
+                })
+            }
+        }
+        catch (err) {
+            mapReducer({
+                type: GlobalPostActionType.ERROR_MODAL,
+                payload: { hasError: true, errorMessage: error.response.data.errorMessage }
+            })
+        }
     }
 
     post.updatePostLikes = async (id) => {
-        api.updatePostLikes()
+        try {
+            const response = await api.updatePostLikes(id)
+            if (response.status === 200) {
+                mapReducer({
+                    type: GlobalPostActionType.UPDATE_POST_LIKES,
+                    payload: { id, alreadyLiked: response.data.alreadyLiked, likes: response.data.likes }
+                })
+            }
+        }
+        catch (err) {
+            mapReducer({
+                type: GlobalPostActionType.ERROR_MODAL,
+                payload: { hasError: true, errorMessage: error.response.data.errorMessage }
+            })
+        }
     }
 
 }
