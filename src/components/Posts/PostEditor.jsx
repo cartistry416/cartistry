@@ -1,18 +1,41 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import "../../static/css/post.css";
 import { useNavigate } from 'react-router';
+import GlobalPostContext from '../../contexts/post';
+import { at } from 'lodash';
+
 
 const PostEditor = () => {
   const navigate = useNavigate();
+  const {post} = useContext(GlobalPostContext)
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [postTags, setPostTags] = useState(["Tag Five", "Tag Three"])
   const [availTags, setAvailTags] = useState(["Tag One", "Tag Thrity", "Tag Eighty One", "Tag Six", "Tag Two", "Tag Seventeen", "Tag Nine"])
 
-  const handleTitleChange = (e) => setTitle(e.target.value)
-  const handleContentChange = (value) => setContent(value)
+
+  const [attachments, setAttachments] = useState([])
+
+  const handleTitleChange = (e) => {
+    e.preventDefault()
+    setTitle(e.target.value)
+  }
+  const handleContentChange = (value) => {
+    let textContent = value
+    try {
+      const parser = new DOMParser();
+      const parsedHtml = parser.parseFromString(value, 'text/html');
+      textContent = parsedHtml.body.textContent
+    }
+    catch(err) {
+      console.error(err)
+    }
+    if (textContent !== content) {
+      setContent(textContent)
+    }
+  }
 
   const addTag = (tagToAdd) => {
     if (postTags.indexOf(tagToAdd) === -1) {
@@ -28,10 +51,28 @@ const PostEditor = () => {
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log(title, content, postTags)
-    navigate('/home')
+    await post.createPost(title, content, attachments, postTags)
+
+
+    // navigate('/home')
+  }
+
+  const handleAttachmentAdd = async (e) => {
+    e.preventDefault()
+    const files = e.target.files
+
+    for (let i=0; i<files.length; i++) {
+      const ext = files[i].name.split('.').pop()
+      if (ext !== "png" && ext !== "jpg" && ext !== "jpeg") {
+        alert("Only .png .jpeg or .jpg allowed")
+        return
+      }
+    }
+    if (files.length > 0) {
+      setAttachments([...attachments, ...files])
+    }
   }
 
   return (
@@ -49,8 +90,14 @@ const PostEditor = () => {
           <div className='post-attachments'>
             <div className="attachment-item">
             </div>
+            {/* Can someone change the way the attachment cards look */}
+            {
+              attachments.map( (file, index) => <div className="attachment-add" key={index}> {file.name} </div>)
+            }
             <div className="attachment-add">
-              <span className="material-icons attachment-add-icon">add</span>
+              {/* <span className="material-icons attachment-add-icon">add</span> */}
+              {/* Can someone change the input button back to the plus icon */}
+              <input type="file" accept='*' onChange={handleAttachmentAdd} multiple={true}/>
             </div>
           </div>
           <div className="post-tags">
