@@ -1,9 +1,18 @@
 import { useState } from "react";
 import "../../static/css/comment.css";
 
-function Comment({text}) {
+function Comment({comment}) {
   const [showOptions, setShowOptions] = useState(false)
 
+
+  let userName = ""
+  let text = ""
+
+  console.log(comment)
+  if (comment) {
+    userName = comment.authorUserName
+    text = comment.comment
+  }
   return (
     <div className="comment-container">
       <div className="comment-header">
@@ -12,7 +21,7 @@ function Comment({text}) {
             <span class="material-icons">account_circle</span>
           </div>
           <div className="comment-header">
-            <span className="comment-username">username • 4d</span>
+            <span className="comment-username"> {userName} • 4d</span>
           </div>
         </div>
         <div className="comment-options">
@@ -46,7 +55,7 @@ function Comment({text}) {
 function CommentThread({comment, replies}) {
   return (
     <div className="comment-thread">
-      <Comment text={comment} />
+      <Comment comment={comment} />
       <div className="comment-replies">
         {replies.map((reply, index) => (
           <Comment key={index} text={reply} />
