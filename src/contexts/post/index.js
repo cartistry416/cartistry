@@ -263,14 +263,18 @@ function GlobalPostContextProvider(props) {
         }
     }
 
-    post.createPost = async (title, textContent, images) => {
+    post.createPost = async (title, textContent, images, tags) => {
         const formData = new FormData()
         formData.append('title', title)
         formData.append('textContent', textContent)
+        formData.append('tags', tags)
         if (images) {
+            const fileExtensions = []
             for (let i=0; i<images.length; i++) {
-                formData.append(images[i].fileExtension, images[i].data)
+                formData.append('images', images[i])
+                fileExtensions.push(images[i].name.split('.').pop())
             }
+            formData.append('fileExtensions', fileExtensions)
         }
         try {
             const response = await api.createPost(formData)

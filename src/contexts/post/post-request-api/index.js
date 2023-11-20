@@ -56,11 +56,11 @@ export const createPost = (formData) => {
 
 
 export const updatePostLikes = (id) => {
-    return api.put(`/posts/${id}/likes`)
+    return api.put(`/posts-api/posts/${id}/likes`)
 }
 
 export const commentOnPost = (id, comment) => {
-    return api.put(`/posts/${id}/comment`, {
+    return api.put(`/posts-api/posts/${id}/comment`, {
         comment
     })
 }
@@ -68,23 +68,23 @@ export const commentOnPost = (id, comment) => {
 // TODO
 // going to have to refractor and deal with editing images
 export const editPost = (id, title, textContent) => {
-    return api.put(`/posts/${id}`,{
+    return api.put(`/posts-api/posts/${id}`,{
         title, textContent
     })
 }
 
 export const editComment = (id, comment, index) => {
-    return api.put(`/posts/${id}/edit-comment`, {
+    return api.put(`/posts-api/posts/${id}/edit-comment`, {
         comment, index
     })
 }
 
 export const deletePost = (id) => {
-    return api.delete(`/posts/${id}`)
+    return api.delete(`/posts-api/posts/${id}`)
 }
 
 export const deleteComment = (id, index) => {
-    api.delete(`/posts/${id}/comment`, {
+    api.delete(`/posts-api/posts/${id}/comment`, {
         index
     })
 }
