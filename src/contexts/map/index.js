@@ -212,6 +212,7 @@ function GlobalMapContextProvider(props) {
                 })
                 navigate(`/editMap/${response.data.mapMetadata._id}`)
             }
+            return true;
         }
         catch (error) { 
             mapReducer({
@@ -219,6 +220,7 @@ function GlobalMapContextProvider(props) {
                 payload: { hasError: true, errorMessage: error.response.data.errorMessage }
             })
         }
+        return false;
     }
 
     map.renameMap = async (id, title, index) => {
@@ -429,6 +431,11 @@ function GlobalMapContextProvider(props) {
     map.canRedo = function() {
         return ((map.currentMapGeoJSONOriginal !== null) && tps.hasTransactionToRedo())
     }
+    return (
+        <GlobalMapContext.Provider value={{map}}>
+            {props.children}
+        </GlobalMapContext.Provider>
+    )
 }
 
 export default GlobalMapContext ;

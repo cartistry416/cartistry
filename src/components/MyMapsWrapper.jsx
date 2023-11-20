@@ -6,7 +6,7 @@ import ImportModal from "./modals/ImportModal";
 
 function MyMapsWrapper() {
   const { mapCardsInfo } = useContext(GlobalMapContext);
-  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState("");
   const [showCreateDropdown, setCreateDropdown] = useState(false);
   const [showSortDropdown, setSortDropdown] = useState(false);
   const createDropdownRef = useRef(null);
@@ -48,31 +48,31 @@ function MyMapsWrapper() {
             <div className="createMapMenu">
               <button
                 className="createMapMenuItem"
-                onClick={() => setShowUploadModal(true)}
+                onClick={() => setShowUploadModal("bin")}
               >
                 Bin Map
               </button>
               <button
                 className="createMapMenuItem"
-                onClick={() => setShowUploadModal(true)}
+                onClick={() => setShowUploadModal("heat")}
               >
                 Heat Map
               </button>
               <button
                 className="createMapMenuItem"
-                onClick={() => setShowUploadModal(true)}
+                onClick={() => setShowUploadModal("subway")}
               >
                 Subway Map
               </button>
               <button
                 className="createMapMenuItem"
-                onClick={() => setShowUploadModal(true)}
+                onClick={() => setShowUploadModal("cadastral")}
               >
                 Cadastral Map
               </button>
               <button
                 className="createMapMenuItem"
-                onClick={() => setShowUploadModal(true)}
+                onClick={() => setShowUploadModal("landmark")}
               >
                 Landmark Map
               </button>
@@ -111,8 +111,8 @@ function MyMapsWrapper() {
         ))} */}
         <MapCard title="Map Title" updatedAt="October 11" />
       </div>
-      {showUploadModal && (
-        <ImportModal onClose={() => setShowUploadModal(false)} />
+      { (showUploadModal !== "") && (
+        <ImportModal onClose={() => setShowUploadModal("")} templateType={showUploadModal} />
       )}
     </div>
   );

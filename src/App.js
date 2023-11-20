@@ -7,6 +7,7 @@ import './App.css';
 // eslint-disable-next-line
 import JSZip from 'jszip';
 import { AuthContextProvider } from './auth';
+import { GlobalMapContextProvider } from './contexts/map';
 // eslint-disable-next-line
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import HomeWrapper from './components/HomeWrapper/HomeWrapper'
@@ -68,74 +69,46 @@ function App() {
     dummyNode = <div id="dummyText">{JSON.stringify(dummyData)}</div>
   }
 
-// eslint-disable-next-line
-  const handleFileUpload = async (event) => {
-    const file = event.target.files[0]
-    if (!file) {
-      console.error("No file uploaded?")
-      return 
-    }
-
-    const ext = file.name.split('.').pop().toLowerCase()
-
-    let blob = file;
-    const formData = new FormData()
-    if (ext === "json" || ext === "kml") {
-
-      const zip = new JSZip()
-      zip.file(file.name, file)
-
-      blob = await zip.generateAsync({type: 'blob'})
-    }
-    else if (ext !== "zip") {
-      console.error("Unsupported file extension: " + ext)
-      return
-    }
-
-    formData.append('zipFile', blob )
-    formData.append('fileExtension', ext)
-    formData.append('title', "testMap")
-    formData.append('templateType', "heat")
-    // eslint-disable-next-line
-    const res = await api.uploadMap(formData)
-  }
 
   return (
     <BrowserRouter>
       <AuthContextProvider>
-      <div className="App">
-            {/* <h1> Map Viewer</h1>
-              <button id="dummy" onClick={handleDummyOnClick}> dummy </button>
-              {dummyNode}
-              <RegisterModal></RegisterModal>
-              <LoginModal> </LoginModal>
-              <button onClick={dummyRequest}>Get Most Recent Posts</button>
-              <input type="file" id="geojsonFile" accept="*" onChange={handleFileUpload} />
-              {map} */}
-            <NavBar/>
-            <Routes>
-                        <Route path="/" element={<LoginScreen/>} />
-                        <Route path="/register/" element={<RegisterScreen/>} />
-                        <Route path="/forgotPassword/" element={<ForgotPasswordScreen/>}/>
-                        <Route path="/resetPassword/" element={<ResetPasswordScreen/>}/>
-                        <Route path="/requestPassword/" element={<RequestPasswordScreen/>}/>
-                        <Route path="/home/" element={<HomeWrapper/>} />
-                        <Route path="/editMap/" element={<EditMapWrapper/>} />
-                        <Route path="/post/" element={<PostScreen/>} />
-                        <Route path="/myMaps/" element={<MyMapsWrapper/>}/>
-                        <Route path="/myPosts/" element={<MyPostsScreen/>}/>
-                        <Route path="/editPost/" element={<PostEditor/>} />
-                        <Route path="/profile/" element={<ProfileScreen/>} />
-                        {/* <Route path="/login/" exact component={LoginScreen} />
-                        <Route path="/register/" exact component={RegisterScreen} />
-                        <Route path="/playlist/:id" exact component={WorkspaceScreen} /> */}
-            </Routes>
-            <AlertModal/>
-            <ConfirmPublishModal/>
-            <ConfirmDeleteModal/>
-            <SuccessfulLoginModal/>
-      </div>
+        <GlobalMapContextProvider>
+          <div className="App">
+                {/* <h1> Map Viewer</h1>
+                  <button id="dummy" onClick={handleDummyOnClick}> dummy </button>
+                  {dummyNode}
+                  <RegisterModal></RegisterModal>
+                  <LoginModal> </LoginModal>
+                  <button onClick={dummyRequest}>Get Most Recent Posts</button>
+                  <input type="file" id="geojsonFile" accept="*" onChange={handleFileUpload} />
+                  {map} */}
+                <NavBar/>
+                <Routes>
+                            <Route path="/" element={<LoginScreen/>} />
+                            <Route path="/register/" element={<RegisterScreen/>} />
+                            <Route path="/forgotPassword/" element={<ForgotPasswordScreen/>}/>
+                            <Route path="/resetPassword/" element={<ResetPasswordScreen/>}/>
+                            <Route path="/requestPassword/" element={<RequestPasswordScreen/>}/>
+                            <Route path="/home/" element={<HomeWrapper/>} />
+                            <Route path="/editMap/" element={<EditMapWrapper/>} />
+                            <Route path="/post/" element={<PostScreen/>} />
+                            <Route path="/myMaps/" element={<MyMapsWrapper/>}/>
+                            <Route path="/myPosts/" element={<MyPostsScreen/>}/>
+                            <Route path="/editPost/" element={<PostEditor/>} />
+                            <Route path="/profile/" element={<ProfileScreen/>} />
+                            {/* <Route path="/login/" exact component={LoginScreen} />
+                            <Route path="/register/" exact component={RegisterScreen} />
+                            <Route path="/playlist/:id" exact component={WorkspaceScreen} /> */}
+                </Routes>
+                <AlertModal/>
+                <ConfirmPublishModal/>
+                <ConfirmDeleteModal/>
+                <SuccessfulLoginModal/>
+          </div>
+        </GlobalMapContextProvider>
       </AuthContextProvider>
+      
     </BrowserRouter>
   );
 }
