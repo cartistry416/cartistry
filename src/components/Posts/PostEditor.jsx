@@ -2,8 +2,10 @@ import { useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import "../../static/css/post.css";
+import { useNavigate } from 'react-router';
 
 const PostEditor = () => {
+  const navigate = useNavigate();
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [postTags, setPostTags] = useState(["Tag Five", "Tag Three"])
@@ -29,6 +31,7 @@ const PostEditor = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
     console.log(title, content, postTags)
+    navigate('/home')
   }
 
   return (

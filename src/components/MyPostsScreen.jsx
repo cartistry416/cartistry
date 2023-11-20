@@ -1,5 +1,5 @@
 import "../static/css/myPosts.css";
-import PostCard from "./PostCard";
+import PostCard from "./Posts/PostCard";
 import { useEffect, useRef, useState } from "react";
 
 function MyPostsScreen() {
