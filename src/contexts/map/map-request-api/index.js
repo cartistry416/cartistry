@@ -7,19 +7,19 @@ const api = axios.create({
 })
 
 export const exportMap = (id) => {
-    return api.get(`/maps/${id}/export`, {
+    return api.get(`/maps-api/maps/${id}/export`, {
         responseType: 'arraybuffer'
     })
 }
 
 export const getMapMetadataOwnedByUser = () => {
-    return api.get(`/maps/map-metadata`)
+    return api.get(`/maps-api/maps/map-metadata`)
 }
 export const getPublicMapMetadataOwnedByUser = (id) => {
-    return api.get(`/maps/public-map-metadata/${id}`)
+    return api.get(`/maps-api/maps/public-map-metadata/${id}`)
 }
 export const getMapData = (id) => {
-    return api.get(`/maps/${id}`, {
+    return api.get(`/maps-api/maps/${id}`, {
         responseType: 'arraybuffer'
     })
 }
@@ -32,12 +32,12 @@ export const uploadMap = (formData) => {
     })
 }
 export const publishMap = (id, postData) => {
-    return api.post(`/maps/${id}/publish`, {
+    return api.post(`/maps-api/maps/${id}/publish`, {
         postData
     })
 }
 export const forkMap = (id) => {
-    return api.post(`/maps/${id}/fork`)
+    return api.post(`/maps-api/maps/${id}/fork`)
 }
 export const renameMap = (id, title) => {
     return api.put(`/maps-api/maps/${id}/rename`, {
@@ -45,20 +45,20 @@ export const renameMap = (id, title) => {
     })
 }
 export const favoriteMap = (id) => {
-    return api.put(`/maps/${id}/favorite`)
+    return api.put(`/maps-api/maps/${id}/favorite`)
 }
 export const updateMapPrivacy = (id) => {
-    return api.put(`/maps/${id}/update-privacy`)
+    return api.put(`/maps-api/maps/${id}/update-privacy`)
 }
 export const saveMapEdits = (id, delta, proprietaryJSON) => {
-    return api.put(`/maps/${id}/save`, {
+    return api.put(`/maps-api/maps/${id}/save`, {
         delta,
         proprietaryJSON
     })
 }
 
 export const deleteMap = (id) => {
-    return api.delete(`/maps/${id}`)
+    return api.delete(`/maps-api/maps/${id}`)
 }
 
 const apis = {
