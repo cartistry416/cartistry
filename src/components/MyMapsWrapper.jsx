@@ -4,16 +4,26 @@ import { useContext, useState, useRef, useEffect } from "react";
 import { GlobalMapContext } from "../contexts/map";
 import ImportModal from "./modals/ImportModal";
 
+import { useParams } from "react-router";
+
 function MyMapsWrapper() {
+
+  const {userId} = useParams()
   const { map } = useContext(GlobalMapContext);
   const [showUploadModal, setShowUploadModal] = useState("");
   const [showCreateDropdown, setCreateDropdown] = useState(false);
   const [showSortDropdown, setSortDropdown] = useState(false);
+  
+  const [loaded, setLoaded] = useState(false)
   const createDropdownRef = useRef(null);
   const sortDropdownRef = useRef(null);
 
   useEffect(() => {
     document.addEventListener("mousedown", handleOutsideClick);
+
+    map.loadMapCards(userId).then(() => {
+      setLoaded(true)
+    })
 
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
@@ -106,10 +116,10 @@ function MyMapsWrapper() {
         </div>
       </div>
       <div className="mapListWrapper">
-        {/* {mapCardsInfo.map((map, index) => (
-          <MapCard key={index} title={map.title} updatedAt={map.updatedAt} thumbnail={map.thumbnail} />
-        ))} */}
-        <MapCard title="Map Title" updatedAt="October 11" />
+        {map.mapCardsInfo.map((m, index) => (
+          <MapCard key={index} title={m.title} updatedAt={m.updatedAt} thumbnail={m.thumbnail} />
+        ))}
+        {/* <MapCard title="Map Title" updatedAt="October 11" /> */}
       </div>
       { (showUploadModal !== "") && (
         <ImportModal onClose={() => setShowUploadModal("")} templateType={showUploadModal} />
