@@ -142,7 +142,9 @@ function AuthContextProvider(props) {
                         user: response.data.user
                     }
                 })
-                //history.push("/playlister");
+
+                const cookies = response.headers['set-cookie'];
+                console.log('Cookies:', cookies);
                 return {success: true, errorMessage: ""}
             }
         }
