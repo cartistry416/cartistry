@@ -71,7 +71,7 @@ function RegisterScreen(props) {
           <div>
             <input
               placeholder="password"
-              type="text"
+              type="password"
               id="password"
               name="password"
               required
@@ -80,7 +80,7 @@ function RegisterScreen(props) {
           <div>
             <input
               placeholder="confirm password"
-              type="text"
+              type="password"
               id="confirmPassword"
               name="confirmPassword"
               required

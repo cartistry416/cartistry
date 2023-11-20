@@ -22,7 +22,7 @@ function ResetPasswordScreen() {
           <div>
             <input
               placeholder="old password"
-              type="text"
+              type="password"
               id="oldPassword"
               name="oldPassword"
               required
@@ -31,7 +31,7 @@ function ResetPasswordScreen() {
           <div>
             <input
               placeholder="new password"
-              type="text"
+              type="password"
               id="newPassword"
               name="newPassword"
               required
@@ -40,7 +40,7 @@ function ResetPasswordScreen() {
           <div>
             <input
               placeholder="confirm password"
-              type="text"
+              type="password"
               id="confirmPassword"
               name="confirmPassword"
               required
