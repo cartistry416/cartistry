@@ -18,7 +18,6 @@ function getNameFromConvertedShapeFile(properties) {
 // https://react-leaflet.js.org/docs/example-popup-marker/
 // https://github.com/CodingWith-Adam/geoJson-map-with-react-leaflet/blob/master/src/components/MyMap.jsx
 function GeoJSONMap({mapMetadataId, position}) {
-  console.log(mapMetadataId)
     const { map } = useContext(GlobalMapContext)
     const [loaded, setLoaded] = useState(false)
     useEffect(() => {
@@ -55,9 +54,6 @@ function GeoJSONMap({mapMetadataId, position}) {
 
     return (
         <div>
-            {
-                !loaded && <div> Map is loading... </div>
-            }
           <MapContainer center={position} zoom={4} style={{ width: '600px', height: '400px' }}>
               <TileLayer
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

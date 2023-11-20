@@ -22,7 +22,7 @@ function ForgotPasswordScreen() {
           <div>
             <input
               placeholder="new password"
-              type="text"
+              type="password"
               id="newPassword"
               name="newPassword"
               required
@@ -31,7 +31,7 @@ function ForgotPasswordScreen() {
           <div>
             <input
               placeholder="confirm password"
-              type="text"
+              type="password"
               id="confirmPassword"
               name="confirmPassword"
               required

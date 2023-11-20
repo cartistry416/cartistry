@@ -15,9 +15,6 @@ import NavBar from './components/NavBar';
 import './static/css/global.css'
 import './static/css/fonts.css'
 import AlertModal from './components/modals/AlertModal';
-import SuccessfulLoginModal from './components/modals/SuccessfulLoginModal';
-import ConfirmDeleteModal from './components/modals/ConfirmDeleteModal';
-import ConfirmPublishModal from './components/modals/ConfirmPublishModal';
 import EditMapWrapper from './components/EditMapWrapper/EditMapWrapper.jsx';
 import PostScreen from './components/Posts/PostScreen.jsx';
 import MyMapsWrapper from './components/MyMapsWrapper';
@@ -31,6 +28,7 @@ import ResetPasswordScreen from './components/ResetPasswordScreen.jsx';
 import RequestPasswordScreen from './components/requestPasswordScreen.jsx';
 import '../src/static/css/modals.css'
 import '../src/static/css/authScreens.css'
+import { GlobalPostContextProvider } from './contexts/post/index.js';
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
 
@@ -74,35 +72,38 @@ function App() {
     <BrowserRouter>
       <AuthContextProvider>
         <GlobalMapContextProvider>
-          <div className="App">
-                {/* <h1> Map Viewer</h1>
-                  <button id="dummy" onClick={handleDummyOnClick}> dummy </button>
-                  {dummyNode}
-                  <RegisterModal></RegisterModal>
-                  <LoginModal> </LoginModal>
-                  <button onClick={dummyRequest}>Get Most Recent Posts</button>
-                  <input type="file" id="geojsonFile" accept="*" onChange={handleFileUpload} />
-                  {map} */}
-                <NavBar/>
-                <Routes>
-                            <Route path="/" element={<LoginScreen/>} />
-                            <Route path="/register/" element={<RegisterScreen/>} />
-                            <Route path="/forgotPassword/" element={<ForgotPasswordScreen/>}/>
-                            <Route path="/resetPassword/" element={<ResetPasswordScreen/>}/>
-                            <Route path="/requestPassword/" element={<RequestPasswordScreen/>}/>
-                            <Route path="/home/" element={<HomeWrapper/>} />
-                            <Route path="/editMap/:id" element={<EditMapWrapper/>} />
-                            <Route path="/post/:id" element={<PostScreen/>} />
-                            <Route path="/myMaps/" element={<MyMapsWrapper/>}/>
-                            <Route path="/myPosts/" element={<MyPostsScreen/>}/>
-                            <Route path="/editPost/" element={<PostEditor/>} />
-                            <Route path="/profile/" element={<ProfileScreen/>} />
-                            {/* <Route path="/login/" exact component={LoginScreen} />
-                            <Route path="/register/" exact component={RegisterScreen} />
-                            <Route path="/playlist/:id" exact component={WorkspaceScreen} /> */}
-                </Routes>
-          </div>
+          <GlobalPostContextProvider>
+            <div className="App">
+                  {/* <h1> Map Viewer</h1>
+                    <button id="dummy" onClick={handleDummyOnClick}> dummy </button>
+                    {dummyNode}
+                    <RegisterModal></RegisterModal>
+                    <LoginModal> </LoginModal>
+                    <button onClick={dummyRequest}>Get Most Recent Posts</button>
+                    <input type="file" id="geojsonFile" accept="*" onChange={handleFileUpload} />
+                    {map} */}
+                  <NavBar/>
+                  <Routes>
+                              <Route path="/" element={<LoginScreen/>} />
+                              <Route path="/register/" element={<RegisterScreen/>} />
+                              <Route path="/forgotPassword/" element={<ForgotPasswordScreen/>}/>
+                              <Route path="/resetPassword/" element={<ResetPasswordScreen/>}/>
+                              <Route path="/requestPassword/" element={<RequestPasswordScreen/>}/>
+                              <Route path="/home/" element={<HomeWrapper/>} />
+                              <Route path="/editMap/:id" element={<EditMapWrapper/>} />
+                              <Route path="/post/:id" element={<PostScreen/>} />
+                              <Route path="/myMaps/" element={<MyMapsWrapper/>}/>
+                              <Route path="/myPosts/" element={<MyPostsScreen/>}/>
+                              <Route path="/editPost/" element={<PostEditor/>} />
+                              <Route path="/profile/" element={<ProfileScreen/>} />
+                              {/* <Route path="/login/" exact component={LoginScreen} />
+                              <Route path="/register/" exact component={RegisterScreen} />
+                              <Route path="/playlist/:id" exact component={WorkspaceScreen} /> */}
+                  </Routes>
+            </div>
+          </GlobalPostContextProvider>
         </GlobalMapContextProvider>
+        
       </AuthContextProvider>
     </BrowserRouter>
   );

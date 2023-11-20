@@ -40,11 +40,18 @@ export const registerUser = (email, password, passwordVerify, userName) => {
         userName,
     })
 }
+export const resetPassword = (newPassword, confirmPassword) => {
+    return api.post('/resetPassword/', {
+        newPassword : newPassword,
+        confirmPassword : confirmPassword
+    })
+}
 const apis = {
     getLoggedIn,
     registerUser,
     loginUser,
-    logoutUser
+    logoutUser,
+    resetPassword
 }
 
 export default apis

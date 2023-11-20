@@ -71,7 +71,7 @@ function RegisterScreen(props) {
           <div>
             <input
               placeholder="password"
-              type="text"
+              type="password"
               id="password"
               name="password"
               required
@@ -80,7 +80,7 @@ function RegisterScreen(props) {
           <div>
             <input
               placeholder="confirm password"
-              type="text"
+              type="password"
               id="confirmPassword"
               name="confirmPassword"
               required
@@ -94,7 +94,7 @@ function RegisterScreen(props) {
           ) : null}
           <div className="authFooter">
             <div className="authFooterContent">
-              <button className="authAltButton" onClick={() => redirectTo('/')}>Login</button>
+              <button className="authAltButton" onClick={() => redirectTo('/')}>Back</button>
               <button type="submit">Register</button>
             </div>
             <button className="authTopButton" onClick={() => redirectTo('/home')}>Continue as guest</button>
