@@ -90,7 +90,7 @@ function App() {
                               <Route path="/resetPassword/" element={<ResetPasswordScreen/>}/>
                               <Route path="/requestPassword/" element={<RequestPasswordScreen/>}/>
                               <Route path="/home/" element={<HomeWrapper/>} />
-                              <Route path="/editMap/" element={<EditMapWrapper/>} />
+                              <Route path="/editMap/:id" element={<EditMapWrapper/>} />
                               <Route path="/post/:id" element={<PostScreen/>} />
                               <Route path="/myMaps/" element={<MyMapsWrapper/>}/>
                               <Route path="/myPosts/" element={<MyPostsScreen/>}/>
