@@ -1,25 +1,3 @@
-#homeWrapper{
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  width: 100%;
-}
-
-.functionsWrapper{
-  width: 70vw;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 1rem 0 1rem 0;
-  padding-left: 5vw;
-}
-
-.functionsWrapper button,
-.functionsWrapper div
-{
-  margin-right: 0.5rem;
-}
-
 #myPostsHeader{
   padding: 0.2rem 2rem 0.2rem 2rem;
   font-weight: bold;
