@@ -46,7 +46,7 @@ function LoginScreen() {
             <div>
               <input
                 placeholder="password"
-                type="text"
+                type="password"
                 id="password"
                 name="password"
                 required
