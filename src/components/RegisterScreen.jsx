@@ -94,7 +94,7 @@ function RegisterScreen(props) {
           ) : null}
           <div className="authFooter">
             <div className="authFooterContent">
-              <button className="authAltButton" onClick={() => redirectTo('/')}>Login</button>
+              <button className="authAltButton" onClick={() => redirectTo('/')}>Back</button>
               <button type="submit">Register</button>
             </div>
             <button className="authTopButton" onClick={() => redirectTo('/home')}>Continue as guest</button>

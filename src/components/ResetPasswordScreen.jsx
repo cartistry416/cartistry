@@ -7,7 +7,8 @@ function ResetPasswordScreen() {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    console.log("submit");
+    e.preventDefault()
+    await auth.resetPassword(e.target[0].value, e.target[1].value)
   };
 
   const redirectTo = (path) => {
@@ -18,16 +19,7 @@ function ResetPasswordScreen() {
     <div className="authScreenWrapper">
       <span className="authScreenLogotype">Cartistry</span>
       <div className="authWrapper">
-        <form>
-          <div>
-            <input
-              placeholder="old password"
-              type="password"
-              id="oldPassword"
-              name="oldPassword"
-              required
-            />
-          </div>
+        <form onSubmit={handleSubmit}>
           <div>
             <input
               placeholder="new password"
@@ -49,7 +41,7 @@ function ResetPasswordScreen() {
           <div className="authFooter">
             <div className="authFooterContent">
               <button className="authAltButton" onClick={() => redirectTo('/home')}>Cancel</button>
-              <button type="submit" onClick={handleSubmit}>Reset</button>
+              <button type="submit">Reset</button>
             </div>
           </div>
         </form>
