@@ -101,14 +101,9 @@ function App() {
                             <Route path="/register/" exact component={RegisterScreen} />
                             <Route path="/playlist/:id" exact component={WorkspaceScreen} /> */}
                 </Routes>
-                <AlertModal/>
-                <ConfirmPublishModal/>
-                <ConfirmDeleteModal/>
-                <SuccessfulLoginModal/>
           </div>
         </GlobalMapContextProvider>
       </AuthContextProvider>
-      
     </BrowserRouter>
   );
 }

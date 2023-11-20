@@ -78,7 +78,9 @@ function GlobalMapContextProvider(props) {
                 })
             }
             
-            case GlobalMapActionType.HIDE_MODALS: {}
+            case GlobalMapActionType.HIDE_MODALS: {
+              return
+            }
 
             case GlobalMapActionType.LOAD_MAP: {
                 return setMap({
