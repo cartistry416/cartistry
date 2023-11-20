@@ -17,6 +17,14 @@ export const GlobalPostActionType = {
     HIDE_MODALS: "HIDE_MODALS",
 }
 
+const CurrentModal = {
+  NONE : "NONE",
+  ERROR: "ERROR"
+  // DELETE_LIST : "DELETE_LIST",
+  // EDIT_SONG : "EDIT_SONG",
+  // REMOVE_SONG : "REMOVE_SONG"
+}
+
 function GlobalPostContextProvider(props) {
     const [post, setPost] = useState({
         currentModal : CurrentModal.NONE,
@@ -35,7 +43,7 @@ function GlobalPostContextProvider(props) {
         const { type, payload } = action;
         switch (type) {
             case GlobalPostActionType.DELETE_COMMENT: {
-                const updatedCurrentPost = {...currentPost}
+                const updatedCurrentPost = {...post.currentPost}
                 updatedCurrentPost.comments.splice(payload.index, 1)
                 return setPost({
                     ...post,
@@ -43,14 +51,14 @@ function GlobalPostContextProvider(props) {
                 })
             }
             case GlobalPostActionType.DELETE_POST: {
-                const updatedPostCardsInfo = postCardsInfo.filter(card => card._id !== payload.id)
+                const updatedPostCardsInfo = post.postCardsInfo.filter(card => card._id !== payload.id)
                 return setPost({
                     ...post,
                     postCardsInfo: updatedPostCardsInfo
                 })
             }
             case GlobalPostActionType.EDIT_COMMENT: {
-                const updatedCurrentPost = {...currentPost}
+                const updatedCurrentPost = {...post.currentPost}
                 updatedCurrentPost.comments[payload.index] = payload.comment
                 return setPost({
                     ...post,
@@ -64,7 +72,7 @@ function GlobalPostContextProvider(props) {
                 })
             }
             case GlobalPostActionType.CREATE_COMMENT: {
-                const updatedCurrentPost = {...currentPost}
+                const updatedCurrentPost = {...post.currentPost}
                 updatedCurrentPost.comments.splice(payload.index, 0, payload.comment)
                 return setPost({
                     ...post,
@@ -72,8 +80,8 @@ function GlobalPostContextProvider(props) {
                 })
             }
             case GlobalPostActionType.UPDATE_POST_LIKES: {
-                const updatedPostCardsInfo = [...postCardsInfo]
-                const updateIndex = postCardsInfo.findIndex(card => card._id === payload.id)
+                const updatedPostCardsInfo = [...post.postCardsInfo]
+                const updateIndex = post.postCardsInfo.findIndex(card => card._id === payload.id)
                 if (updateIndex !== -1) {
                     updatedPostCardsInfo[updateIndex]["alreadyLiked"] = payload.alreadyLiked
                     updatedPostCardsInfo[updateIndex].likes = payload.likes
@@ -84,6 +92,8 @@ function GlobalPostContextProvider(props) {
                 })
             }
 
+            default:
+              return
         }
     }
 
@@ -91,14 +101,14 @@ function GlobalPostContextProvider(props) {
         try {
             const response = await api.deleteComment(id, index)
             if (response.status === 200) {
-                mapReducer({
+                postReducer({
                     type: GlobalPostActionType.DELETE_COMMENT,
                     payload: { id, index }
                 })
             }
         }
         catch (error) {
-            mapReducer({
+            postReducer({
                 type: GlobalPostActionType.ERROR_MODAL,
                 payload: { hasError: true, errorMessage: error.response.data.errorMessage }
             })
@@ -113,14 +123,14 @@ function GlobalPostContextProvider(props) {
                     navigate('/home')
                     return
                 }
-                mapReducer({
+                postReducer({
                     type: GlobalPostActionType.DELETE_POST,
                     payload: { id }
                 })
             }
         }
         catch (error) {
-            mapReducer({
+            postReducer({
                 type: GlobalPostActionType.ERROR_MODAL,
                 payload: { hasError: true, errorMessage: error.response.data.errorMessage }
             })
@@ -131,14 +141,14 @@ function GlobalPostContextProvider(props) {
         try {
             const response = await api.editComment(id, comment, index)
             if (response.status === 200) {
-                mapReducer({
+                postReducer({
                     type: GlobalPostActionType.EDIT_COMMENT,
                     payload: { id, comment, index }
                 })
             }
         }
         catch (error) {
-            mapReducer({
+            postReducer({
                 type: GlobalPostActionType.ERROR_MODAL,
                 payload: { hasError: true, errorMessage: error.response.data.errorMessage }
             })
@@ -150,14 +160,14 @@ function GlobalPostContextProvider(props) {
         try {
             const response = await api.editPost(id, title, textContent)
             if (response.status === 200) {
-                mapReducer({
+                postReducer({
                     type: GlobalPostActionType.LOAD_POST,
                     payload: {post: response.data.post}
                 })
             }
         }
         catch (error) {
-            mapReducer({
+            postReducer({
                 type: GlobalPostActionType.ERROR_MODAL,
                 payload: { hasError: true, errorMessage: error.response.data.errorMessage }
             })
@@ -170,14 +180,14 @@ function GlobalPostContextProvider(props) {
         try {
             const response = await api.getPostData(id)
             if (response.status === 200) {
-                mapReducer({
+                postReducer({
                     type: GlobalPostActionType.LOAD_POST,
                     payload: { post: response.data.post }
                 })
             }
         }
         catch (error) {
-            mapReducer({
+            postReducer({
                 type: GlobalPostActionType.ERROR_MODAL,
                 payload: { hasError: true, errorMessage: error.response.data.errorMessage }
             })
@@ -201,15 +211,15 @@ function GlobalPostContextProvider(props) {
             }
 
             if (response.status === 200) {
-                mapReducer({
+                postReducer({
                     type: GlobalPostActionType.LOAD_POST_CARDS,
                     payload: { postCards: response.data.posts }
                 }) 
             }
 
         }
-        catch (err) {
-            mapReducer({
+        catch (error) {
+            postReducer({
                 type: GlobalPostActionType.ERROR_MODAL,
                 payload: { hasError: true, errorMessage: error.response.data.errorMessage }
             })
@@ -220,14 +230,14 @@ function GlobalPostContextProvider(props) {
         try {
             const response = await api.searchPostsByTags(tags, limit)
             if (response.status === 200) {
-                mapReducer({
+                postReducer({
                     type: GlobalPostActionType.LOAD_POST_CARDS,
                     payload: { postCards: response.data.posts }
                 }) 
             }
         }
-        catch (err) {
-            mapReducer({
+        catch (error) {
+            postReducer({
                 type: GlobalPostActionType.ERROR_MODAL,
                 payload: { hasError: true, errorMessage: error.response.data.errorMessage }
             })
@@ -239,14 +249,14 @@ function GlobalPostContextProvider(props) {
         try {
             const response = await api.searchPostsByTitle(title, limit)
             if (response.status === 200) {
-                mapReducer({
+                postReducer({
                     type: GlobalPostActionType.LOAD_POST_CARDS,
                     payload: { postCards: response.data.posts }
                 }) 
             }
         }
-        catch (err) {
-            mapReducer({
+        catch (error) {
+            postReducer({
                 type: GlobalPostActionType.ERROR_MODAL,
                 payload: { hasError: true, errorMessage: error.response.data.errorMessage }
             })
@@ -268,8 +278,8 @@ function GlobalPostContextProvider(props) {
                 navigate(`/post/${response.data.postId}`)
             }
         }
-        catch (err) {
-            mapReducer({
+        catch (error) {
+            postReducer({
                 type: GlobalPostActionType.ERROR_MODAL,
                 payload: { hasError: true, errorMessage: error.response.data.errorMessage }
             })  
@@ -280,14 +290,14 @@ function GlobalPostContextProvider(props) {
         try {
             const response = await api.commentOnPost(id,comment)
             if (response.status === 200) {
-                mapReducer({
+                postReducer({
                     type: GlobalPostActionType.CREATE_COMMENT,
                     payload: {comment: response.data.comment, index: response.data.index, id}
                 })
             }
         }
-        catch (err) {
-            mapReducer({
+        catch (error) {
+            postReducer({
                 type: GlobalPostActionType.ERROR_MODAL,
                 payload: { hasError: true, errorMessage: error.response.data.errorMessage }
             })
@@ -298,18 +308,27 @@ function GlobalPostContextProvider(props) {
         try {
             const response = await api.updatePostLikes(id)
             if (response.status === 200) {
-                mapReducer({
+                postReducer({
                     type: GlobalPostActionType.UPDATE_POST_LIKES,
                     payload: { id, alreadyLiked: response.data.alreadyLiked, likes: response.data.likes }
                 })
             }
         }
-        catch (err) {
-            mapReducer({
+        catch (error) {
+            postReducer({
                 type: GlobalPostActionType.ERROR_MODAL,
                 payload: { hasError: true, errorMessage: error.response.data.errorMessage }
             })
         }
     }
 
+    return (
+      <GlobalPostContext.Provider value={{post}}>
+          {props.children}
+      </GlobalPostContext.Provider>
+  )
+
 }
+
+export default GlobalPostContext ;
+export { GlobalPostContextProvider };
