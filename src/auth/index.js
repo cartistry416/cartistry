@@ -2,8 +2,9 @@
 import React, { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 // import { useHistory } from 'react-router-dom'
-import api from "./auth-request-api";
 
+import api from './auth-request-api'
+import SuccessfulLoginLogoutModal from "../components/modals/SuccessfulLoginLogoutModal";
 export const AuthContext = createContext();
 
 // THESE ARE ALL THE TYPES OF UPDATES TO OUR AUTH STATE THAT CAN BE PROCESSED
@@ -16,30 +17,77 @@ export const AuthActionType = {
 };
 
 function AuthContextProvider(props) {
-  const [auth, setAuth] = useState({
-    user: null,
-    loggedIn: false,
-    guest: false,
-    showLoggedInModal: false,
-  });
-  const navigate = useNavigate();
+    const navigate = useNavigate();
+    const [auth, setAuth] = useState({
+        user: null,
+        loggedIn: false,
+        guest: false,
+        showLoginLogoutModal: false,
+        modalMessage: '',
+    });
+    useEffect(() => {
+        if (auth.showLoginLogoutModal) {
+            const timer = setTimeout(() => {
+                setAuth({ ...auth, showLoginLogoutModal: false });
+            }, 2000);
+            return () => clearTimeout(timer); // Clean up the timer
+        }
+    }, [auth.showLoginLogoutModal]);
+    
+    // const history = useHistory();
 
-  // const history = useHistory();
+    // useEffect(() => {
+    //     auth.getLoggedIn();
+    // }, []);
 
-  // useEffect(() => {
-  //     auth.getLoggedIn();
-  // }, []);
+    const authReducer = (action) => {
+        const { type, payload } = action;
+        switch (type) {
+            case AuthActionType.GET_LOGGED_IN: {
+                return setAuth({
+                    user: payload.user,
+                    loggedIn: payload.loggedIn,
+                    guest: false,
+                });
+            }
+            case AuthActionType.LOGIN_USER: {
+                return setAuth({
+                    user: payload.user,
+                    loggedIn: true,
+                    guest: false,
+                    showLoginLogoutModal: true,
+                    modalMessage: 'You are now logged in. You will soon be redirected',
+                })
+            }
+            case AuthActionType.LOGOUT_USER: {
+                return setAuth({
+                    user: null,
+                    loggedIn: false,
+                    guest: false,
+                    showLoginLogoutModal: true,
+                    modalMessage: 'You are now logged out. You will soon be redirected',
+                })
+            }
+            case AuthActionType.REGISTER_USER: {
+                return setAuth({
+                    user: payload.user,
+                    loggedIn: false,
+                    guest: false,
+                })
+            }
+            case AuthActionType.LOGIN_GUEST: {
+                return setAuth({
+                    user: null,
+                    loggedIn: false,
+                    guest: true,
+                })
+            }
 
-  const authReducer = (action) => {
-    const { type, payload } = action;
-    switch (type) {
-      case AuthActionType.GET_LOGGED_IN: {
-        return setAuth({
-          user: payload.user,
-          loggedIn: payload.loggedIn,
-          guest: false,
-        });
-      }
+            default:
+                return auth;
+        }
+    }
+
       case AuthActionType.LOGIN_USER: {
         return setAuth({
           user: payload.user,
@@ -208,15 +256,16 @@ function AuthContextProvider(props) {
     }
   };
 
-  return (
-    <AuthContext.Provider
-      value={{
-        auth,
-      }}
-    >
-      {props.children}
-    </AuthContext.Provider>
-  );
+
+
+    return (
+        <AuthContext.Provider value={{
+            auth
+        }}>
+            {auth.showLoginLogoutModal && <SuccessfulLoginLogoutModal message={auth.modalMessage} />}
+            {props.children}
+        </AuthContext.Provider>
+    );
 }
 
 export default AuthContext;
