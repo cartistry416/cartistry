@@ -2,7 +2,7 @@
 import React, { createContext, useEffect, useState } from "react";
 // import { useHistory } from 'react-router-dom'
 import api from './auth-request-api'
-
+import SuccessfulLoginLogoutModal from "../components/modals/SuccessfulLoginLogoutModal";
 export const AuthContext = createContext();
 
 // THESE ARE ALL THE TYPES OF UPDATES TO OUR AUTH STATE THAT CAN BE PROCESSED
@@ -19,8 +19,18 @@ function AuthContextProvider(props) {
         user: null,
         loggedIn: false,
         guest: false,
-        showLoggedInModal: false,
+        showLoginLogoutModal: false,
+        modalMessage: '',
     });
+    useEffect(() => {
+        if (auth.showLoginLogoutModal) {
+            const timer = setTimeout(() => {
+                setAuth({ ...auth, showLoginLogoutModal: false });
+            }, 2000);
+            return () => clearTimeout(timer); // Clean up the timer
+        }
+    }, [auth.showLoginLogoutModal]);
+    
     // const history = useHistory();
 
     // useEffect(() => {
@@ -41,7 +51,9 @@ function AuthContextProvider(props) {
                 return setAuth({
                     user: payload.user,
                     loggedIn: true,
-                    guest: false
+                    guest: false,
+                    showLoginLogoutModal: true,
+                    modalMessage: 'You are now logged in. You will soon be redirected',
                 })
             }
             case AuthActionType.LOGOUT_USER: {
@@ -49,6 +61,8 @@ function AuthContextProvider(props) {
                     user: null,
                     loggedIn: false,
                     guest: false,
+                    showLoginLogoutModal: true,
+                    modalMessage: 'You are now logged out. You will soon be redirected',
                 })
             }
             case AuthActionType.REGISTER_USER: {
@@ -194,6 +208,7 @@ function AuthContextProvider(props) {
         <AuthContext.Provider value={{
             auth
         }}>
+            {auth.showLoginLogoutModal && <SuccessfulLoginLogoutModal message={auth.modalMessage} />}
             {props.children}
         </AuthContext.Provider>
     );
