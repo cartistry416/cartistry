@@ -1,7 +1,9 @@
 import { useContext, useState } from 'react'
 import GlobalMapContext from '../../contexts/map';
 
-function ImportModal({onClose}) {
+import JSZip from 'jszip';
+
+function ImportModal({onClose, templateType}) {
   const { map } = useContext(GlobalMapContext);
   const [selectedFile, setSelectedFile] = useState(null)
 
@@ -9,12 +11,26 @@ function ImportModal({onClose}) {
     setSelectedFile(event.target.files[0])
   }
 
-  const handleImport = () => {
+  const handleImport = async () => {
     if (selectedFile) {
-      const formData = new FormData();
-      formData.append('file', selectedFile);
-      console.log('File to be sent: ', selectedFile);
-      
+      //console.log('File to be sent: ', selectedFile);
+      const ext = selectedFile.name.split('.').pop().toLowerCase()
+
+      let blob = selectedFile;
+      if (ext === "json" || ext === "kml") {
+  
+        const zip = new JSZip()
+        zip.file(file.name, file)
+  
+        blob = await zip.generateAsync({type: 'blob'})
+      }
+      else if (ext !== "zip") {
+        console.error("Unsupported file extension: " + ext)
+        return
+      }
+  
+      const res = await map.uploadMap(selectedFile.name, ext, templateType, blob)
+      console.log("Success after upload: " + res)
       // TODO: upload map logic
       onClose();
     } else {
