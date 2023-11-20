@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import { map } from 'lodash'
+import GlobalMapContext from '../contexts/map'
 import React, { useEffect, useState, useContext } from 'react'
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet'
 function getNameFromConvertedShapeFile(properties) {
