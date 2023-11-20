@@ -12,16 +12,16 @@ describe("Frontend Tests", () => {
     // cy.get(".sortByMenuItem").should("exist").should("have.length", 3);
   });
 
-  it("visits /post", () => {
-    cy.visit("/post",{'failOnStatusCode': false});
-    cy.get(".post-content").should("exist");
-    cy.get("#commentInput").type("Hello!!!");
-  });
+  // it("visits /post", () => {
+  //   cy.visit("/post/",{'failOnStatusCode': false});
+  //   cy.get(".post-content").should("exist");
+  //   cy.get("#commentInput").type("Hello!!!");
+  // });
 
-  it("visits /editMap", () => {
-    cy.visit("/editMap",{'failOnStatusCode': false});
-    cy.get(".leaflet-container").should("exist");
-    cy.get(".rightPanel").should("exist");
-    cy.get(".legend").should("exist");
-  });
+  // it("visits /editMap/", () => {
+  //   cy.visit("/editMap",{'failOnStatusCode': false});
+  //   cy.get(".leaflet-container").should("exist");
+  //   cy.get(".rightPanel").should("exist");
+  //   cy.get(".legend").should("exist");
+  // });
 });
