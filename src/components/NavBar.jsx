@@ -30,7 +30,6 @@ function NavBar() {
   };
 
   const logoutUser = () => {
-    // console.log("logoutUser");
     auth.logoutUser();
     navigate("/");
   };
@@ -82,7 +81,10 @@ function NavBar() {
                   >
                     <span>Login</span>
                   </div>
-                  <div className="nav-dropdown-option" onClick={() => redirectTo('/register')}>
+                  <div
+                    className="nav-dropdown-option"
+                    onClick={() => redirectTo("/register")}
+                  >
                     <span>Register</span>
                   </div>
                 </div>

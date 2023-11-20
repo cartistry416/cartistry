@@ -7,6 +7,7 @@
     padding: 1rem;
     border-radius: 1rem;
     margin: 0 0 1rem 0;
+    cursor: pointer;
 }
 
 .postCardImagePreview{
@@ -80,4 +81,9 @@
 .postCardButton span{
     font-size: 1rem;
     padding-right: 0.2rem;
+}
+
+.liked{
+    background-color: var(--background-color);
+    color: var(--main-text-color)
 }

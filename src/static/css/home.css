@@ -115,7 +115,13 @@
 }
 
 .dropdownOption{
-    padding: 0.5rem;
+    padding: 0.5rem 0;
     cursor: pointer;
+    width: 100%;
     font-weight: 600;
+}
+
+.mapOnlySelected{
+    background-color: var(--background-color);
+    color: var(--main-text-color)
 }

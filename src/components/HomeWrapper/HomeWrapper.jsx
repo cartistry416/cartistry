@@ -1,10 +1,13 @@
 import "../../static/css/home.css";
-import PostCard from "../PostCard";
+import PostCard from "../Posts/PostCard";
 import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router";
 
 function HomeWrapper() {
   const [showDropdown, setShowDropdown] = useState(false);
+  const [mapSelected, setMapSelected] = useState("");
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.addEventListener("mousedown", handleOutsideClick);
@@ -20,15 +23,31 @@ function HomeWrapper() {
     }
   };
 
+  const toggleMapsOnly = () => {
+    if (mapSelected === "") {
+      setMapSelected("mapOnlySelected");
+    } else {
+      setMapSelected("");
+    }
+  };
+
+  const redirectTo = (path) => {
+    navigate(path);
+  };
+
   return (
     <div id="homeWrapper">
       <div className="functionsWrapper">
-        <button id="createPostButton">Create Post</button>
+        <button id="createPostButton" onClick={() => redirectTo("/editpost")}>
+          Create Post
+        </button>
         <div className="searchBarWrapper">
           <span className="searchIcon material-icons">search</span>
           <input id="searchInput" type="text" placeholder="Search..."></input>
         </div>
-        <button>Maps Only</button>
+        <button className={mapSelected} onClick={toggleMapsOnly}>
+          Maps Only
+        </button>
         <div ref={dropdownRef}>
           <div className="sortBy">
             <button
