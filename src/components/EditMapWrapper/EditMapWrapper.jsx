@@ -6,8 +6,10 @@ import Legend from './Legend';
 import GeoJSONMap from "../GeoJSONMap";
 
 import { useParams } from "react-router";
+import { useContext, useEffect } from "react";
+import GlobalMapContext from "../../contexts/map";
 
-const EditMapWrapper = () =>{
+const EditMapWrapper = () => {
     const {id} = useParams()
 
     return (

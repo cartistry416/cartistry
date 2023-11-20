@@ -4,11 +4,13 @@ import { formatDate, getImage } from "../utils/utils";
 import GlobalMapContext from "../contexts/map";
 import ConfirmDeleteModal from "./modals/ConfirmDeleteModal";
 import AuthContext from "../auth";
+import { useNavigate } from "react-router";
 
 function MapCard(props) {
   const { auth } = useContext(AuthContext)
   const { map } = useContext(GlobalMapContext)
   const { index, mapId, title, updatedAt, thumbnail } = props
+  const navigate = useNavigate();
   const [showOptions, setShowOptions] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [isEditing, setIsEditing] = useState(false);
@@ -29,6 +31,10 @@ function MapCard(props) {
       setShowOptions(false);
     }
   };
+
+  const redirectToEdit = () => {
+    navigate(`/editMap/${mapId}`)
+  }
 
   const handleRename = () => {
     setShowOptions(false);
@@ -72,9 +78,9 @@ function MapCard(props) {
 
   return (
     <div className="mapCardWrapper">
-      <img src={imageUrl} alt='map' className="mapCardImagePreview"></img>
+      <img src={imageUrl} alt='map' className="mapCardImagePreview" onClick={redirectToEdit}></img>
       <div className="mapCardDescription">
-      <div className="mapCardInfo">
+        <div className="mapCardInfo">
           {isEditing ? (
             <input
               className="mapCardTitleInput"
@@ -84,7 +90,7 @@ function MapCard(props) {
               autoFocus
             />
           ) : (
-            <div className="mapCardTitle">{title}</div>
+            <div className="mapCardTitle" onClick={redirectToEdit}>{title}</div>
           )}
           <div className="mapCardDate">{'Opened '} {formatDate(updatedAt)}</div>
         </div>
