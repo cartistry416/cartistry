@@ -119,7 +119,7 @@ function MyMapsWrapper() {
         </div>
         <div className="mapListWrapper">
           {map.mapCardsInfo.map((map, index) => (
-            <MapCard key={index} title={map.title} updatedAt={map.updatedAt} thumbnail={map.thumbnail} />
+            <MapCard key={index} index={index} mapId={map._id} title={map.title} updatedAt={map.updatedAt} thumbnail={map.thumbnail} />
           ))}
         </div>
         { (showUploadModal !== "") && (
