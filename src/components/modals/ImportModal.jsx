@@ -20,7 +20,7 @@ function ImportModal({onClose, templateType}) {
       if (ext === "json" || ext === "kml") {
   
         const zip = new JSZip()
-        zip.file(file.name, file)
+        zip.file(selectedFile.name, selectedFile)
   
         blob = await zip.generateAsync({type: 'blob'})
       }
