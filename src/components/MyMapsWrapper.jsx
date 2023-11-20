@@ -5,7 +5,7 @@ import { GlobalMapContext } from "../contexts/map";
 import ImportModal from "./modals/ImportModal";
 
 function MyMapsWrapper() {
-  const { mapCardsInfo } = useContext(GlobalMapContext);
+  const { map } = useContext(GlobalMapContext);
   const [showUploadModal, setShowUploadModal] = useState("");
   const [showCreateDropdown, setCreateDropdown] = useState(false);
   const [showSortDropdown, setSortDropdown] = useState(false);
