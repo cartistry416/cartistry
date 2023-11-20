@@ -56,6 +56,7 @@ function GlobalMapContextProvider(props) {
                 return setMap({
                   ...map,
                   mapCardsInfo: [
+                    // should this be ...map
                     ...map.mapCardsInfo.filter((mapCard) => mapCard._id !== payload.mapId)
                   ]
                 })
@@ -78,7 +79,9 @@ function GlobalMapContextProvider(props) {
                 })
             }
             
-            case GlobalMapActionType.HIDE_MODALS: {}
+            case GlobalMapActionType.HIDE_MODALS: {
+              return
+            }
 
             case GlobalMapActionType.LOAD_MAP: {
                 return setMap({
@@ -99,6 +102,7 @@ function GlobalMapContextProvider(props) {
                 return setMap({
                   ...map,
                   mapCardsInfo: [
+                    // should this be ...map
                     ...map.mapCardsInfo.map((mapCard) => {
                       if (mapCard._id === payload.mapId) {
                         return {

@@ -1,19 +1,39 @@
 import CommentThread from './CommentThread'
 import Post from './Post'
 import "../../static/css/post.css";
+import { useParams } from 'react-router-dom';
+import { useContext, useEffect, useState} from 'react';
+import GlobalPostContext from '../../contexts/post';
 
 function PostScreen() {
-  const mainComment = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Diam vulputate ut pharetra sit amet. Sit amet luctus venenatis lectus magna fringilla. Ac placerat vestibulum lectus mauris ultrices eros in cursus turpis.";
-  const replies = [
-    "Auctor urna nunc id cursus metus aliquam eleifend mi. Eleifend quam adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus. Habitasse platea dictumst vestibulum rhoncus. Leo a diam sollicitudin tempor.",
-    "Mauris rhoncus aenean vel elit. Enim ut sem viverra aliquet eget sit. Varius vel pharetra vel turpis nunc eget lorem dolor. Pretium viverra suspendisse potenti nullam."
-  ];
+
+  const {id} = useParams()
+  const {post} = useContext(GlobalPostContext)
+  const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    post.loadPost(id).then(() => {
+      setLoaded(true)
+    })
+  }, [])
+
+  useEffect(() => {
+
+  }, [post.currentPost])
+
+
+  let comments = <div> </div>
+  if (post.currentPost && post.currentPost.comments.length > 0) {
+    console.log(post.currentPost.comments)
+    comments = post.currentPost.comments.map((comment, index) => <CommentThread comment={comment} key={index} replies={[]}> </CommentThread>)
+  }
+
+  const replies = [];
   return (
     <div className='post-wrapper'>
       <div className='post-content-wrapper'>
-        <Post />
-        <CommentThread comment={mainComment} replies={replies} />
-        <CommentThread comment={mainComment} replies={replies} />
+        <Post postId={id}/>
+        {comments}
       </div>
       <div className='post-image-wrapper'>
         <div className='post-img' />
