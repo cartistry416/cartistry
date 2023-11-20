@@ -1,11 +1,27 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import "../static/css/mapCard.css";
 import { getImage } from "../utils/utils";
+import { drop } from "lodash";
 
 function MapCard(props) {
   const [showOptions, setShowOptions] = useState(false)
+  const dropdownRef = useRef(null)
   const { title, updatedAt, thumbnail } = props
   const imageUrl = thumbnail ? getImage(thumbnail.imageData) : '/'
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
+
+  const handleOutsideClick = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setShowOptions(false);
+    }
+  };
 
   return (
     <div className="mapCardWrapper">
@@ -15,7 +31,7 @@ function MapCard(props) {
           <div className="mapCardTitle">{title}</div>
           <div className="mapCardDate">{'Opened '} {updatedAt}</div>
         </div>
-        <div className="mapCardMore">
+        <div className="mapCardMore" ref={dropdownRef}>
           {showOptions && (
             <div className="mapCardMenu">
               <div className="mapCardMenuItem">

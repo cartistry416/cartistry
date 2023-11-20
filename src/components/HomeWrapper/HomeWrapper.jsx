@@ -1,6 +1,25 @@
 import "../../static/css/home.css";
 import PostCard from "../PostCard";
+import { useEffect, useState, useRef } from "react";
+
 function HomeWrapper() {
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
+
+  const handleOutsideClick = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setShowDropdown(false);
+    }
+  };
+
   return (
     <div id="homeWrapper">
       <div className="functionsWrapper">
@@ -10,14 +29,26 @@ function HomeWrapper() {
           <input id="searchInput" type="text" placeholder="Search..."></input>
         </div>
         <button>Maps Only</button>
-        <div>
-          <button>
-            Sort By <span className="material-icons">expand_more</span>
-          </button>
-          <div className="sortByMenu show">
-            <button className="sortByMenuItem">Newest</button>
-            <button className="sortByMenuItem">Oldest</button>
-            <button className="sortByMenuItem">Liked</button>
+        <div ref={dropdownRef}>
+          <div className="sortBy">
+            <button
+              className="sortByButton"
+              onClick={() => setShowDropdown(!showDropdown)}
+            >
+              Sort By{" "}
+              {showDropdown ? (
+                <span className="material-icons">expand_less</span>
+              ) : (
+                <span className="material-icons">expand_more</span>
+              )}
+            </button>
+            {showDropdown && (
+              <div className="sortByMenu">
+                <div className="dropdownOption">Newest</div>
+                <div className="dropdownOption">Oldest</div>
+                <div className="dropdownOption">Liked</div>
+              </div>
+            )}
           </div>
         </div>
       </div>
