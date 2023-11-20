@@ -48,7 +48,13 @@ function getImage({ imageData }) {
   return  imageUrl;
 }
 
-export {generateDiff, unzipBlobToJSON, jsonToZip, getImage}
+function formatDate(dateStr) {
+  const options = { month: 'long', day: 'numeric' };
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('en-US', options);
+}
+
+export {generateDiff, unzipBlobToJSON, jsonToZip, getImage, formatDate}
 
 // // TODO MOVE THESE TO APPROPRIATE PLACES LATER
 
