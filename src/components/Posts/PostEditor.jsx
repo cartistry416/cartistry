@@ -5,11 +5,14 @@ import "../../static/css/post.css";
 import { useNavigate, useParams } from 'react-router';
 import GlobalPostContext from '../../contexts/post';
 import { getAllTags } from '../../utils/utils';
+import AuthContext from '../../auth';
+import ForbiddenMessage from '../modals/ForbiddenMessage';
 
 
 const PostEditor = () => {
   const navigate = useNavigate();
-  const {post} = useContext(GlobalPostContext)
+  const { auth } = useContext(AuthContext)
+  const { post } = useContext(GlobalPostContext)
   const {mapMetadataId} = useParams()
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
@@ -96,61 +99,65 @@ const PostEditor = () => {
 
   return (
     <div className='post-editor-container'>
-      {loaded ? (
-        <>
-          <div className="create-post">
-            <input 
-              type="text" 
-              value={title} 
-              onChange={handleTitleChange} 
-              placeholder="Title here..." 
-              className="title-input"
-            />
-            <ReactQuill value={content} onChange={handleContentChange} />
-            <div className='post-add-ons'>
-              <div className='post-attachments'>
-                <div className="attachment-item">
+      {(auth.loggedIn && auth.user.userId === post.currentPost.owner._id) ? (
+        loaded ? (
+          <>
+            <div className="create-post">
+              <input 
+                type="text" 
+                value={title} 
+                onChange={handleTitleChange} 
+                placeholder="Title here..." 
+                className="title-input"
+              />
+              <ReactQuill value={content} onChange={handleContentChange} />
+              <div className='post-add-ons'>
+                <div className='post-attachments'>
+                  <div className="attachment-item">
+                  </div>
+                  {/* Can someone change the way the attachment cards look */}
+                  {
+                    attachments.map( (file, index) => <div className="attachment-add" key={index}> {file.name} </div>)
+                  }
+                  <div className="attachment-add">
+                    {/* <span className="material-icons attachment-add-icon">add</span> */}
+                    {/* Can someone change the input button back to the plus icon */}
+                    <input type="file" accept='*' onChange={handleAttachmentAdd} multiple={true}/>
+                  </div>
                 </div>
-                {/* Can someone change the way the attachment cards look */}
-                {
-                  attachments.map( (file, index) => <div className="attachment-add" key={index}> {file.name} </div>)
-                }
-                <div className="attachment-add">
-                  {/* <span className="material-icons attachment-add-icon">add</span> */}
-                  {/* Can someone change the input button back to the plus icon */}
-                  <input type="file" accept='*' onChange={handleAttachmentAdd} multiple={true}/>
+                <div className="post-tags">
+                  <div className='tags-list'>
+                    {postTags.map((tag, index) => (
+                      <span key={index} className="tag" onClick={() => removeTag(tag)}>
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className='post-button'>
+                  <button onClick={handleSubmit}>Post</button>
                 </div>
               </div>
-              <div className="post-tags">
-                <div className='tags-list'>
-                  {postTags.map((tag, index) => (
-                    <span key={index} className="tag" onClick={() => removeTag(tag)}>
-                      {tag}
+            </div>
+            <div className='tags-container'>
+              <div id="tag-title">Tags</div>
+              <div className='avail-tags-list'>
+                <input type="text" placeholder="Search Tag" />
+                <div className="avail-tags">
+                  {availTags.map((tag, index) => (
+                    <span key={index} className="avail-tag" onClick={() => addTag(tag)}>
+                      {tag} <span className="material-icons">add</span>
                     </span>
                   ))}
                 </div>
               </div>
-              <div className='post-button'>
-                <button onClick={handleSubmit}>Post</button>
-              </div>
             </div>
-          </div>
-          <div className='tags-container'>
-            <div id="tag-title">Tags</div>
-            <div className='avail-tags-list'>
-              <input type="text" placeholder="Search Tag" />
-              <div className="avail-tags">
-                {availTags.map((tag, index) => (
-                  <span key={index} className="avail-tag" onClick={() => addTag(tag)}>
-                    {tag} <span className="material-icons">add</span>
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </>
+          </>
+        ) : (
+          <div>Loading...</div>
+        )
       ) : (
-        <div>Loading...</div>
+        <ForbiddenMessage />
       )}
     </div>
   )

@@ -1,31 +1,41 @@
-import React, { useState, useContext, useEffect} from "react";
+import React, { useState, useContext, useRef} from "react";
 import AuthContext from "../auth";
 import { useNavigate } from "react-router";
+import AlertModal from "./modals/AlertModal";
 
 function LoginScreen() {
   const { auth } = useContext(AuthContext);
   const navigate = useNavigate();
+  const formRef = useRef();
 
   const [successfulLogin, setSuccessfulLogin] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-
+  const [showError, setShowError] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const email = e.target[0].value;
-    const password = e.target[1].value;
+    const email = e.target.email.value;
+    const password = e.target.password.value;
 
     const { success, errorMessage } = await auth.loginUser(email, password);
-    // console.log(success);
     if (success) {
-      navigate('/home'); 
+      navigate('/home')
+    } else {
+      setErrorMessage(errorMessage);
+      setShowError(true);
     }
     setSuccessfulLogin(success);
-    setErrorMessage(errorMessage);
   };
 
   const redirectTo = (path) => {
     navigate(path);
+  };
+
+  const handleReset = () => {
+    if (formRef.current) {
+      formRef.current.reset();
+    }
+    setShowError(false);
   };
 
   if (auth.getLoggedIn)
@@ -33,7 +43,7 @@ function LoginScreen() {
       <div className="authScreenWrapper">
         <span className="authScreenLogotype">Cartistry</span>
         <div className="authWrapper">
-          <form onSubmit={handleSubmit}>
+          <form ref={formRef} onSubmit={handleSubmit}>
             <div>
               <input
                 placeholder="email"
@@ -62,6 +72,9 @@ function LoginScreen() {
             </div>
           </form>
         </div>
+        {showError && (
+          <AlertModal errorMessage={errorMessage} onCancel={() => setShowError(false)} onReset={handleReset} />
+        )}
       </div>
     );
 }
