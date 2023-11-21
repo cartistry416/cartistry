@@ -102,3 +102,20 @@
   align-items: center;
   cursor: pointer;
 }
+
+.forbidden-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.forbidden-wrapper h3 {
+  color: var(--main-text-color);
+  font-size: 32px;
+}
+
+.forbidden-wrapper button {
+  background-color: var(--background-color);
+  margin-top: 20px;
+}
