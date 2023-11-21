@@ -19,6 +19,7 @@ function PostCard({ title, username, time, tags, likes, comments, imageUrl }) {
     console.log(e.target)
   }
 
+  // comment for commit
   return (
         <div className="postCardWrapper">
             {imageUrl && <img className="postCardImagePreview" src={imageUrl} alt="preview" />}
