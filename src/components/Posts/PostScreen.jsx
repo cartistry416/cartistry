@@ -30,10 +30,10 @@ function PostScreen() {
   }
 
   let map = <div className='post-img' />
+  let legend = <div> </div>
 
   if (post.currentPost && post.currentPost.mapMetadata !== "") {
-    console.log("we have map metadata")
-    map = <GeoJSONMap mapMetadataId={post.currentPost.mapMetadata} position={[39.74739, -105]}/>
+    map = <GeoJSONMap mapMetadataId={post.currentPost.mapMetadata} position={[39.74739, -105]}/> 
   }
 
   const replies = [];

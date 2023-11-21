@@ -55,7 +55,8 @@ const PostEditor = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    await post.createPost(title, content, attachments, postTags, mapMetadataId)
+    const id = mapMetadataId !== undefined ? mapMetadataId : ""
+    await post.createPost(title, content, attachments, postTags, id)
   }
 
   const handleAttachmentAdd = async (e) => {
