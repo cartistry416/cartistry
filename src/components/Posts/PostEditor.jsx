@@ -10,7 +10,7 @@ import AuthContext from '../../auth';
 
 const PostEditor = () => {
   const navigate = useNavigate();
-  const {post} = useContext(GlobalPostContext)
+  const {post} = useContext(GlobalPostContext) 
   const {auth} = useContext(AuthContext)
   const {mapMetadataId} = useParams()
   const [title, setTitle] = useState('')
@@ -102,6 +102,7 @@ const PostEditor = () => {
     }
   }
 
+  // something here didnt get deploy for some reason?
   return (
     <div className='post-editor-container'>
       {loaded ? (
