@@ -19,12 +19,18 @@ function getNameFromConvertedShapeFile(properties) {
 // https://github.com/CodingWith-Adam/geoJson-map-with-react-leaflet/blob/master/src/components/MyMap.jsx
 function GeoJSONMap({mapMetadataId, position}) {
     const { map } = useContext(GlobalMapContext)
-    const [loaded, setLoaded] = useState(false)
+    const [loaded, setLoaded] = useState(0)
     useEffect(() => {
-        map.loadMap(mapMetadataId).then(() => {
-            setLoaded(true)
-        })
-    },[])
+      map.loadMap(mapMetadataId).then(() => {
+        setLoaded(prev => prev + 1)
+      });
+    }, [])
+
+    useEffect(() => {
+        console.log('map updated')
+        setLoaded(prev => prev + 1)
+    }, [map.currentMapGeoJSON])
+
     const onEachFeature = (feature, layer) => {
         let name = null;
         if ('name' in feature.properties) {
@@ -47,9 +53,6 @@ function GeoJSONMap({mapMetadataId, position}) {
 
     return (
         <div>
-            {
-                !loaded && <div> Map is loading... </div>
-            }
           <MapContainer center={position} zoom={4} style={{ width: '600px', height: '400px' }}>
               <TileLayer
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

@@ -7,7 +7,7 @@ import GeoJSONMap from "../GeoJSONMap";
 
 import { useParams } from "react-router";
 
-const EditMapWrapper = () =>{
+const EditMapWrapper = () => {
     const {id} = useParams()
 
     return (
