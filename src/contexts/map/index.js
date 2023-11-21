@@ -245,7 +245,7 @@ function GlobalMapContextProvider(props) {
         }
     }
 
-    map.forkMap = async (id) => {
+    map.forkMap = async (id, index, title) => {
         try {
             const response = await api.forkMap(id)
             if (response.status === 200) {
@@ -254,7 +254,7 @@ function GlobalMapContextProvider(props) {
                     payload: {mapMetadata: response.data.mapMetadata}
                 })
 
-                navigate(`/editMap/${response.data.mapMetadata._id}`)
+                navigate(`/editMap/${response.data.mapMetadata._id}/${index}/${title}`)
             }
         }
         catch (error) {
