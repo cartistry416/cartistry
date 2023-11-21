@@ -113,7 +113,7 @@ const Toolbox = (props) => {
           <div className="mapCardTitle">{newTitle}</div>
         )}
         <div ref={dropdownRef}>
-          <span className="material-icons" onClick={toggleMenu}>
+          <span className="material-icons mapCardMore" onClick={toggleMenu}>
             more_vert
           </span>
           {showOptions && (
