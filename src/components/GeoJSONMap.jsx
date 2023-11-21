@@ -19,19 +19,18 @@ function getNameFromConvertedShapeFile(properties) {
 // https://github.com/CodingWith-Adam/geoJson-map-with-react-leaflet/blob/master/src/components/MyMap.jsx
 function GeoJSONMap({mapMetadataId, position}) {
     const { map } = useContext(GlobalMapContext)
-    const [loaded, setLoaded] = useState(false)
+    const [loaded, setLoaded] = useState(0)
     useEffect(() => {
-      const loadMapData = async () => {
-        try {
-          await map.loadmap(mapMetadataId);
-          setLoaded(true)
-        } catch (error) {
-          console.error("Failed to load map cards:", error);
-        }
-      };
-  
-      loadMapData();
-    }, [map, mapMetadataId])
+      map.loadMap(mapMetadataId).then(() => {
+        setLoaded(prev => prev + 1)
+      });
+    }, [])
+
+    useEffect(() => {
+        console.log('map updated')
+        setLoaded(prev => prev + 1)
+    }, [map.currentMapGeoJSON])
+
     const onEachFeature = (feature, layer) => {
         let name = null;
         if ('name' in feature.properties) {

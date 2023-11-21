@@ -2,17 +2,20 @@ import { useState, useContext } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import "../../static/css/post.css";
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import GlobalPostContext from '../../contexts/post';
 
 
 const PostEditor = () => {
   const navigate = useNavigate();
   const {post} = useContext(GlobalPostContext)
+  const {mapMetadataId} = useParams()
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [postTags, setPostTags] = useState(["Tag Five", "Tag Three"])
   const [availTags, setAvailTags] = useState(["Tag One", "Tag Thrity", "Tag Eighty One", "Tag Six", "Tag Two", "Tag Seventeen", "Tag Nine"])
+
+
 
 
   const [attachments, setAttachments] = useState([])
@@ -52,10 +55,7 @@ const PostEditor = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    await post.createPost(title, content, attachments, postTags)
-
-
-    // navigate('/home')
+    await post.createPost(title, content, attachments, postTags, mapMetadataId)
   }
 
   const handleAttachmentAdd = async (e) => {

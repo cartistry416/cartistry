@@ -2,7 +2,6 @@ import { createContext, useContext, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import api from './post-request-api'
 import AuthContext from '../../auth'
-import { update } from 'lodash';
 
 export const GlobalPostContext = createContext({});
 export const GlobalPostActionType = {
@@ -178,13 +177,14 @@ function GlobalPostContextProvider(props) {
     // load a specific post's details
     post.loadPost = async (id) => { 
         try {
-            const response = await api.getPostData(id)
-            if (response.status === 200) {
-                postReducer({
-                    type: GlobalPostActionType.LOAD_POST,
-                    payload: { post: response.data.post }
-                })
+            let response = await api.getPostData(id)
+            if (response.status !== 200) {
+                return 
             }
+            postReducer({
+                type: GlobalPostActionType.LOAD_POST,
+                payload: { post: response.data.post }
+            })
         }
         catch (error) {
             postReducer({
@@ -263,11 +263,14 @@ function GlobalPostContextProvider(props) {
         }
     }
 
-    post.createPost = async (title, textContent, images, tags) => {
+    post.createPost = async (title, textContent, images, tags, mapMetadataId) => {
         const formData = new FormData()
         formData.append('title', title)
         formData.append('textContent', textContent)
         formData.append('tags', tags)
+        if (mapMetadataId !== "") {
+            formData.append('mapMetadataId', mapMetadataId)
+        }
         if (images) {
             const fileExtensions = []
             for (let i=0; i<images.length; i++) {

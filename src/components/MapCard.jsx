@@ -59,7 +59,8 @@ function MapCard(props) {
   const handlePublish = (e) => {
     e.stopPropagation();
     setShowOptions(false)
-    map.publishMap(mapId, title, "", [])
+    navigate(`/editPost/${mapId}`)
+
   }
 
   const handleFork = (e) => {
