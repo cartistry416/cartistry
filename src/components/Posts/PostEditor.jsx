@@ -12,10 +12,8 @@ import ForbiddenMessage from '../modals/ForbiddenMessage';
 
 const PostEditor = () => {
   const navigate = useNavigate();
-
-  const { auth } = useContext(AuthContext)
-  const { post } = useContext(GlobalPostContext)
-
+  const {post} = useContext(GlobalPostContext) 
+  const {auth} = useContext(AuthContext)
   const {mapMetadataId} = useParams()
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
@@ -106,9 +104,10 @@ const PostEditor = () => {
     }
   }
 
+  // something here didnt get deploy for some reason?
   return (
     <div className='post-editor-container'>
-      {(auth.loggedIn && auth.user.userId === post.currentPost.owner._id) ? (
+      {(auth.loggedIn && ((post.currentPost && auth.user.userId === post.currentPost.owner._id) || !post.currentPost)) ? (
         loaded ? (
           <>
             <div className="create-post">
