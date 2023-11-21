@@ -45,6 +45,11 @@ function MapCard(props) {
 
   const handleTitleSubmit = (event) => {
     if (event.key === 'Enter') {
+      if (newTitle === title || newTitle ==="") {
+        setIsEditing(false);
+        setNewTitle(title)
+        return
+      }
       map.renameMap(mapId, newTitle, index);
       setIsEditing(false);
     }
@@ -88,7 +93,7 @@ function MapCard(props) {
 
 
   return (
-    <div className="mapCardWrapper" onClick={() => navigate(`/editMap/${mapId}/${index}/${title}`)}>
+    <div className="mapCardWrapper" onClick={() => navigate(`/editMap/${mapId}`)}>
       <img src={imageUrl} alt='map' className="mapCardImagePreview"></img>
       <div className="mapCardWrapper">
         <img src={imageUrl} alt='map' className="mapCardImagePreview"></img>

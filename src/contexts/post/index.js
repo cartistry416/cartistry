@@ -14,6 +14,7 @@ export const GlobalPostActionType = {
     CREATE_COMMENT: "CREATE_COMMENT",
     UPDATE_POST_LIKES: "UPDATE_POST_LIKES",
     HIDE_MODALS: "HIDE_MODALS",
+    EXIT_CURRENT_POST: "EXIT_CURRENT_POST"
 }
 
 const CurrentModal = {
@@ -96,6 +97,12 @@ function GlobalPostContextProvider(props) {
                     postCardsInfo: updatedPostCardsInfo
                 })
             }
+            case GlobalPostActionType.EXIT_CURRENT_POST: {
+                return setPost({
+                    ...post,
+                    currentPost: null
+                })
+            }
 
             default:
               return
@@ -126,6 +133,10 @@ function GlobalPostContextProvider(props) {
             if (response.status === 200) {
                 if (location.pathname.startsWith("/post")) {
                     navigate('/home')
+                    postReducer({
+                        type: GlobalPostActionType.EXIT_CURRENT_POST,
+                        payload: { }
+                    })
                     return
                 }
                 postReducer({
@@ -337,6 +348,13 @@ function GlobalPostContextProvider(props) {
                 payload: { hasError: true, errorMessage: error.response.data.errorMessage }
             })
         }
+    }
+
+    post.exitCurrentPost = () => {
+        postReducer({
+            type: GlobalPostActionType.EXIT_CURRENT_POST,
+            payload: {}
+        })
     }
 
     return (

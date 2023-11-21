@@ -8,12 +8,13 @@ import GlobalMapContext from "../../contexts/map";
 const Toolbox = (props) => {
   const { auth } = useContext(AuthContext);
   const { map } = useContext(GlobalMapContext);
-  const { mapId, index, title } = props;
   const [showOptions, setShowOptions] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const dropdownRef = useRef(null);
-  const [newTitle, setNewTitle] = useState(title);
+  const [newTitle, setNewTitle] = useState("");
+  const [mapId, setMapId] = useState("")
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,6 +24,13 @@ const Toolbox = (props) => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, []);
+
+  useEffect(() => {
+    if (map.currentMapMetadata) {
+      setNewTitle(map.currentMapMetadata.title)
+      setMapId(map.currentMapMetadata._id)
+    }
+  }, [map.currentMapMetadata])
 
   const handleOutsideClick = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -43,7 +51,7 @@ const Toolbox = (props) => {
 
   const handleTitleSubmit = (event) => {
     if (event.key === "Enter") {
-      map.renameMap(mapId, newTitle, index);
+      map.renameMap(mapId, newTitle, -1);
       setIsEditing(false);
     }
   };
@@ -57,13 +65,13 @@ const Toolbox = (props) => {
   const handlePublish = (e) => {
     e.stopPropagation();
     setShowOptions(false);
-    // TODO: go to edit post screen
+    navigate(`/editPost/${mapId}`)
   };
 
   const handleFork = (e) => {
     e.stopPropagation();
     setShowOptions(false);
-    map.forkMap(mapId, index, title);
+    map.forkMap(mapId);
   };
 
   const onDeleteClick = (e) => {

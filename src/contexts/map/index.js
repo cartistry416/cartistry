@@ -4,7 +4,7 @@ import api from './map-request-api'
 import AuthContext from '../../auth'
 import jsTPS from '../../common/jsTPS'
 import { generateDiff, unzipBlobToJSON, jsonToZip} from '../../utils/utils'
-import _ from 'lodash'
+import _, { findIndex } from 'lodash'
 
 
 export const GlobalMapContext = createContext({});
@@ -20,6 +20,7 @@ export const GlobalMapActionType = {
     SAVE_MAP_EDITS: "SAVE_MAP_EDITS",
     SET_CURRENT_MAP_METADATA: "SET_CURRENT_MAP_METADATA",
     UPDATE_MAP_PRIVACY: "UPDATE_MAP_PRIVACY",
+    EXIT_CURRENT_MAP: "EXIT_CURRENT_MAP"
   }
 
 const tps = new jsTPS();
@@ -55,10 +56,12 @@ function GlobalMapContextProvider(props) {
             case GlobalMapActionType.DELETE_MAP: {
                 return setMap({
                   ...map,
-                  mapCardsInfo: [
-                    // should this be ...map
-                    ...map.mapCardsInfo.filter((mapCard) => mapCard._id !== payload.mapId)
-                  ]
+                  mapCardsInfo: map.mapCardsInfo.filter((mapCard) => mapCard._id !== payload.mapId),
+                  currentMapMetadata: null,
+                  currentMapGeoJSON: null,
+                  currentMapGeoJSONOriginal: null,
+                  currentMapProprietaryJSON: null,
+                  currentMapProprietaryJSONOriginal: null
                 })
               }
             
@@ -87,7 +90,8 @@ function GlobalMapContextProvider(props) {
                 return setMap({
                     ...map,
                     currentMapGeoJSONOriginal: payload.originalGeoJSON,
-                    currentMapGeoJSON: payload.currentGeoJSON
+                    currentMapGeoJSON: payload.currentGeoJSON,
+                    currentMapMetadata: payload.mapMetadata
                 })
             }
 
@@ -117,12 +121,23 @@ function GlobalMapContextProvider(props) {
             }
 
             case GlobalMapActionType.RENAME_MAP: {
-                const updatedMapCardsInfo = [...map.mapCardsInfo]
-                updatedMapCardsInfo[payload.index].title = payload.title
-                return setMap({
-                    ...map,
-                    mapCardsInfo: updatedMapCardsInfo
-                })
+
+                if ( payload.index === -1 && map.currentMapMetadata) {
+                    const updatedMapMetadata = {...map.currentMapMetadata}
+                    updatedMapMetadata.title = payload.title
+                    return setMap({
+                        ...map,
+                        currentMapMetadata: updatedMapMetadata
+                    })
+                }
+                else {
+                    const updatedMapCardsInfo = [...map.mapCardsInfo]
+                    updatedMapCardsInfo[payload.index].title = payload.title
+                    return setMap({
+                        ...map,
+                        mapCardsInfo: updatedMapCardsInfo
+                    })
+                }
             }
 
             case GlobalMapActionType.SAVE_MAP_EDITS: {
@@ -154,6 +169,16 @@ function GlobalMapContextProvider(props) {
                 mapCardsInfo: updatedMapCardsInfo
               })
             }
+            case GlobalMapActionType.EXIT_CURRENT_MAP: {
+                return setMap({
+                    ...map, 
+                    currentMapMetadata: null,
+                    currentMapGeoJSON: null,
+                    currentMapGeoJSONOriginal: null,
+                    currentMapProprietaryJSON: null,
+                    currentMapProprietaryJSONOriginal: null
+                })
+            }
             default:
               return map
         }
@@ -183,14 +208,23 @@ function GlobalMapContextProvider(props) {
 
     map.loadMap = async (id) => {
         try {
-            const response = await api.getMapData(id)
-            if (response.status === 200) {
-                const {currentGeoJSON, originalGeoJSON} = await unzipBlobToJSON(response.data)
-                mapReducer({
-                    type: GlobalMapActionType.LOAD_MAP,
-                    payload: {currentGeoJSON, originalGeoJSON}
-                })
+        
+            let response = await api.getMapMetadata(id)
+            if (response.status !== 200) {
+                console.log('not a 200 status code')
+                return
             }
+            const mapMetadata = response.data.mapMetadata
+            if (response.status !== 200) {
+                console.log('not a 200 status code')
+                return
+            }
+            response = await api.getMapData(id)
+            const {currentGeoJSON, originalGeoJSON} = await unzipBlobToJSON(response.data)
+            mapReducer({
+                type: GlobalMapActionType.LOAD_MAP,
+                payload: {currentGeoJSON, originalGeoJSON, mapMetadata}
+            })
         }
         catch (error) {
             mapReducer({
@@ -233,7 +267,7 @@ function GlobalMapContextProvider(props) {
             if (response.status === 200) {
                 mapReducer({
                     type: GlobalMapActionType.RENAME_MAP,
-                    payload: {index, title}
+                    payload: {index, title, id}
                 })
             }
         }
@@ -245,7 +279,7 @@ function GlobalMapContextProvider(props) {
         }
     }
 
-    map.forkMap = async (id, index, title) => {
+    map.forkMap = async (id) => {
         try {
             const response = await api.forkMap(id)
             if (response.status === 200) {
@@ -254,7 +288,7 @@ function GlobalMapContextProvider(props) {
                     payload: {mapMetadata: response.data.mapMetadata}
                 })
 
-                navigate(`/editMap/${response.data.mapMetadata._id}/${index}/${title}`)
+                navigate(`/editMap/${response.data.mapMetadata._id}`)
             }
         }
         catch (error) {
@@ -332,6 +366,10 @@ function GlobalMapContextProvider(props) {
         const response = await api.deleteMap(mapId)
         if (response.status === 200) {
           if (!location.pathname.endsWith('/mymaps')) {
+            mapReducer({
+                type: GlobalMapActionType.DELETE_MAP,
+                payload: { mapId }
+            })
             navigate(`/mymaps`)
           }
           else { // still on /myaps so just delete on client side
@@ -416,6 +454,13 @@ function GlobalMapContextProvider(props) {
             payload: { hasError: true, errorMessage: error.response.data.errorMessage }
         })
       }
+    }
+
+    map.exitCurrentMap = () => {
+        mapReducer({
+            type: GlobalMapActionType.EXIT_CURRENT_MAP,
+            payload: {}
+        })
     }
 
     map.addEditFeaturePropertiesTransaction = (newProperties, oldProperties, index) => {

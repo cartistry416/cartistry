@@ -6,10 +6,12 @@ function Post({postId}) {
 
   let userName = ""
   let content = ""
+  let title = ""
   
   if (post.currentPost) {
     userName = post.currentPost.ownerUserName
     content = post.currentPost.textContent
+    title = post.currentPost.title
   }
   
   const handleSubmitComment =  (e) => {
@@ -21,7 +23,7 @@ function Post({postId}) {
     <div className="post-container">
       <div className="post-header">
         <div className="post-details">
-          <h2>Post Title</h2>
+          <h2>{title}</h2>
           <span className="post-username">{userName} • 4d</span>
         </div>
         <span className="material-icons fork-button">fork_right</span>

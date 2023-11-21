@@ -6,13 +6,16 @@ import { useNavigate, useParams } from 'react-router';
 import GlobalPostContext from '../../contexts/post';
 import { getAllTags } from '../../utils/utils';
 import AuthContext from '../../auth';
+
 import ForbiddenMessage from '../modals/ForbiddenMessage';
 
 
 const PostEditor = () => {
   const navigate = useNavigate();
+
   const { auth } = useContext(AuthContext)
   const { post } = useContext(GlobalPostContext)
+
   const {mapMetadataId} = useParams()
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
@@ -22,24 +25,30 @@ const PostEditor = () => {
   const [attachments, setAttachments] = useState([])
 
   useEffect(() => {
-    const loadPostData = async () => {
-      try {
-        await post.loadPost(mapMetadataId);
-        if (!loaded) {
-          setTitle(post.currentPost.title || '');
-          setContent(post.currentPost.textContent || '');
-          post.currentPost.tags.forEach((tag) => addTag(tag))
-        }
-        setLoaded(true);
-      } catch (error) {
-        console.error("Failed to load post: ", error);
-      }
-    };
+    // const loadPostData = async () => {
+    //   try {
+    //     if (!loaded) {
+    //       if (post.currentPost && post.curren) {
+    //         setTitle(post.currentPost.title)
+    //         setContent(post.currentPost.textContent)
+    //         post.currentPost.tags.forEach((tag) => addTag(tag))
+    //       }
 
+    //     }
+    //     setLoaded(true);
+    //   } catch (error) {
+    //     console.error("Failed to load post: ", error);
+    //   }
+    // };
     if (!loaded) {
-      loadPostData();
+      if (post.currentPost && auth.loggedIn && post.currentPost.owner === auth.user.userId) {
+        setTitle(post.currentPost.title)
+        setContent(post.currentPost.textContent)
+        post.currentPost.tags.forEach((tag) => addTag(tag))
+      }
+      setLoaded(true)
     }
-  }, [mapMetadataId, loaded, post])
+  }, [post.currentPost])
 
   const handleTitleChange = (e) => {
     e.preventDefault()
