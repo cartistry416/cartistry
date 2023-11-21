@@ -58,8 +58,8 @@ function HomeWrapper() {
       case "mostRecent":
         post.loadPostCards("mostRecent", 10);
         break;
-      case "oldest":
-        // Implement the logic to sort by oldest
+      case "leastRecent":
+        post.loadPostCards("leastRecent", 10);
         break;
       case "liked":
         // Implement the logic to sort by likes
@@ -123,7 +123,7 @@ function HomeWrapper() {
             {showDropdown && (
               <div className="sortByMenu">
                 <div className="dropdownOption" onClick={() => setSortOption("mostRecent")}>Newest</div>
-                <div className="dropdownOption" onClick={() => setSortOption("oldest")}>Oldest</div>
+                <div className="dropdownOption" onClick={() => setSortOption("leastRecent")}>Oldest</div>
                 <div className="dropdownOption" onClick={() => setSortOption("liked")}>Liked</div>
               </div>
             )}

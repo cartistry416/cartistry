@@ -38,6 +38,13 @@ export const getMostRecentPosts = (limit) => {
     }
     return api.get(`/posts-api/posts/most-recent`,  { params: { limit } }) 
 }
+export const getLeastRecentPosts = (limit) => {
+    if (!limit) {
+        limit = 20
+    }
+    console.log("leastrecent")
+    return api.get(`/posts-api/posts/least-recent`,  { params: { limit } }) 
+}
 
 export const getMostLikedPosts = (limit) => {
     if (!limit) {
@@ -97,6 +104,7 @@ const apis = {
     getPostsOwnedByUser,
     getPostData,
     getMostRecentPosts,
+    getLeastRecentPosts,
     getMostLikedPosts,
     createPost,
     deletePost,
