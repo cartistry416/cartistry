@@ -28,7 +28,7 @@ function GlobalPostContextProvider(props) {
     const [post, setPost] = useState({
         currentModal : CurrentModal.NONE,
         postCardsInfo: [],
-        currentPost: null, 
+        currentPost: {}, 
         postCardIndexMarkedForDeletion: null,
         postCardMarkedForDeletion: null,
         commentIndexMarkedForDeletion: null,
@@ -65,11 +65,13 @@ function GlobalPostContextProvider(props) {
                 })
             }
             case GlobalPostActionType.LOAD_POST: {
+                const newPost = payload.post || {}; // Fallback to an empty object if undefined
                 return setPost({
                     ...post,
-                    currentPost: payload.post
+                    currentPost: newPost
                 })
             }
+            
             case GlobalPostActionType.LOAD_POST_CARDS: {
                 return setPost({
                     ...post,
@@ -225,11 +227,12 @@ function GlobalPostContextProvider(props) {
 
         }
         catch (error) {
+            const errorMessage = error?.response?.data?.errorMessage || "An unexpected error occurred";
             postReducer({
                 type: GlobalPostActionType.ERROR_MODAL,
-                payload: { hasError: true, errorMessage: error.response.data.errorMessage }
+                payload: { hasError: true, errorMessage: errorMessage }
             })
-        }
+        }        
     }
 
     post.searchPostsByTags = async (tags, limit) => {
