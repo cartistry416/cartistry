@@ -288,3 +288,8 @@
 .avail-tag span {
   font-size: 14px;
 }
+
+.mapContainerSize{
+  width: 100%;
+  height: 100%;
+}

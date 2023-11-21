@@ -33,7 +33,7 @@ function PostScreen() {
   let legend = <div> </div>
 
   if (post.currentPost && post.currentPost.mapMetadata && post.currentPost.mapMetadata !== "") {
-    map = <GeoJSONMap mapMetadataId={post.currentPost.mapMetadata} position={[39.74739, -105]}/> 
+    map = <GeoJSONMap mapMetadataId={post.currentPost.mapMetadata} position={[39.74739, -105]} width="100%" height="100%"/> 
   }
 
   const replies = [];

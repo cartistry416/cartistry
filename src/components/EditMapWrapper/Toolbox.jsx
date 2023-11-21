@@ -27,6 +27,7 @@ const Toolbox = (props) => {
 
   useEffect(() => {
     if (map.currentMapMetadata) {
+      console.log("switched map, title is: "+ map.currentMapMetadata.title)
       setNewTitle(map.currentMapMetadata.title)
       setMapId(map.currentMapMetadata._id)
     }
@@ -112,7 +113,7 @@ const Toolbox = (props) => {
           <div className="mapCardTitle">{newTitle}</div>
         )}
         <div ref={dropdownRef}>
-          <span className="material-icons" onClick={toggleMenu}>
+          <span className="material-icons mapCardMore" onClick={toggleMenu}>
             more_vert
           </span>
           {showOptions && (

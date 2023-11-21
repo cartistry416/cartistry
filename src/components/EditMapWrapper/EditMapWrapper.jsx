@@ -19,7 +19,7 @@ const EditMapWrapper = () =>{
     return (
         <div className="editMapWrapper">
             <div className="mapScreen">
-                <GeoJSONMap position={[39.74739, -105]} mapMetadataId={id} />
+                <GeoJSONMap className="mapOverlay" position={[39.74739, -105]} mapMetadataId={id} width="100vw" height="100vh"/>
                 <div className="rightPanel">
                     <Toolbox mapId={id} />
                     <Legend />
