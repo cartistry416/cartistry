@@ -3,11 +3,15 @@ import PostCard from "./Posts/PostCard";
 import { useEffect, useRef, useState, useContext } from "react";
 import { formatTime } from "./HomeWrapper/HomeWrapper";
 import { GlobalPostContext } from "../contexts/post";
+import { AuthContext } from "../auth";
+import { useNavigate } from "react-router";
 
 function MyPostsScreen() {
   const { post } = useContext(GlobalPostContext);
+  const { auth } = useContext(AuthContext);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.addEventListener("mousedown", handleOutsideClick);
@@ -27,6 +31,17 @@ function MyPostsScreen() {
       setShowDropdown(false);
     }
   };
+
+  const handlePostCardClick = (id) => {
+    navigate(`/post/${id}`);
+  };
+
+  const myPosts = post.postCardsInfo.filter(postCard => {
+    // console.log("PostCard ID:", postCard._id, "Owner User ID:", postCard.owner, "Auth User ID:", auth.user.userId);
+    return postCard.owner === auth.user.userId;
+  });
+
+  // const myPosts = post.postCardsInfo.filter(postCard => postCard.ownerUserId === auth.user);
 
   return (
     <div id="myPostsContainer">
@@ -61,18 +76,19 @@ function MyPostsScreen() {
       </div>
       <div className="contentWrapper">
         <div id="postListWrapper">
-          {post.postCardsInfo.map((postCard, index) => (
+          {myPosts.map((postCard, index) => (
+            <div onClick={() => handlePostCardClick(postCard._id)} key={index}>
               <PostCard
-                  key={index}
-                  title={postCard.title}
-                  username={postCard.username}
-                  time={formatTime(postCard.createdAt)} 
-                  tags={postCard.tags}
-                  likes={postCard.likes} //TODO Increase like count from postcard button
-                  comments={postCard.comments.length}
-                  imageUrl={postCard.images[0]} //TODO handle image
+                title={postCard.title}
+                username={postCard.ownerUserName}
+                time={formatTime(postCard.createdAt)} 
+                tags={postCard.tags}
+                likes={postCard.likes}
+                comments={postCard.comments.length}
+                imageUrl={postCard.images[0]}
               />
-            ))}
+            </div>
+          ))}
         </div>
         <div className="tagWrapper">
           <div className="tagTitle">Tags</div>

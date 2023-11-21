@@ -46,6 +46,7 @@ function HomeWrapper() {
     };
   }, []);
 
+  //TODO, handle limit differently, maybe have pages
   useEffect(() => {
     post.loadPostCards("mostRecent", 10);
   }, []); 
@@ -71,6 +72,9 @@ function HomeWrapper() {
     navigate(path);
   };
 
+  const handlePostCardClick = (id) => {
+    navigate(`/post/${id}`);
+  };
   return (
     <div id="homeWrapper">
       <div className="functionsWrapper">
@@ -110,16 +114,17 @@ function HomeWrapper() {
       <div className="contentWrapper">
         <div id="postListWrapper">
           {post.postCardsInfo.map((postCard, index) => (
-            <PostCard
-                key={index}
+            <div onClick={() => handlePostCardClick(postCard._id)} key={index}>
+              <PostCard
                 title={postCard.title}
                 username={postCard.ownerUserName}
                 time={formatTime(postCard.createdAt)} 
                 tags={postCard.tags}
-                likes={postCard.likes} //TODO Increase like count from postcard button
+                likes={postCard.likes}
                 comments={postCard.comments.length}
-                imageUrl={postCard.images[0]} //TODO handle image
-            />
+                imageUrl={postCard.images[0]}
+              />
+            </div>
           ))}
         </div>
         <div className="tagWrapper">

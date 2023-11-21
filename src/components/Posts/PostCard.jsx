@@ -20,7 +20,7 @@ function PostCard({ title, username, time, tags, likes, comments, imageUrl }) {
   }
 
   return (
-        <div className="postCardWrapper" onClick={redirectTo}>
+        <div className="postCardWrapper">
             {imageUrl && <img className="postCardImagePreview" src={imageUrl} alt="preview" />}
             <div className="postCardDescription">
                 <div className="postCardTitle">{title}</div>
