@@ -4,6 +4,7 @@ import "../../static/css/post.css";
 import { useParams } from 'react-router-dom';
 import { useContext, useEffect, useState} from 'react';
 import GlobalPostContext from '../../contexts/post';
+import GeoJSONMap from '../GeoJSONMap';
 
 function PostScreen() {
 
@@ -28,6 +29,13 @@ function PostScreen() {
     comments = post.currentPost.comments.map((comment, index) => <CommentThread comment={comment} key={index} replies={[]}> </CommentThread>)
   }
 
+  let map = <div className='post-img' />
+  let legend = <div> </div>
+
+  if (post.currentPost && post.currentPost.mapMetadata !== "") {
+    map = <GeoJSONMap mapMetadataId={post.currentPost.mapMetadata} position={[39.74739, -105]}/> 
+  }
+
   const replies = [];
   return (
     <div className='post-wrapper'>
@@ -36,7 +44,7 @@ function PostScreen() {
         {comments}
       </div>
       <div className='post-image-wrapper'>
-        <div className='post-img' />
+        {map}
       </div>
     </div>
   )

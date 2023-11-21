@@ -94,7 +94,7 @@ function App() {
                               <Route path="/post/:id" element={<PostScreen/>} />
                               <Route path="/myMaps/" element={<MyMapsWrapper/>}/>
                               <Route path="/myPosts/" element={<MyPostsScreen/>}/>
-                              <Route path="/editPost/" element={<PostEditor/>} />
+                              <Route path="/editPost/:mapMetadataId?" element={<PostEditor/>} />
                               <Route path="/profile/" element={<ProfileScreen/>} />
                               {/* <Route path="/login/" exact component={LoginScreen} />
                               <Route path="/register/" exact component={RegisterScreen} />
