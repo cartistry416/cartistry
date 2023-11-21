@@ -20,26 +20,23 @@ function getNameFromConvertedShapeFile(properties) {
 function GeoJSONMap({mapMetadataId, position}) {
     const { map } = useContext(GlobalMapContext)
     const [currentGeoJSON, setCurrentGeoJSON] = useState(null);
-    const [loaded, setLoaded] = useState(0)
-
-    useEffect(() => {
-      map.loadMap(mapMetadataId).then(() => {
-        setLoaded(prev => prev + 1)
-      });
-    }, [])
+    const [loaded, setLoaded] = useState(false)
 
     useEffect(() => {
       const loadMapData = async () => {
-        try {
-          await map.loadMap(mapMetadataId);
-          setLoaded(true)
-        } catch (error) {
-          console.error("Failed to load map cards:", error);
-        }
+          try {
+              await map.loadMap(mapMetadataId);
+              setLoaded(true);
+          } catch (error) {
+              console.error("Failed to load map: ", error);
+          }
       };
-  
-      loadMapData();
-    }, [map, mapMetadataId])
+
+      if (!loaded) {
+          loadMapData();
+      }
+  }, [mapMetadataId, loaded]);
+
     const onEachFeature = (feature, layer) => {
         let name = null;
         if ('name' in feature.properties) {

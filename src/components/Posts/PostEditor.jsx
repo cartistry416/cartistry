@@ -21,18 +21,22 @@ const PostEditor = () => {
   useEffect(() => {
     const loadPostData = async () => {
       try {
-        await post.loadpost(mapMetadataId);
-        setTitle(post.currentPost.title || '');
-            setContent(post.currentPost.textContent || '');
-            setPostTags(post.currentPost.tags || []);
-            setLoaded(true);
+        await post.loadPost(mapMetadataId);
+        if (!loaded) {
+          setTitle(post.currentPost.title || '');
+          setContent(post.currentPost.textContent || '');
+          post.currentPost.tags.forEach((tag) => addTag(tag))
+        }
+        setLoaded(true);
       } catch (error) {
         console.error("Failed to load post: ", error);
       }
     };
 
-    loadPostData();
-  }, [post, mapMetadataId])
+    if (!loaded) {
+      loadPostData();
+    }
+  }, [mapMetadataId, loaded, post])
 
   const handleTitleChange = (e) => {
     e.preventDefault()
