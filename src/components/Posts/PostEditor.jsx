@@ -1,9 +1,10 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import "../../static/css/post.css";
 import { useNavigate, useParams } from 'react-router';
 import GlobalPostContext from '../../contexts/post';
+import { getAllTags } from '../../utils/utils';
 
 
 const PostEditor = () => {
@@ -12,18 +13,36 @@ const PostEditor = () => {
   const {mapMetadataId} = useParams()
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  const [postTags, setPostTags] = useState(["Tag Five", "Tag Three"])
-  const [availTags, setAvailTags] = useState(["Tag One", "Tag Thrity", "Tag Eighty One", "Tag Six", "Tag Two", "Tag Seventeen", "Tag Nine"])
-
-
-
-
+  const [loaded, setLoaded] = useState(false)
+  const [postTags, setPostTags] = useState([])
+  const [availTags, setAvailTags] = useState(getAllTags())
   const [attachments, setAttachments] = useState([])
+
+  useEffect(() => {
+    const loadPostData = async () => {
+      try {
+        await post.loadPost(mapMetadataId);
+        if (!loaded) {
+          setTitle(post.currentPost.title || '');
+          setContent(post.currentPost.textContent || '');
+          post.currentPost.tags.forEach((tag) => addTag(tag))
+        }
+        setLoaded(true);
+      } catch (error) {
+        console.error("Failed to load post: ", error);
+      }
+    };
+
+    if (!loaded) {
+      loadPostData();
+    }
+  }, [mapMetadataId, loaded, post])
 
   const handleTitleChange = (e) => {
     e.preventDefault()
     setTitle(e.target.value)
   }
+
   const handleContentChange = (value) => {
     let textContent = value
     try {
@@ -77,56 +96,62 @@ const PostEditor = () => {
 
   return (
     <div className='post-editor-container'>
-      <div className="create-post">
-        <input 
-          type="text" 
-          value={title} 
-          onChange={handleTitleChange} 
-          placeholder="Title here..." 
-          className="title-input"
-        />
-        <ReactQuill value={content} onChange={handleContentChange} />
-        <div className='post-add-ons'>
-          <div className='post-attachments'>
-            <div className="attachment-item">
+      {loaded ? (
+        <>
+          <div className="create-post">
+            <input 
+              type="text" 
+              value={title} 
+              onChange={handleTitleChange} 
+              placeholder="Title here..." 
+              className="title-input"
+            />
+            <ReactQuill value={content} onChange={handleContentChange} />
+            <div className='post-add-ons'>
+              <div className='post-attachments'>
+                <div className="attachment-item">
+                </div>
+                {/* Can someone change the way the attachment cards look */}
+                {
+                  attachments.map( (file, index) => <div className="attachment-add" key={index}> {file.name} </div>)
+                }
+                <div className="attachment-add">
+                  {/* <span className="material-icons attachment-add-icon">add</span> */}
+                  {/* Can someone change the input button back to the plus icon */}
+                  <input type="file" accept='*' onChange={handleAttachmentAdd} multiple={true}/>
+                </div>
+              </div>
+              <div className="post-tags">
+                <div className='tags-list'>
+                  {postTags.map((tag, index) => (
+                    <span key={index} className="tag" onClick={() => removeTag(tag)}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className='post-button'>
+                <button onClick={handleSubmit}>Post</button>
+              </div>
             </div>
-            {/* Can someone change the way the attachment cards look */}
-            {
-              attachments.map( (file, index) => <div className="attachment-add" key={index}> {file.name} </div>)
-            }
-            <div className="attachment-add">
-              {/* <span className="material-icons attachment-add-icon">add</span> */}
-              {/* Can someone change the input button back to the plus icon */}
-              <input type="file" accept='*' onChange={handleAttachmentAdd} multiple={true}/>
+          </div>
+          <div className='tags-container'>
+            <div id="tag-title">Tags</div>
+            <div className='avail-tags-list'>
+              <input type="text" placeholder="Search Tag" />
+              <div className="avail-tags">
+                {availTags.map((tag, index) => (
+                  <span key={index} className="avail-tag" onClick={() => addTag(tag)}>
+                    {tag} <span className="material-icons">add</span>
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
-          <div className="post-tags">
-            <div className='tags-list'>
-              {postTags.map((tag, index) => (
-                <span key={index} className="tag" onClick={() => removeTag(tag)}>
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className='post-button'>
-            <button onClick={handleSubmit}>Post</button>
-          </div>
-        </div>
-      </div>
-      <div className='tags-container'>
-        <div id="tag-title">Tags</div>
-        <div className='avail-tags-list'>
-          <input type="text" placeholder="Search Tag" />
-          <div className="avail-tags">
-            {availTags.map((tag, index) => (
-              <span key={index} className="avail-tag" onClick={() => addTag(tag)}>
-                {tag} <span className="material-icons">add</span>
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
+        </>
+      ) : (
+        <div>Loading...</div>
+      )}
     </div>
   )
 }

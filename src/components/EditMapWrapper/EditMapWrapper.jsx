@@ -7,15 +7,15 @@ import GeoJSONMap from "../GeoJSONMap";
 
 import { useParams } from "react-router";
 
-const EditMapWrapper = () => {
-    const {id} = useParams()
+const EditMapWrapper = () =>{
+    const {id, index, title} = useParams()
 
     return (
         <div className="editMapWrapper">
             <div className="mapScreen">
                 <GeoJSONMap position={[39.74739, -105]} mapMetadataId={id} />
                 <div className="rightPanel">
-                    <Toolbox />
+                    <Toolbox mapId={id} title={title} index={index}/>
                     <Legend />
                     <div className="sideControls">
                     <div className="iconGroup">

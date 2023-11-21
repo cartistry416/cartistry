@@ -66,7 +66,7 @@ function MapCard(props) {
   const handleFork = (e) => {
     e.stopPropagation();
     setShowOptions(false)
-    map.forkMap(mapId)
+    map.forkMap(mapId, index, title)
   }
 
   const onDeleteClick = (e) => {
@@ -86,8 +86,9 @@ function MapCard(props) {
     setShowOptions(!showOptions)
   }
 
+
   return (
-    <div className="mapCardWrapper" onClick={() => navigate('/editMap/' + mapId)}>
+    <div className="mapCardWrapper" onClick={() => navigate(`/editMap/${mapId}/${index}/${title}`)}>
       <img src={imageUrl} alt='map' className="mapCardImagePreview"></img>
       <div className="mapCardWrapper">
         <img src={imageUrl} alt='map' className="mapCardImagePreview"></img>

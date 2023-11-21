@@ -32,7 +32,7 @@ function PostScreen() {
   let map = <div className='post-img' />
   let legend = <div> </div>
 
-  if (post.currentPost && post.currentPost.mapMetadata !== "") {
+  if (post.currentPost && post.currentPost.mapMetadata && post.currentPost.mapMetadata !== "") {
     map = <GeoJSONMap mapMetadataId={post.currentPost.mapMetadata} position={[39.74739, -105]}/> 
   }
 
