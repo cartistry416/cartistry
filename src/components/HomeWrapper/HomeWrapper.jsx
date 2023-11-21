@@ -3,6 +3,7 @@ import PostCard from "../Posts/PostCard";
 import { useEffect, useState, useRef, useContext } from "react";
 import { useNavigate } from "react-router";
 import { GlobalPostContext } from "../../contexts/post";
+import GlobalMapContext from "../../contexts/map";
 
 export function formatTime(timeString) {
   const date = new Date(timeString);
@@ -33,6 +34,7 @@ export function formatTime(timeString) {
 
 function HomeWrapper() {
   const { post } = useContext(GlobalPostContext);
+  const { map } = useContext(GlobalMapContext)
   const [showDropdown, setShowDropdown] = useState(false);
   const [mapSelected, setMapSelected] = useState("");
   const [sortOption, setSortOption] = useState("mostRecent"); 
@@ -41,7 +43,8 @@ function HomeWrapper() {
 
   useEffect(() => {
     document.addEventListener("mousedown", handleOutsideClick);
-
+    post.exitCurrentPost()
+    map.exitCurrentMap()
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };

@@ -5,8 +5,10 @@ import { formatTime } from "./HomeWrapper/HomeWrapper";
 import { GlobalPostContext } from "../contexts/post";
 import { AuthContext } from "../auth";
 import { useNavigate } from "react-router";
+import GlobalMapContext from "../contexts/map";
 
 function MyPostsScreen() {
+  const { map } = useContext(GlobalMapContext)
   const { post } = useContext(GlobalPostContext);
   const { auth } = useContext(AuthContext);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -15,7 +17,8 @@ function MyPostsScreen() {
 
   useEffect(() => {
     document.addEventListener("mousedown", handleOutsideClick);
-
+    post.exitCurrentPost()
+    map.exitCurrentMap()
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
