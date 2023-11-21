@@ -1,8 +1,11 @@
 import "../static/css/myPosts.css";
 import PostCard from "./Posts/PostCard";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
+import { formatTime } from "./HomeWrapper/HomeWrapper";
+import { GlobalPostContext } from "../contexts/post";
 
 function MyPostsScreen() {
+  const { post } = useContext(GlobalPostContext);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -13,6 +16,11 @@ function MyPostsScreen() {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, []);
+  
+  //TODO, filter users to current logged in for this
+  useEffect(() => {
+    post.loadPostCards("mostRecent", 10);
+  }, []); 
 
   const handleOutsideClick = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -53,15 +61,18 @@ function MyPostsScreen() {
       </div>
       <div className="contentWrapper">
         <div id="postListWrapper">
-          <PostCard />
-          <PostCard />
-          <PostCard />
-          <PostCard />
-          <PostCard />
-          <PostCard />
-          <PostCard />
-          <PostCard />
-          <PostCard />
+          {post.postCardsInfo.map((postCard, index) => (
+              <PostCard
+                  key={index}
+                  title={postCard.title}
+                  username={postCard.username}
+                  time={formatTime(postCard.createdAt)} 
+                  tags={postCard.tags}
+                  likes={postCard.likes} //TODO Increase like count from postcard button
+                  comments={postCard.comments.length}
+                  imageUrl={postCard.images[0]} //TODO handle image
+              />
+            ))}
         </div>
         <div className="tagWrapper">
           <div className="tagTitle">Tags</div>
