@@ -122,12 +122,13 @@ function AuthContextProvider(props) {
     passwordVerify,
     username
   ) {
+    let errorMessage;
     const response = await api
       .registerUser(email, password, passwordVerify, username)
       .catch((err) => {
         if (err.response && err.response.data) {
           // Extracting the errorMessage from the server response
-          const errorMessage = err.response.data.errorMessage;
+          errorMessage = err.response.data.errorMessage;
           return { success: false, errorMessage: errorMessage };
         } else {
           // Handle cases where the error is not from the server response
@@ -150,7 +151,7 @@ function AuthContextProvider(props) {
       // history.push("/login"); // or history.push("/");
       return { success: true, errorMessage: "" };
     } else {
-      return { success: false, errorMessage: response.errorMessage };
+      return { success: false, errorMessage: errorMessage };
     }
   };
 
@@ -170,9 +171,8 @@ function AuthContextProvider(props) {
         console.log("Cookies:", cookies);
         return { success: true, errorMessage: "" };
       }
-    } catch (err) {
-      console.error(err);
-      return { success: false, errorMessage: "" };
+    } catch (error) {
+      return { success: false, errorMessage: error.response.data.errorMessage };
     }
   };
 

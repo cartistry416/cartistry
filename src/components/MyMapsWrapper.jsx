@@ -5,6 +5,8 @@ import { GlobalMapContext } from "../contexts/map";
 import ImportModal from "./modals/ImportModal";
 import AuthContext from "../auth";
 import GlobalPostContext from "../contexts/post";
+import ForbiddenMessage from "./modals/ForbiddenMessage";
+
 
 function MyMapsWrapper() {
   const { auth } = useContext(AuthContext);
@@ -51,7 +53,7 @@ function MyMapsWrapper() {
 
   return (
     <div id="myMapsWrapper">
-      { auth.loggedIn && (
+      { auth.loggedIn ? (
         <>
           <div className="functionsWrapper">
           <div ref={createDropdownRef} className="create">
@@ -136,6 +138,8 @@ function MyMapsWrapper() {
           <ImportModal onClose={() => setShowUploadModal("")} templateType={showUploadModal} />
         )}
         </>
+      ) : (
+        <ForbiddenMessage />
       )}
     </div>
   );

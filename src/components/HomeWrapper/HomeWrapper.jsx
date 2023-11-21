@@ -35,6 +35,7 @@ function HomeWrapper() {
   const { post } = useContext(GlobalPostContext);
   const [showDropdown, setShowDropdown] = useState(false);
   const [mapSelected, setMapSelected] = useState("");
+  const [sortOption, setSortOption] = useState("mostRecent"); 
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
@@ -48,8 +49,26 @@ function HomeWrapper() {
 
   //TODO, handle limit differently, maybe have pages
   useEffect(() => {
-    post.loadPostCards("mostRecent", 10);
-  }, []); 
+    // Call the sorting function whenever the sort option changes
+    sortPosts();
+  }, [sortOption]);
+
+  const sortPosts = () => {
+    switch (sortOption) {
+      case "mostRecent":
+        post.loadPostCards("mostRecent", 10);
+        break;
+      case "oldest":
+        // Implement the logic to sort by oldest
+        break;
+      case "liked":
+        // Implement the logic to sort by likes
+        break;
+      default:
+        post.loadPostCards("mostRecent", 10);
+    }
+  };
+
   useEffect(() => {
     console.log("Updated Post Cards Info:", post.postCardsInfo);
 }, [post.postCardsInfo]);
@@ -103,9 +122,9 @@ function HomeWrapper() {
             </button>
             {showDropdown && (
               <div className="sortByMenu">
-                <div className="dropdownOption">Newest</div>
-                <div className="dropdownOption">Oldest</div>
-                <div className="dropdownOption">Liked</div>
+                <div className="dropdownOption" onClick={() => setSortOption("mostRecent")}>Newest</div>
+                <div className="dropdownOption" onClick={() => setSortOption("oldest")}>Oldest</div>
+                <div className="dropdownOption" onClick={() => setSortOption("liked")}>Liked</div>
               </div>
             )}
           </div>
