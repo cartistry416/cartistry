@@ -70,6 +70,12 @@ function GlobalPostContextProvider(props) {
                     currentPost: payload.post
                 })
             }
+            case GlobalPostActionType.LOAD_POST_CARDS: {
+                return setPost({
+                    ...post,
+                    postCardsInfo: payload.postCards
+                });
+            }
             case GlobalPostActionType.CREATE_COMMENT: {
                 const updatedCurrentPost = {...post.currentPost}
                 updatedCurrentPost.comments.splice(payload.index, 0, payload.comment)

@@ -1,9 +1,11 @@
 import "../../static/css/home.css";
 import PostCard from "../Posts/PostCard";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { useNavigate } from "react-router";
+import { GlobalPostContext } from "../../contexts/post";
 
 function HomeWrapper() {
+  const { post } = useContext(GlobalPostContext);
   const [showDropdown, setShowDropdown] = useState(false);
   const [mapSelected, setMapSelected] = useState("");
   const dropdownRef = useRef(null);
@@ -16,6 +18,10 @@ function HomeWrapper() {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, []);
+
+  useEffect(() => {
+    post.loadPostCards("mostRecent", 10);
+  }, []); 
 
   const handleOutsideClick = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -73,15 +79,9 @@ function HomeWrapper() {
       </div>
       <div className="contentWrapper">
         <div id="postListWrapper">
-          <PostCard />
-          <PostCard />
-          <PostCard />
-          <PostCard />
-          <PostCard />
-          <PostCard />
-          <PostCard />
-          <PostCard />
-          <PostCard />
+          {post.postCardsInfo.map((postCard, index) => (
+              <PostCard key={index} {...postCard} />
+          ))}
         </div>
         <div className="tagWrapper">
           <div className="tagTitle">Tags</div>
