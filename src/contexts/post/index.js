@@ -220,6 +220,9 @@ function GlobalPostContextProvider(props) {
             else if (type === "mostRecent") {
                 response = await api.getMostRecentPosts(limit)
             }
+            else if (type === "leastRecent") {
+                response = await api.getLeastRecentPosts(limit)
+            }
             else if (type === "owned") {
                 response = await api.getPostsOwnedByUser(limit)
             } 
