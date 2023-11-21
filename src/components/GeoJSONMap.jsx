@@ -60,7 +60,7 @@ function GeoJSONMap({mapMetadataId, position}) {
     return (
         <div>
           {loaded ? (
-            <MapContainer center={position} zoom={4} style={{ width: '600px', height: '400px' }}>
+            <MapContainer center={position} zoom={4} style={{ width: '100vw', height: '100vh', zIndex: '1' }}>
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     maxZoom={19}

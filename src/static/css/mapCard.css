@@ -31,8 +31,11 @@
 
 .mapCardTitle{
     font-weight: 700;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     margin-bottom: 0.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .mapCardMore{
