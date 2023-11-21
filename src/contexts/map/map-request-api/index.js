@@ -18,6 +18,10 @@ export const getMapMetadataOwnedByUser = () => {
 export const getPublicMapMetadataOwnedByUser = (id) => {
     return api.get(`/maps-api/maps/public-map-metadata/${id}`)
 }
+
+export const getMapMetadata = (id) => {
+    return api.get(`/maps-api/maps/single-map-metadata/${id}`)
+}
 export const getMapData = (id) => {
     return api.get(`/maps-api/maps/${id}`, {
         responseType: 'arraybuffer'
@@ -72,5 +76,6 @@ const apis = {
     getMapMetadataOwnedByUser,
     getPublicMapMetadataOwnedByUser,
     getMapData,
+    getMapMetadata
 }
 export default apis

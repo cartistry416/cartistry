@@ -4,10 +4,12 @@ import { useContext, useState, useRef, useEffect } from "react";
 import { GlobalMapContext } from "../contexts/map";
 import ImportModal from "./modals/ImportModal";
 import AuthContext from "../auth";
+import GlobalPostContext from "../contexts/post";
 
 function MyMapsWrapper() {
   const { auth } = useContext(AuthContext);
   const { map } = useContext(GlobalMapContext);
+  const { post } = useContext(GlobalPostContext)
   const [showUploadModal, setShowUploadModal] = useState("");
   const [showCreateDropdown, setCreateDropdown] = useState(false);
   const [showSortDropdown, setSortDropdown] = useState(false);
@@ -19,16 +21,24 @@ function MyMapsWrapper() {
   useEffect(() => {
     document.addEventListener("mousedown", handleOutsideClick);
 
-    if (auth.loggedIn) {
+    if (auth.loggedIn && !loaded) {
       map.loadMapCards(auth.user.userId).then(() => {
         setLoaded(true)
       })
+    }
+    else if (map.currentMapMetadata) {
+      setLoaded(false)
     }
 
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
-  }, [auth]);
+  }, [auth, loaded, map.currentMapMetadata]);
+
+  useEffect(() => {
+    post.exitCurrentPost()
+    map.exitCurrentMap()
+  }, [])
 
   const handleOutsideClick = (event) => {
     if (createDropdownRef.current && !createDropdownRef.current.contains(event.target)) {
