@@ -54,7 +54,24 @@ function formatDate(dateStr) {
   return date.toLocaleDateString('en-US', options);
 }
 
-export {generateDiff, unzipBlobToJSON, jsonToZip, getImage, formatDate}
+function getAllTags() {
+  return [
+    "Bin Map",
+    "Heat Map",
+    "Subway Map",
+    "Cadastral Map",
+    "Landmark Map",
+    "Austrailia",
+    "Antartica",
+    "Asia",
+    "Europe",
+    "North America",
+    "South America",
+    "Africa",
+  ]
+}
+
+export {generateDiff, unzipBlobToJSON, jsonToZip, getImage, formatDate, getAllTags}
 
 // // TODO MOVE THESE TO APPROPRIATE PLACES LATER
 
