@@ -113,7 +113,7 @@ function HomeWrapper() {
             <PostCard
                 key={index}
                 title={postCard.title}
-                username={postCard.username}
+                username={postCard.ownerUserName}
                 time={formatTime(postCard.createdAt)} 
                 tags={postCard.tags}
                 likes={postCard.likes} //TODO Increase like count from postcard button
