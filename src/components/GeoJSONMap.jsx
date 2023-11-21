@@ -19,17 +19,23 @@ function getNameFromConvertedShapeFile(properties) {
 // https://github.com/CodingWith-Adam/geoJson-map-with-react-leaflet/blob/master/src/components/MyMap.jsx
 function GeoJSONMap({mapMetadataId, position}) {
     const { map } = useContext(GlobalMapContext)
-    const [loaded, setLoaded] = useState(0)
-    useEffect(() => {
-      map.loadMap(mapMetadataId).then(() => {
-        setLoaded(prev => prev + 1)
-      });
-    }, [])
+    const [currentGeoJSON, setCurrentGeoJSON] = useState(null);
+    const [loaded, setLoaded] = useState(false)
 
     useEffect(() => {
-        console.log('map updated')
-        setLoaded(prev => prev + 1)
-    }, [map.currentMapGeoJSON])
+      const loadMapData = async () => {
+          try {
+              await map.loadMap(mapMetadataId);
+              setLoaded(true);
+          } catch (error) {
+              console.error("Failed to load map: ", error);
+          }
+      };
+
+      if (!loaded) {
+          loadMapData();
+      }
+  }, [mapMetadataId, loaded]);
 
     const onEachFeature = (feature, layer) => {
         let name = null;
@@ -53,19 +59,23 @@ function GeoJSONMap({mapMetadataId, position}) {
 
     return (
         <div>
-          <MapContainer center={position} zoom={4} style={{ width: '600px', height: '400px' }}>
-              <TileLayer
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  maxZoom={19}
-              />
-              {map.currentMapGeoJSON && (
-                  <GeoJSON
-                      data={map.currentMapGeoJSON}
-                      style={myCustomStyle}
-                      onEachFeature={onEachFeature}
-                  /> 
-              )}
-          </MapContainer>
+          {loaded ? (
+            <MapContainer center={position} zoom={4} style={{ width: '600px', height: '400px' }}>
+                <TileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    maxZoom={19}
+                />
+                {map.currentMapGeoJSON && (
+                    <GeoJSON
+                        data={map.currentMapGeoJSON}
+                        style={myCustomStyle}
+                        onEachFeature={onEachFeature}
+                    /> 
+                )}
+            </MapContainer>
+          ) : (
+            <div>Loading...</div>
+          )}
         </div>
     )
 }
