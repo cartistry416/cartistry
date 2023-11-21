@@ -225,9 +225,13 @@ function GlobalPostContextProvider(props) {
 
         }
         catch (error) {
+            let errorMessage = "An unexpected error occurred";
+            if (error.response && error.response.data && error.response.data.errorMessage) {
+                errorMessage = error.response.data.errorMessage;
+            }
             postReducer({
                 type: GlobalPostActionType.ERROR_MODAL,
-                payload: { hasError: true, errorMessage: error.response.data.errorMessage }
+                payload: { hasError: true, errorMessage: errorMessage }
             })
         }
     }
