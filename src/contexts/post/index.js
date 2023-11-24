@@ -319,7 +319,7 @@ function GlobalPostContextProvider(props) {
     
     post.createComment = async (id, comment) => {
         try {
-            const response = await api.commentOnPost(id,comment)
+            const response = await api.commentOnPost(id, comment, auth.user.userId)
             if (response.status === 200) {
                 postReducer({
                     type: GlobalPostActionType.CREATE_COMMENT,

@@ -58,6 +58,10 @@
     font-weight: 800;
 }
 
+.modalButton:disabled {
+  opacity: 0.2;
+}
+
 .alertModalMessage{
     display: flex;
     width: 20rem;
