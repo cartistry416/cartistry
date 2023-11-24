@@ -53,7 +53,7 @@ function RegisterScreen(props) {
           <div>
             <input
               placeholder="email"
-              type="text"
+              type="email"
               id="email"
               name="email"
               required

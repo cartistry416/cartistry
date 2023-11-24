@@ -23,28 +23,25 @@ function PostScreen() {
   }, [post.currentPost])
 
 
-  let comments = <div> </div>
-  if (post.currentPost && post.currentPost.comments.length > 0) {
-    console.log(post.currentPost.comments)
-    comments = post.currentPost.comments.map((comment, index) => <CommentThread comment={comment} key={index} replies={[]}> </CommentThread>)
-  }
-
-  let map = <div className='post-img' />
-  let legend = <div> </div>
-
-  if (post.currentPost && post.currentPost.mapMetadata && post.currentPost.mapMetadata !== "") {
-    map = <GeoJSONMap mapMetadataId={post.currentPost.mapMetadata} position={[39.74739, -105]} width="100%" height="100%"/> 
-  }
-
   const replies = [];
   return (
     <div className='post-wrapper'>
       <div className='post-content-wrapper'>
         <Post postId={id}/>
-        {comments}
+        {(post.currentPost && post.currentPost.comments.length > 0) && (
+          <div>
+            {post.currentPost.comments.map((comment, index) => (
+              <CommentThread comment={comment} key={index} replies={replies} ></CommentThread>
+            ))}
+          </div>
+        )}
       </div>
       <div className='post-image-wrapper'>
-        {map}
+        {(post.currentPost && post.currentPost.mapMetadata && post.currentPost.mapMetadata !== "") ? (
+          <GeoJSONMap mapMetadataId={post.currentPost.mapMetadata} position={[39.74739, -105]} width="100%" height="100%"/>
+        ) : (
+          <div className='post-img' />
+        )}
       </div>
     </div>
   )
