@@ -8,7 +8,6 @@ function Comment({comment}) {
   let userName = ""
   let text = ""
 
-  console.log(comment)
   if (comment) {
     userName = comment.authorUserName
     text = comment.comment
@@ -18,7 +17,7 @@ function Comment({comment}) {
       <div className="comment-header">
         <div className="comment-details">
           <div className="comment-avatar">
-            <span class="material-icons">account_circle</span>
+            <span className="material-icons">account_circle</span>
           </div>
           <div className="comment-header">
             <span className="comment-username"> {userName} • 4d</span>
