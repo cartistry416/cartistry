@@ -7,11 +7,13 @@ function AlertModal({ errorMessage, onCancel, onReset }) {
           <div className="material-icons" onClick={onCancel}>cancel</div>
         </div>
         <div className="alertModalMessage">{errorMessage}</div>
-        <div className="modalFooter">
-          <button className="modalButton" type="submit" onClick={onReset}>
-            Reset
-          </button>
-        </div>
+        { onReset && (
+          <div className="modalFooter">
+            <button className="modalButton" type="submit" onClick={onReset}>
+              Reset
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
