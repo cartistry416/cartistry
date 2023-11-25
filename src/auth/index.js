@@ -14,6 +14,7 @@ export const AuthActionType = {
   LOGOUT_USER: "LOGOUT_USER",
   REGISTER_USER: "REGISTER_USER",
   LOGIN_GUEST: "LOGIN_GUEST",
+  REQUEST_TOKEN: "REQUEST_TOKEN",
 };
 
 function AuthContextProvider(props) {
@@ -81,6 +82,15 @@ function AuthContextProvider(props) {
                     loggedIn: false,
                     guest: true,
                 })
+            }
+            case AuthActionType.REQUEST_TOKEN: {
+              return setAuth({
+                ...auth,
+                user: {
+                  ...auth.user,
+                  resetPasswordToken: payload.token
+                }
+              })
             }
             default:
                 return auth;
@@ -212,7 +222,6 @@ function AuthContextProvider(props) {
   auth.resetPassword = async (newPassword, confirmPassword) => {
     try {
       const response = await api.resetPassword(newPassword, confirmPassword);
-      console.log('hi')
       if (response.status === 200) {
         navigate("/home");
       }
@@ -221,6 +230,20 @@ function AuthContextProvider(props) {
     }
   };
 
+  auth.requestPasswordToken = async (email) => {
+    try {
+      const response = await api.requestPasswordToken(email);
+      authReducer({
+        type: AuthActionType.REQUEST_TOKEN,
+        payload: {
+          token: response.data.token
+        }
+      })
+      return { success: true, errorMessage: "" };
+    } catch (error) {
+      return { success: false, errorMessage: error.response.data.errorMessage };
+    }
+  }
 
 
     return (
