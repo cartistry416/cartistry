@@ -38,7 +38,7 @@ function PostScreen() {
       </div>
       <div className='post-image-wrapper'>
         {(post.currentPost && post.currentPost.mapMetadata && post.currentPost.mapMetadata !== "") ? (
-          <GeoJSONMap mapMetadataId={post.currentPost.mapMetadata} position={[39.74739, -105]} width="100%" height="100%"/>
+          <GeoJSONMap mapMetadataId={post.currentPost.mapMetadata} position={[39.74739, -105]} editEnabled={false} width="100%" height="100%"/>
         ) : (
           <div className='post-img' />
         )}
