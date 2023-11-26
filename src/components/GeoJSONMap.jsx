@@ -1,7 +1,11 @@
 // eslint-disable-next-line
 import GlobalMapContext from '../contexts/map'
 import React, { useEffect, useState, useContext } from 'react'
-import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet'
+import { MapContainer, TileLayer, GeoJSON, FeatureGroup, Circle } from 'react-leaflet'
+import { EditControl } from "react-leaflet-draw"
+import "leaflet/dist/leaflet.css"
+import "leaflet-draw/dist/leaflet.draw.css"
+
 function getNameFromConvertedShapeFile(properties) {
 
     let keyBase = "NAME_"
@@ -60,7 +64,20 @@ function GeoJSONMap({mapMetadataId, position, width, height}) {
     return (
         <div className="mapContainerSize">
           {loaded ? (
+            <>
             <MapContainer center={position} zoom={4} style={{ width:`${width}`, height: `${height}`, zIndex: '1', borderRadius: '1rem'}}>
+                <FeatureGroup>
+                        <EditControl
+                        position='topleft'
+                        onEdited={() => {}}
+                        onCreated={() => {console.log("hi")}}
+                        onDeleted={() => {}}
+                        draw={{
+                            rectangle: false, // if we use this library, we can easily disable which drawing tools are available
+                        }}
+                        />
+                        <Circle center={[51.51, -0.06]} radius={200} />
+                </FeatureGroup>
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     maxZoom={19}
@@ -73,6 +90,7 @@ function GeoJSONMap({mapMetadataId, position, width, height}) {
                     /> 
                 )}
             </MapContainer>
+            </>
           ) : (
             <div>Loading...</div>
           )}
