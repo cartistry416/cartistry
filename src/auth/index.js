@@ -106,7 +106,7 @@ function AuthContextProvider(props) {
         return { success: false, errorMessage: errorMessage };
       } else {
         // Handle cases where the error is not from the server response
-        console.error("Error in getLoggedIn: An unexpected error occurred");
+        console.error("Error in getLoggedIn: An unexpected error occurred: " + err);
         return { success: false, errorMessage: "An unexpected error occurred" };
       }
     });
@@ -142,6 +142,7 @@ function AuthContextProvider(props) {
           return { success: false, errorMessage: errorMessage };
         } else {
           // Handle cases where the error is not from the server response
+          console.error("Error in getLoggedIn: An unexpected error occurred: " + err);
           return {
             success: false,
             errorMessage: "An unexpected error occurred",
