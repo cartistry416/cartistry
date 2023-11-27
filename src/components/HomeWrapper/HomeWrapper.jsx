@@ -64,7 +64,7 @@ function HomeWrapper() {
       sortPosts(sortOption);
       setSortOption("")
     }
-
+    setShowDropdown(false)
   }, [sortOption]);
 
   const sortPosts = () => {
@@ -106,6 +106,7 @@ function HomeWrapper() {
       post.searchPostsByTitle(e.target.value)
     }
   }
+  
   return (
     <div id="homeWrapper">
       <div className="functionsWrapper">
