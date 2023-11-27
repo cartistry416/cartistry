@@ -87,8 +87,9 @@ function MyPostsScreen() {
                 time={formatTime(postCard.createdAt)} 
                 tags={postCard.tags}
                 likes={postCard.likes}
-                comments={postCard.comments.length}
-                imageUrl={postCard.images[0]}
+                comments={postCard.numComments}
+                thumbnail={postCard.thumbnail}
+                postId={postCard._id}
               />
             </div>
           ))}
