@@ -64,7 +64,7 @@ function HomeWrapper() {
       sortPosts(sortOption);
       setSortOption("")
     }
-
+    setShowDropdown(false)
   }, [sortOption]);
 
   const sortPosts = () => {
