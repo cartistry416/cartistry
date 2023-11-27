@@ -16,7 +16,17 @@ function PostCard({ title, username, time, tags, alreadyLiked, likes, comments, 
     await post.updatePostLikes(postId)
   }
 
-
+  const generateImageSrc = (image) => {
+    const blob = new Blob([new Uint8Array(image.imageData.data)], { type: image.contentType })
+    return URL.createObjectURL(blob)
+  }
+  let imageData;
+  if (thumbnail && typeof thumbnail.imageData === 'string') {
+    imageData = thumbnail.imageData
+  }
+  else if (thumbnail && thumbnail.imageData) {
+    imageData = generateImageSrc(thumbnail)
+  }
   // comment for commit
   return (
         <div className="postCardWrapper">
