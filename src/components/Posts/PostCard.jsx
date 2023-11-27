@@ -1,14 +1,27 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useRef } from "react";
 import "../../static/css/postCard.css";
 import { useNavigate } from "react-router";
 import GlobalPostContext from "../../contexts/post";
 import AuthContext from "../../auth";
 
-function PostCard({ title, username, time, tags, alreadyLiked, likes, comments, thumbnail, postId }) {
+function PostCard({ title, username, time, tags, alreadyLiked, likes, comments, thumbnail, postId, showMenu}) {
   const {post} = useContext(GlobalPostContext)
+  const [showOptions, setShowOptions] = useState(false);
+  const dropdownRef = useRef(null);
+
   const navigate = useNavigate();
   const redirectTo = (path) => {
     navigate(path);
+  };
+
+  const toggleMenu = (e) => {
+    e.stopPropagation();
+    setShowOptions(!showOptions);
+  };
+  const handleOutsideClick = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setShowOptions(false);
+    }
   };
 
   const handleLikePost = async (e) => {
@@ -52,6 +65,26 @@ function PostCard({ title, username, time, tags, alreadyLiked, likes, comments, 
                     <span className="material-icons">mode_comment</span>{comments}
                 </button>
             </div>
+            {showMenu && (
+              <>
+                <span className="material-icons" onClick={toggleMenu}>
+                  more_vert
+                </span>
+                {showOptions && (
+                  <div className="CardMenu" ref={dropdownRef}>           
+                    <div className="mapCardMenuItem" >
+                      <span className="material-icons">edit</span>
+                      Edit
+                    </div>
+                    <div className="mapCardMenuItem" >
+                      <span className="material-icons">delete</span>
+                      Delete
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+
         </div>
     );
 }
