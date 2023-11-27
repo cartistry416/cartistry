@@ -6,19 +6,23 @@ function RegisterScreen(props) {
   const { auth } = useContext(AuthContext);
   const navigate = useNavigate();
   const formRef = useRef(); 
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // eslint-disable-next-line
   const [successfulRegister, setSuccessfulRegister] = useState(false);
   // eslint-disable-next-line
   const [errorMessage, setErrorMessage] = useState("");
+  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
   // eslint-disable-next-line
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true); 
     const email = e.target[0].value;
     const username = e.target[1].value;
     const password = e.target[2].value;
     const passwordVerify = e.target[3].value;
+    await delay(2000); // Delay for 2 seconds
 
     const { success, errorMessage } = await auth.registerUser(
       email,
@@ -28,6 +32,7 @@ function RegisterScreen(props) {
     );
     // console.log(errorMessage);
     // console.log(success);
+    setIsSubmitting(false); // Re-enable the button
     setSuccessfulRegister(success);
     setErrorMessage(errorMessage);
     if(success){
@@ -87,6 +92,8 @@ function RegisterScreen(props) {
             />
           </div>
           {/* Display success or error message */}
+          {isSubmitting && <div className="submitting-message">Registering...</div>}
+
           {successfulRegister ? (
             <div className="success-message">Successfully registered</div>
           ) : errorMessage ? (
@@ -95,7 +102,7 @@ function RegisterScreen(props) {
           <div className="authFooter">
             <div className="authFooterContent">
               <button className="authAltButton" onClick={() => redirectTo('/')}>Back</button>
-              <button type="submit">Register</button>
+              <button type="submit" disabled={isSubmitting}>Register</button>
             </div>
             <button className="authTopButton" onClick={() => redirectTo('/home')}>Continue as guest</button>
           </div>
