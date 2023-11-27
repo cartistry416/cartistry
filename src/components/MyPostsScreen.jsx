@@ -11,6 +11,7 @@ function MyPostsScreen() {
   const { map } = useContext(GlobalMapContext)
   const { post } = useContext(GlobalPostContext);
   const { auth } = useContext(AuthContext);
+  const [sortOption, setSortOption] = useState("first"); 
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
@@ -26,8 +27,21 @@ function MyPostsScreen() {
   
   //TODO, filter users to current logged in for this
   useEffect(() => {
-    post.loadPostCards("mostRecent", 10);
-  }, []); 
+    // Call the sorting function whenever the sort option changes
+    if (sortOption === "first") {
+      post.loadPostCards("mostRecent")
+      setSortOption("")
+    }
+    else if (sortOption !== "") {
+      sortPosts(sortOption);
+      setSortOption("")
+    }
+    setShowDropdown(false)
+  }, [sortOption]);
+
+  const sortPosts = () => {
+    post.sortBy(sortOption)
+  };
 
   const handleOutsideClick = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -44,6 +58,12 @@ function MyPostsScreen() {
     return postCard.owner === auth.user.userId;
   });
 
+  const handleSearchChange = (e) => {
+    if (e.key === "Enter") {
+      post.searchPostsByTitle(e.target.value)
+    }
+  }
+
   // const myPosts = post.postCardsInfo.filter(postCard => postCard.ownerUserId === auth.user);
 
   return (
@@ -52,7 +72,7 @@ function MyPostsScreen() {
         <span id="myPostsHeader">My Posts</span>
         <div className="searchBarWrapper">
           <span className="searchIcon material-icons">search</span>
-          <input id="searchInput" type="text" placeholder="Search..."></input>
+          <input id="searchInput" type="text" placeholder="Search..." onKeyDown={handleSearchChange}></input>
         </div>
         <div ref={dropdownRef}>
           <div className="sortBy">
@@ -69,9 +89,9 @@ function MyPostsScreen() {
             </button>
             {showDropdown && (
               <div className="sortByMenu">
-                <div className="dropdownOption">Newest</div>
-                <div className="dropdownOption">Oldest</div>
-                <div className="dropdownOption">Liked</div>
+                <div className="dropdownOption" onClick={() => setSortOption("mostRecent")}>Newest</div>
+                <div className="dropdownOption" onClick={() => setSortOption("leastRecent")}>Oldest</div>
+                <div className="dropdownOption" onClick={() => setSortOption("liked")}>Liked</div>
               </div>
             )}
           </div>
@@ -79,26 +99,27 @@ function MyPostsScreen() {
       </div>
       <div className="contentWrapper">
         <div id="postListWrapper">
-          {myPosts.map((postCard, index) => (
-            <div onClick={() => handlePostCardClick(postCard._id)} key={index}>
-              <PostCard
-                title={postCard.title}
-                username={postCard.ownerUserName}
-                time={formatTime(postCard.createdAt)} 
-                tags={postCard.tags}
-                likes={postCard.likes}
-                comments={postCard.numComments}
-                thumbnail={postCard.thumbnail}
-                postId={postCard._id}
-              />
-            </div>
-          ))}
+          {myPosts.map((postCard, index) => {
+            if(postCard && postCard.owner !== auth.user.userId){
+              return null
+            }
+            return (
+              <div onClick={() => handlePostCardClick(postCard._id)} key={index}>
+                <PostCard
+                  title={postCard.title}
+                  username={postCard.ownerUserName}
+                  time={formatTime(postCard.createdAt)} 
+                  tags={postCard.tags}
+                  likes={postCard.likes}
+                  comments={postCard.numComments}
+                  thumbnail={postCard.thumbnail}
+                  postId={postCard._id}
+                />
+              </div>
+            )
+          })}
         </div>
-        <div className="tagWrapper">
-          <div className="tagTitle">Tags</div>
-          <button className="tag">Tag Twenty</button>
-          <button className="tag">Tag One</button>
-          <button className="tag">Tag Forty</button>
+        <div className="tagWrapperHome">
         </div>
       </div>
     </div>

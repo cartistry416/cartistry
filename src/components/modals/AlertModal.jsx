@@ -10,7 +10,7 @@ function AlertModal({ errorMessage, onCancel, onReset }) {
         { onReset && (
           <div className="modalFooter">
             <button className="modalButton" type="submit" onClick={onReset}>
-              Reset
+              Close
             </button>
           </div>
         )}
