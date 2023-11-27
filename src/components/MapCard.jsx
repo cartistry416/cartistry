@@ -93,11 +93,19 @@ function MapCard(props) {
     setShowOptions(!showOptions);
   };
 
+  const handleMapCardClick = async (e) => {
+    e.preventDefault();
+    console.log(mapId)
+    //map.exitCurrentMap()
+    await map.loadMap(mapId);
+    navigate(`/editMap/${mapId}`)
+  };
+
   return (
     <div className="mapCardWrapper">
       <img
         src={imageUrl}
-        onClick={() => navigate(`/editMap/${mapId}`)}
+        onClick={handleMapCardClick}
         alt="map"
         className="mapCardImagePreview"
       ></img>
