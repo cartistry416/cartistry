@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useContext } from "react";
 import { useNavigate } from "react-router";
 import { GlobalPostContext } from "../../contexts/post";
 import GlobalMapContext from "../../contexts/map";
+import AuthContext from "../../auth";
 
 export function formatTime(timeString) {
   const date = new Date(timeString);
@@ -35,6 +36,7 @@ export function formatTime(timeString) {
 function HomeWrapper() {
   const { post } = useContext(GlobalPostContext);
   const { map } = useContext(GlobalMapContext)
+  const { auth } = useContext(AuthContext)
   const [showDropdown, setShowDropdown] = useState(false);
   const [mapSelected, setMapSelected] = useState("");
   const [sortOption, setSortOption] = useState("mostRecent"); 
@@ -143,8 +145,10 @@ function HomeWrapper() {
                 time={formatTime(postCard.createdAt)} 
                 tags={postCard.tags}
                 likes={postCard.likes}
-                comments={postCard.comments.length}
-                imageUrl={postCard.images[0]}
+                alreadyLiked={auth.loggedIn && auth.likedPosts.has(postCard._id)}
+                comments={postCard.numComments}
+                thumbnail={postCard.thumbnail}
+                postId={postCard._id}
               />
             </div>
           ))}
