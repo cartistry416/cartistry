@@ -15,6 +15,8 @@ export const AuthActionType = {
   REGISTER_USER: "REGISTER_USER",
   LOGIN_GUEST: "LOGIN_GUEST",
   REQUEST_TOKEN: "REQUEST_TOKEN",
+  ADD_TO_LIKED_POSTS: "ADD_TO_LIKED_POSTS",
+  REMOVE_FROM_LIKED_POSTS: "REMOVE_FROM_LIKED_POSTS",
 };
 
 function AuthContextProvider(props) {
@@ -25,6 +27,7 @@ function AuthContextProvider(props) {
         guest: false,
         showLoginLogoutModal: false,
         modalMessage: '',
+        likedPosts: null,
     });
     useEffect(() => {
         if (auth.showLoginLogoutModal) {
@@ -58,6 +61,7 @@ function AuthContextProvider(props) {
                     guest: false,
                     showLoginLogoutModal: true,
                     modalMessage: 'You are now logged in. You will soon be redirected',
+                    likedPosts: new Set(payload.likedPosts)
                 })
             }
             case AuthActionType.LOGOUT_USER: {
@@ -90,6 +94,22 @@ function AuthContextProvider(props) {
                   ...auth.user,
                   resetPasswordToken: payload.token
                 }
+              })
+            }
+            case AuthActionType.ADD_TO_LIKED_POSTS: {
+              const updatedLikedPosts = new Set(auth.likedPosts)
+              updatedLikedPosts.add(payload.id)
+              return setAuth({
+                ...auth,
+                likedPosts: updatedLikedPosts
+              })
+            }
+            case AuthActionType.REMOVE_FROM_LIKED_POSTS: {
+              const updatedLikedPosts = new Set(auth.likedPosts)
+              updatedLikedPosts.delete(payload.id)
+              return setAuth({
+                ...auth,
+                likedPosts: updatedLikedPosts
               })
             }
             default:
@@ -171,15 +191,15 @@ function AuthContextProvider(props) {
     try {
       response = await api.loginUser(email, password);
       if (response.status === 200) {
+        console.log(response.data.user)
         authReducer({
           type: AuthActionType.LOGIN_USER,
           payload: {
             user: response.data.user,
+            likedPosts: response.data.likedPosts
           },
         });
 
-        const cookies = response.headers["set-cookie"];
-        console.log("Cookies:", cookies);
         return { success: true, errorMessage: "" };
       }
     } catch (error) {
@@ -246,6 +266,25 @@ function AuthContextProvider(props) {
     }
   }
 
+  auth.updateLikedPosts = (alreadyLiked, id) => {
+
+    if (alreadyLiked) {
+      authReducer({
+        type: AuthActionType.ADD_TO_LIKED_POSTS,
+        payload: {
+          id
+        }
+      })
+    }
+    else {
+      authReducer({
+        type: AuthActionType.REMOVE_FROM_LIKED_POSTS,
+        payload: {
+          id
+        }
+      })
+    }
+  }
 
     return (
         <AuthContext.Provider value={{

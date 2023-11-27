@@ -89,7 +89,6 @@ function GlobalPostContextProvider(props) {
                 const updatedPostCardsInfo = [...post.postCardsInfo]
                 const updateIndex = post.postCardsInfo.findIndex(card => card._id === payload.id)
                 if (updateIndex !== -1) {
-                    updatedPostCardsInfo[updateIndex]["alreadyLiked"] = payload.alreadyLiked
                     updatedPostCardsInfo[updateIndex].likes = payload.likes
                 }
                 return setPost({
@@ -339,8 +338,9 @@ function GlobalPostContextProvider(props) {
             if (response.status === 200) {
                 postReducer({
                     type: GlobalPostActionType.UPDATE_POST_LIKES,
-                    payload: { id, alreadyLiked: response.data.alreadyLiked, likes: response.data.likes }
+                    payload: { id, likes: response.data.likes }
                 })
+                auth.updateLikedPosts(response.data.alreadyLiked, id)
             }
         }
         catch (error) {

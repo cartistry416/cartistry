@@ -1,28 +1,26 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import "../../static/css/postCard.css";
 import { useNavigate } from "react-router";
+import GlobalPostContext from "../../contexts/post";
+import AuthContext from "../../auth";
 
-function PostCard({ title, username, time, tags, likes, comments, imageUrl }) {
-  const [liked, setLiked] = useState("");
+function PostCard({ title, username, time, tags, alreadyLiked, likes, comments, thumbnail, postId }) {
+  const {post} = useContext(GlobalPostContext)
   const navigate = useNavigate();
   const redirectTo = (path) => {
     navigate(path);
   };
 
-  const handleLikePost = (e) => {
+  const handleLikePost = async (e) => {
     e.stopPropagation();
-    if (liked === "") {
-      setLiked("liked");
-    } else {
-      setLiked("");
-    }
-    console.log(e.target)
+    await post.updatePostLikes(postId)
   }
+
 
   // comment for commit
   return (
         <div className="postCardWrapper">
-            {imageUrl && <img className="postCardImagePreview" src={imageUrl} alt="preview" />}
+            {thumbnail && <img className="postCardImagePreview" src={`data:${thumbnail.contentType};base64,${thumbnail.imageData}`} alt="preview" />}
             <div className="postCardDescription">
                 <div className="postCardTitle">{title}</div>
                 <div className="postCardDescription2">
@@ -35,7 +33,7 @@ function PostCard({ title, username, time, tags, likes, comments, imageUrl }) {
                 </div>
             </div>
             <div className="postCardButtons">
-                <button className={`${liked} postCardButton`} onClick={handleLikePost}>
+                <button className={`${alreadyLiked ? "liked" : ""} postCardButton`} onClick={handleLikePost}>
                     <span className="material-icons">favorite</span>{likes}
                 </button>
                 <button className="postCardButton">
