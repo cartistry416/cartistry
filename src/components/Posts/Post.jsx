@@ -44,8 +44,8 @@ function Post({postId}) {
           {/* strange, this number doesn't increment <div> {`${post.currentPost.forks}`}</div> */}
         </> : null}
       </div>
-      <div className="post-content">
-          {content}
+      {/*using dangerouslySetInnerHTML, but DOMPurify usd in posteditor to mitigaterisks*/}
+      <div className="post-content" dangerouslySetInnerHTML={{ __html: content }}>
           {images.length > 0 ? images.map( (image, index) => <img src={generateImageSrc(image)} alt={`img ${index} of this post`}/>) : null}
       </div>
       <div className="post-footer">

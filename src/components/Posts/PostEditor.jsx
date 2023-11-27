@@ -1,5 +1,6 @@
 import { useState, useContext, useEffect } from "react";
 import ReactQuill from "react-quill";
+import DOMPurify from 'dompurify';
 import "react-quill/dist/quill.snow.css";
 import "../../static/css/post.css";
 import { useNavigate, useParams } from "react-router";
@@ -57,17 +58,18 @@ const PostEditor = () => {
   };
 
   const handleContentChange = (value) => {
-    let textContent = value;
-    try {
-      const parser = new DOMParser();
-      const parsedHtml = parser.parseFromString(value, "text/html");
-      textContent = parsedHtml.body.textContent;
-    } catch (err) {
-      console.error(err);
-    }
-    if (textContent !== content) {
-      setContent(textContent);
-    }
+    const cleanContent = DOMPurify.sanitize(value);
+    setContent(cleanContent);
+    // try {
+    //   const parser = new DOMParser();
+    //   const parsedHtml = parser.parseFromString(value, "text/html");
+    //   textContent = parsedHtml.body.textContent;
+    // } catch (err) {
+    //   console.error(err);
+    // }
+    // if (textContent !== content) {
+    //   setContent(textContent);
+    // }
   };
 
   const addTag = (tagToAdd) => {
