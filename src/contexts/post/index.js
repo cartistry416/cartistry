@@ -1,7 +1,8 @@
 import { createContext, useContext, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import api from './post-request-api'
+import api, { getMostRecentPosts } from './post-request-api'
 import AuthContext from '../../auth'
+import { update } from 'lodash';
 
 export const GlobalPostContext = createContext({});
 export const GlobalPostActionType = {
@@ -14,7 +15,8 @@ export const GlobalPostActionType = {
     CREATE_COMMENT: "CREATE_COMMENT",
     UPDATE_POST_LIKES: "UPDATE_POST_LIKES",
     HIDE_MODALS: "HIDE_MODALS",
-    EXIT_CURRENT_POST: "EXIT_CURRENT_POST"
+    EXIT_CURRENT_POST: "EXIT_CURRENT_POST",
+    SORT_POST_CARDS: "SORT_POST_CARDS"
 }
 
 const CurrentModal = {
@@ -100,6 +102,35 @@ function GlobalPostContextProvider(props) {
                 return setPost({
                     ...post,
                     currentPost: null
+                })
+            }
+
+            case GlobalPostActionType.SORT_POST_CARDS: {
+                const updatedPostCardsInfo = [...post.postCardsInfo]
+                console.log(updatedPostCardsInfo)
+                if (payload.sortType === "mostRecent") {
+                    updatedPostCardsInfo.sort((a, b) => {
+                        const date1 = new Date(a.createdAt)
+                        const date2 = new Date(b.createdAt)
+                        return date2 - date1
+                    })
+                }
+                else if (payload.sortType === "leastRecent") {
+                    updatedPostCardsInfo.sort((a, b) => {
+                        const date1 = new Date(a.createdAt)
+                        const date2 = new Date(b.createdAt)
+                        return date1 - date2
+                    })
+                }
+                else if (payload.sortType === "liked") {
+                    updatedPostCardsInfo.sort((a, b) => {
+                        return b.likes - a.likes
+                    })
+                }
+                console.log(updatedPostCardsInfo)
+                return setPost({
+                    ...post,
+                    postCardsInfo: updatedPostCardsInfo
                 })
             }
 
@@ -213,15 +244,10 @@ function GlobalPostContextProvider(props) {
     post.loadPostCards = async (type, limit) => {
         try {
             let response;
-            if (type === "mostLiked") {
-                response = await api.getMostLikedPosts(limit)
-            }
-            else if (type === "mostRecent") {
+            if (type === "mostRecent") {
                 response = await api.getMostRecentPosts(limit)
             }
-            else if (type === "leastRecent") {
-                response = await api.getLeastRecentPosts(limit)
-            }
+
             else if (type === "owned") {
                 response = await api.getPostsOwnedByUser(limit)
             } 
@@ -249,6 +275,14 @@ function GlobalPostContextProvider(props) {
         }
     }
 
+
+    post.sortBy = (type) => {
+        postReducer({
+            type: GlobalPostActionType.SORT_POST_CARDS,
+            payload: {sortType: type}
+        })
+    }
+
     post.searchPostsByTags = async (tags, limit) => {
         try {
             const response = await api.searchPostsByTags(tags, limit)
@@ -270,7 +304,14 @@ function GlobalPostContextProvider(props) {
     post.searchPostsByTitle = async (title, limit) => {
 
         try {
-            const response = await api.searchPostsByTitle(title, limit)
+            let response;
+            if (title === "") {
+                response = await getMostRecentPosts(limit)
+            }
+            else {
+                response = await api.searchPostsByTitle(title, limit)
+            }
+
             if (response.status === 200) {
                 postReducer({
                     type: GlobalPostActionType.LOAD_POST_CARDS,

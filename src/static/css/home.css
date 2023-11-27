@@ -58,7 +58,7 @@
     padding-left: 5vw;
 }
 
-.tagWrapper{
+.tagWrapperHome{
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -66,7 +66,7 @@
     margin-left: 5vw;
     height: 30rem;
     width: 20rem;
-    background-color: var(--accent3);
+    background-color: var(--accent1);
     border-radius: 1rem;
 }
 

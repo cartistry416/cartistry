@@ -39,7 +39,7 @@ function HomeWrapper() {
   const { auth } = useContext(AuthContext)
   const [showDropdown, setShowDropdown] = useState(false);
   const [mapSelected, setMapSelected] = useState("");
-  const [sortOption, setSortOption] = useState("mostRecent"); 
+  const [sortOption, setSortOption] = useState("first"); 
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
@@ -47,8 +47,7 @@ function HomeWrapper() {
     document.addEventListener("mousedown", handleOutsideClick);
     post.exitCurrentPost()
     map.exitCurrentMap()
-    console.log(post.currentPost)
-    console.log(map.currentMapGeoJSON)
+
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
@@ -57,23 +56,19 @@ function HomeWrapper() {
   //TODO, handle limit differently, maybe have pages
   useEffect(() => {
     // Call the sorting function whenever the sort option changes
-    sortPosts();
+    if (sortOption === "first") {
+      post.loadPostCards("mostRecent")
+      setSortOption("")
+    }
+    else if (sortOption !== "") {
+      sortPosts(sortOption);
+      setSortOption("")
+    }
+
   }, [sortOption]);
 
   const sortPosts = () => {
-    switch (sortOption) {
-      case "mostRecent":
-        post.loadPostCards("mostRecent", 10);
-        break;
-      case "leastRecent":
-        post.loadPostCards("leastRecent", 10);
-        break;
-      case "liked":
-        // Implement the logic to sort by likes
-        break;
-      default:
-        post.loadPostCards("mostRecent", 10);
-    }
+    post.sortBy(sortOption)
   };
 
 //   useEffect(() => {
@@ -105,6 +100,12 @@ function HomeWrapper() {
     }
     navigate(`/post/${id}`);
   };
+
+  const handleSearchChange = (e) => {
+    if (e.key === "Enter") {
+      post.searchPostsByTitle(e.target.value)
+    }
+  }
   return (
     <div id="homeWrapper">
       <div className="functionsWrapper">
@@ -113,7 +114,7 @@ function HomeWrapper() {
         </button>
         <div className="searchBarWrapper">
           <span className="searchIcon material-icons">search</span>
-          <input id="searchInput" type="text" placeholder="Search..."></input>
+          <input id="searchInput" type="text" placeholder="Search..." onKeyDown={handleSearchChange}></input>
         </div>
         <button className={mapSelected} onClick={toggleMapsOnly}>
           Maps Only
@@ -143,7 +144,11 @@ function HomeWrapper() {
       </div>
       <div className="contentWrapper">
         <div id="postListWrapper">
-          {post.postCardsInfo.map((postCard, index) => (
+          {post.postCardsInfo.map((postCard, index) =>  {
+            if (mapSelected === "mapOnlySelected" && (postCard.mapMetadata === "" || !postCard.mapMetadata)) {
+              return null
+            }
+            return (
             <div onClick={() => handlePostCardClick(postCard._id, postCard.mapMetadata)} key={index}>
               <PostCard
                 title={postCard.title}
@@ -157,13 +162,11 @@ function HomeWrapper() {
                 postId={postCard._id}
               />
             </div>
-          ))}
+          ) }
+          
+          )}
         </div>
-        <div className="tagWrapper">
-          <div className="tagTitle">Tags</div>
-          <button className="tag">Tag Twenty</button>
-          <button className="tag">Tag One</button>
-          <button className="tag">Tag Forty</button>
+        <div className="tagWrapperHome">
         </div>
       </div>
     </div>
