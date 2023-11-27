@@ -61,9 +61,12 @@
     width: 100%;
     margin-bottom: 1rem;
 }
-
-.success-message,
+.success-message{
+    color: var(--main-text-color);
+    font-size: 1.2rem;
+}
 .error-message {
   color: #ff0f0f;
   margin-bottom: 5px;
+  font-size: 1.2rem;
 }
