@@ -11,9 +11,11 @@ function LoginScreen() {
   const [successfulLogin, setSuccessfulLogin] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [showError, setShowError] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true); 
     const email = e.target.email.value;
     const password = e.target.password.value;
 
@@ -24,6 +26,7 @@ function LoginScreen() {
       setErrorMessage(errorMessage);
       setShowError(true);
     }
+    setIsSubmitting(false);
     setSuccessfulLogin(success);
   };
 
@@ -65,7 +68,9 @@ function LoginScreen() {
             <div className="authFooter">
               <div className="authFooterContent">
                 <button className="authAltButton" onClick={() => redirectTo('/requestPassword')}>Forgot Password</button>
-                <button type="submit">Login</button>
+                <button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? 'Logging in...' : 'Login'}
+                </button>
               </div>
               <button className="authTopButton" onClick={() => redirectTo('/register')}>Register an account</button>
               <button className="authBottomButton" onClick={() => redirectTo('/home')}>Continue as guest</button>

@@ -32,7 +32,7 @@ function RegisterScreen(props) {
     );
     // console.log(errorMessage);
     // console.log(success);
-    setIsSubmitting(false); // Re-enable the button
+    setIsSubmitting(false);
     setSuccessfulRegister(success);
     setErrorMessage(errorMessage);
     if(success){
@@ -92,8 +92,6 @@ function RegisterScreen(props) {
             />
           </div>
           {/* Display success or error message */}
-          {isSubmitting && <div className="submitting-message">Registering...</div>}
-
           {successfulRegister ? (
             <div className="success-message">Successfully registered</div>
           ) : errorMessage ? (
@@ -102,7 +100,9 @@ function RegisterScreen(props) {
           <div className="authFooter">
             <div className="authFooterContent">
               <button className="authAltButton" onClick={() => redirectTo('/')}>Back</button>
-              <button type="submit" disabled={isSubmitting}>Register</button>
+              <button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? 'Registering...' : 'Register'}
+              </button>
             </div>
             <button className="authTopButton" onClick={() => redirectTo('/home')}>Continue as guest</button>
           </div>

@@ -61,7 +61,6 @@
     width: 100%;
     margin-bottom: 1rem;
 }
-.submitting-message,
 .success-message{
     color: var(--main-text-color);
     font-size: 1.2rem;
