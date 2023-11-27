@@ -1,5 +1,6 @@
 import { useState, useContext, useEffect } from "react";
 import ReactQuill from "react-quill";
+import DOMPurify from 'dompurify';
 import "react-quill/dist/quill.snow.css";
 import "../../static/css/post.css";
 import { useNavigate, useParams } from "react-router";
@@ -20,6 +21,8 @@ const PostEditor = () => {
   const [postTags, setPostTags] = useState([]);
   const [availTags, setAvailTags] = useState(getAllTags());
   const [attachments, setAttachments] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     // const loadPostData = async () => {
@@ -57,17 +60,18 @@ const PostEditor = () => {
   };
 
   const handleContentChange = (value) => {
-    let textContent = value;
-    try {
-      const parser = new DOMParser();
-      const parsedHtml = parser.parseFromString(value, "text/html");
-      textContent = parsedHtml.body.textContent;
-    } catch (err) {
-      console.error(err);
-    }
-    if (textContent !== content) {
-      setContent(textContent);
-    }
+    const cleanContent = DOMPurify.sanitize(value);
+    setContent(cleanContent);
+    // try {
+    //   const parser = new DOMParser();
+    //   const parsedHtml = parser.parseFromString(value, "text/html");
+    //   textContent = parsedHtml.body.textContent;
+    // } catch (err) {
+    //   console.error(err);
+    // }
+    // if (textContent !== content) {
+    //   setContent(textContent);
+    // }
   };
 
   const addTag = (tagToAdd) => {
@@ -86,9 +90,33 @@ const PostEditor = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const id = mapMetadataId !== undefined ? mapMetadataId : "";
-    await post.createPost(title, content, attachments, postTags, id);
-  };
+    // Check if content is effectively empty, react quil empty placeholder is '<p><br></p>'
+    const isContentEmpty = !content.trim() || content === '<p><br></p>';
+    const isTitleEmpty = !title.trim() 
+    
+    if (isContentEmpty) {
+      setErrorMessage("Error: No body content provided");
+      return;
+    }
+    if (isTitleEmpty) {
+      setErrorMessage("Error: No title provided");
+      return;
+    }
+    setIsSubmitting(true); 
+    try {
+      const id = mapMetadataId !== undefined ? mapMetadataId : ""; 
+      const result = await post.createPost(title, content, attachments, postTags, id);
+      if (result && result.success) {
+        setTitle('');
+        setContent('');
+        setPostTags([]);
+        setAttachments([]);
+      }
+    } catch (error) {
+      console.error('Error posting:', error);
+    }
+    setIsSubmitting(false);
+  };  
 
   const handleAttachmentAdd = async (e) => {
     e.preventDefault();
@@ -155,8 +183,13 @@ const PostEditor = () => {
                   ))}
                 </div>
               </div>
+              <div className="error-message">
+                {errorMessage}
+              </div>
               <div className="post-button">
-                <button onClick={handleSubmit}>Post</button>
+                <button onClick={handleSubmit} disabled={isSubmitting}>
+                  {isSubmitting ? 'Posting...' : 'Post'}
+                </button>
               </div>
             </div>
           </div>
