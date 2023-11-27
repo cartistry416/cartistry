@@ -22,6 +22,7 @@ const PostEditor = () => {
   const [availTags, setAvailTags] = useState(getAllTags());
   const [attachments, setAttachments] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     // const loadPostData = async () => {
@@ -89,11 +90,33 @@ const PostEditor = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Check if content is effectively empty, react quil empty placeholder is '<p><br></p>'
+    const isContentEmpty = !content.trim() || content === '<p><br></p>';
+    const isTitleEmpty = !title.trim() 
+    
+    if (isContentEmpty) {
+      setErrorMessage("Error: No body content provided");
+      return;
+    }
+    if (isTitleEmpty) {
+      setErrorMessage("Error: No title provided");
+      return;
+    }
     setIsSubmitting(true); 
-    const id = mapMetadataId !== undefined ? mapMetadataId : "";
-    await post.createPost(title, content, attachments, postTags, id);
+    try {
+      const id = mapMetadataId !== undefined ? mapMetadataId : ""; 
+      const result = await post.createPost(title, content, attachments, postTags, id);
+      if (result && result.success) {
+        setTitle('');
+        setContent('');
+        setPostTags([]);
+        setAttachments([]);
+      }
+    } catch (error) {
+      console.error('Error posting:', error);
+    }
     setIsSubmitting(false);
-  };
+  };  
 
   const handleAttachmentAdd = async (e) => {
     e.preventDefault();
@@ -160,8 +183,11 @@ const PostEditor = () => {
                   ))}
                 </div>
               </div>
+              <div className="error-message">
+                {errorMessage}
+              </div>
               <div className="post-button">
-                <button onClick={handleSubmit}disabled={isSubmitting}>
+                <button onClick={handleSubmit} disabled={isSubmitting}>
                   {isSubmitting ? 'Posting...' : 'Post'}
                 </button>
               </div>
