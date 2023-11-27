@@ -25,23 +25,7 @@ function getNameFromConvertedShapeFile(properties) {
 // https://github.com/alex3165/react-leaflet-draw/blob/7963cfee5ea7f0c85bd294251fa0e150c59641a7/examples/class/edit-control.js
 function GeoJSONMap({mapMetadataId, position, editEnabled, width, height}) {
     const { map } = useContext(GlobalMapContext)
-    const [currentGeoJSON, setCurrentGeoJSON] = useState(null);
-    const [loaded, setLoaded] = useState(false)
-
-    useEffect(() => {
-      const loadMapData = async () => {
-          try {
-              await map.loadMap(mapMetadataId);
-              setLoaded(true);
-          } catch (error) {
-              console.error("Failed to load map: ", error);
-          }
-      };
-
-      if (!loaded) {
-          loadMapData();
-      }
-  }, [mapMetadataId, loaded]);
+    const loaded = true;
 
     const onEachFeature = (feature, layer) => {
         let name = null;
@@ -155,8 +139,6 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height}) {
 
     return (
         <div className="mapContainerSize">
-          {loaded ? (
-            <>
             <MapContainer center={position} zoom={4} style={{ width:`${width}`, height: `${height}`, zIndex: '1', borderRadius: '1rem'}}>
                 {editEnabled ? 
                 <FeatureGroup 
@@ -191,10 +173,6 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height}) {
                     /> 
                 )}
             </MapContainer>
-            </>
-          ) : (
-            <div>Loading...</div>
-          )}
         </div>
     )
 }
