@@ -106,6 +106,7 @@ function HomeWrapper() {
       post.searchPostsByTitle(e.target.value)
     }
   }
+  
   return (
     <div id="homeWrapper">
       <div className="functionsWrapper">
