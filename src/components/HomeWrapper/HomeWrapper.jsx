@@ -47,6 +47,8 @@ function HomeWrapper() {
     document.addEventListener("mousedown", handleOutsideClick);
     post.exitCurrentPost()
     map.exitCurrentMap()
+    console.log(post.currentPost)
+    console.log(map.currentMapGeoJSON)
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
@@ -74,9 +76,9 @@ function HomeWrapper() {
     }
   };
 
-  useEffect(() => {
-    console.log("Updated Post Cards Info:", post.postCardsInfo);
-}, [post.postCardsInfo]);
+//   useEffect(() => {
+//     console.log("Updated Post Cards Info:", post.postCardsInfo);
+// }, [post.postCardsInfo]);
 
   const handleOutsideClick = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -96,7 +98,11 @@ function HomeWrapper() {
     navigate(path);
   };
 
-  const handlePostCardClick = (id) => {
+  const handlePostCardClick = async (id, mapMetadata) => {
+    if(mapMetadata){
+      map.exitCurrentMap()
+      await map.loadMap(mapMetadata);
+    }
     navigate(`/post/${id}`);
   };
   return (
@@ -138,7 +144,7 @@ function HomeWrapper() {
       <div className="contentWrapper">
         <div id="postListWrapper">
           {post.postCardsInfo.map((postCard, index) => (
-            <div onClick={() => handlePostCardClick(postCard._id)} key={index}>
+            <div onClick={() => handlePostCardClick(postCard._id, postCard.mapMetadata)} key={index}>
               <PostCard
                 title={postCard.title}
                 username={postCard.ownerUserName}
