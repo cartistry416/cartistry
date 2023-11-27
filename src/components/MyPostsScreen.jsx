@@ -114,6 +114,7 @@ function MyPostsScreen() {
                   comments={postCard.numComments}
                   thumbnail={postCard.thumbnail}
                   postId={postCard._id}
+                  showMenu={true}
                 />
               </div>
             )
