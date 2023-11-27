@@ -21,6 +21,7 @@ const PostEditor = () => {
   const [postTags, setPostTags] = useState([]);
   const [availTags, setAvailTags] = useState(getAllTags());
   const [attachments, setAttachments] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     // const loadPostData = async () => {
@@ -88,8 +89,10 @@ const PostEditor = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true); 
     const id = mapMetadataId !== undefined ? mapMetadataId : "";
     await post.createPost(title, content, attachments, postTags, id);
+    setIsSubmitting(false);
   };
 
   const handleAttachmentAdd = async (e) => {
@@ -158,7 +161,9 @@ const PostEditor = () => {
                 </div>
               </div>
               <div className="post-button">
-                <button onClick={handleSubmit}>Post</button>
+                <button onClick={handleSubmit}disabled={isSubmitting}>
+                  {isSubmitting ? 'Posting...' : 'Post'}
+                </button>
               </div>
             </div>
           </div>
