@@ -295,13 +295,10 @@ function GlobalPostContextProvider(props) {
         if (mapMetadataId !== "") {
             formData.append('mapMetadataId', mapMetadataId)
         }
-        if (images) {
-            const fileExtensions = []
+        if (images && images.length > 0) {
             for (let i=0; i<images.length; i++) {
                 formData.append('images', images[i])
-                fileExtensions.push(images[i].name.split('.').pop())
             }
-            formData.append('fileExtensions', fileExtensions)
         }
         try {
             const response = await api.createPost(formData)
