@@ -47,7 +47,7 @@ export const resetPassword = (newPassword, confirmPassword) => {
     })
 }
 export const requestPasswordToken = (email) => {
-  return api.post('/requestPasswordToken/', {
+  return api.post('/forgotPassword/', {
     email
   })
 }
