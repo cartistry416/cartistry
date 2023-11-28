@@ -44,12 +44,9 @@ function PostCard({ title, username, time, tags, likes, comments, thumbnail, pos
   const handleEdit = async (e) => {
     e.stopPropagation();
     setShowOptions(false);
-    
     await post.loadPost(postId);
-  
     navigate(`/editPost/${postId}?type=b`);
   };
-  
 
   const onDeleteClick = (e) => {
     e.stopPropagation();
@@ -102,18 +99,21 @@ function PostCard({ title, username, time, tags, likes, comments, thumbnail, pos
                 <span className="material-icons" onClick={toggleMenu}>
                   more_vert
                 </span>
-                {showOptions && (
-                  <div className="postCardMenu" ref={dropdownRef}>           
-                    <div className="postCardMenuItem" onClick={handleEdit}>
-                      <span className="material-icons">edit</span>
-                      Edit
+                <div className="postCardMore" ref={dropdownRef}>
+                  {showOptions && (
+                    <div className="postCardMenu">           
+                      <div className="postCardMenuItem" onClick={handleEdit}>
+                        <span className="material-icons">edit</span>
+                        Edit
+                      </div>
+                      <div className="postCardMenuItem" onClick={onDeleteClick}>
+                        <span className="material-icons">delete</span>
+                        Delete
+                      </div>
                     </div>
-                    <div className="postCardMenuItem" onClick={onDeleteClick}>
-                      <span className="material-icons">delete</span>
-                      Delete
-                    </div>
-                  </div>
-                )}
+                  )}
+                </div>
+                
               </>
             )}
         {showModal && (
