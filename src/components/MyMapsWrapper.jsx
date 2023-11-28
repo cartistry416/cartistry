@@ -15,7 +15,7 @@ function MyMapsWrapper() {
   const [showUploadModal, setShowUploadModal] = useState("");
   const [showCreateDropdown, setCreateDropdown] = useState(false);
   const [showSortDropdown, setSortDropdown] = useState(false);
-  
+  const [sortOption, setSortOption] = useState("first"); 
   const [loaded, setLoaded] = useState(false)
   const createDropdownRef = useRef(null);
   const sortDropdownRef = useRef(null);
@@ -23,19 +23,27 @@ function MyMapsWrapper() {
   useEffect(() => {
     document.addEventListener("mousedown", handleOutsideClick);
 
-    if (auth.loggedIn && !loaded) {
+    if (auth.loggedIn && !loaded && sortOption === "first") {
       map.loadMapCards(auth.user.userId).then(() => {
         setLoaded(true)
       })
     }
+    else if (auth.loggedIn && loaded && sortOption !== "") {
+      sortMaps(sortOption);
+      setSortOption("")
+    }
     else if (map.currentMapMetadata) {
       setLoaded(false)
     }
-
+    setSortDropdown(false)
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
-  }, [auth, loaded, map.currentMapMetadata]);
+  }, [auth, loaded, map.currentMapMetadata, sortOption]);
+
+  const sortMaps = () => {
+    map.sortBy(sortOption)
+  };
 
   useEffect(() => {
     post.exitCurrentPost()
@@ -122,9 +130,9 @@ function MyMapsWrapper() {
             </button>
             {showSortDropdown && (
               <div className="sortByMenu">
-                <button className="dropdownOption">Name(A-Z)</button>
-                <button className="dropdownOption">Edit Date</button>
-                <button className="dropdownOption">Create Date</button>
+                <button className="dropdownOption" onClick={() => setSortOption("name")}>Name(A-Z)</button>
+                <button className="dropdownOption" onClick={() => setSortOption("edit")}>Edit Date</button>
+                <button className="dropdownOption" onClick={() => setSortOption("create")}>Create Date</button>
               </div>
             )}
           </div>

@@ -1,7 +1,6 @@
 // eslint-disable-next-line
 import React, { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-// import { useHistory } from 'react-router-dom'
 
 import api from './auth-request-api'
 import SuccessfulLoginLogoutModal from "../components/modals/SuccessfulLoginLogoutModal";
@@ -37,12 +36,6 @@ function AuthContextProvider(props) {
             return () => clearTimeout(timer); // Clean up the timer
         }
     }, [auth.showLoginLogoutModal]);
-    
-    // const history = useHistory();
-
-    // useEffect(() => {
-    //     auth.getLoggedIn();
-    // }, []);
 
     const authReducer = (action) => {
         const { type, payload } = action;
