@@ -1,5 +1,4 @@
 describe("Frontend Tests", () => {
-
   it("Search Bar", () => {
     cy.visit("/home");
     cy.get("#searchInput")
@@ -10,6 +9,44 @@ describe("Frontend Tests", () => {
     cy.visit("/home");
     cy.get("#postListWrapper").should("exist");
     // cy.get(".sortByMenuItem").should("exist").should("have.length", 3);
+  });
+  it("register page", () => {
+    cy.visit("/register");
+    cy.get("#email").should("exist");
+    cy.get("#email")
+      .type("McKillaGorilla@gmail.com")
+      .should("have.value", "McKillaGorilla@gmail.com");
+    cy.get("#username").should("exist");
+    cy.get("#username")
+      .type("McKillaGorilla")
+      .should("have.value", "McKillaGorilla");
+    cy.get("#password").should("exist");
+    cy.get("#password")
+      .type("McKillaGorillaPassword")
+      .should("have.value", "McKillaGorillaPassword");
+    cy.get("#confirmPassword").should("exist");
+    cy.get("#confirmPassword")
+      .type("McKillaGorillaPassword")
+      .should("have.value", "McKillaGorillaPassword");
+    // cy.get(".sortByMenuItem").should("exist").should("have.length", 3);
+  });
+  it("login page", () => {
+    cy.visit("/");
+    cy.get("#email").should("exist");
+    cy.get("#email")
+      .type("McKillaGorilla@gmail.com")
+      .should("have.value", "McKillaGorilla@gmail.com");
+    cy.get("#password").should("exist");
+    cy.get("#password")
+      .type("McKillaGorillaPassword")
+      .should("have.value", "McKillaGorillaPassword");
+  });
+  it("forgot password page", () => {
+    cy.visit("/requestPassword");
+    cy.get("#email").should("exist");
+    cy.get("#email")
+      .type("McKillaGorilla@gmail.com")
+      .should("have.value", "McKillaGorilla@gmail.com");
   });
 
   // it("visits /post", () => {
