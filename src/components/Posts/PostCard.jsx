@@ -1,4 +1,4 @@
-import { useContext, useState, useRef } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
 import "../../static/css/postCard.css";
 import { useNavigate } from "react-router";
 import GlobalPostContext from "../../contexts/post";
@@ -24,6 +24,12 @@ function PostCard({ title, username, time, tags, likes, comments, thumbnail, pos
     e.stopPropagation();
     setShowOptions(!showOptions);
   };
+  useEffect(() => {
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
   const handleOutsideClick = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
       setShowOptions(false);
@@ -35,11 +41,15 @@ function PostCard({ title, username, time, tags, likes, comments, thumbnail, pos
     await post.updatePostLikes(postId)
   }
 
-  const handleEdit = (e) => {
+  const handleEdit = async (e) => {
     e.stopPropagation();
     setShowOptions(false);
-    navigate(`/editPost/${postId}`);
+    
+    await post.loadPost(postId);
+  
+    navigate(`/editPost/${postId}?type=b`);
   };
+  
 
   const onDeleteClick = (e) => {
     e.stopPropagation();
