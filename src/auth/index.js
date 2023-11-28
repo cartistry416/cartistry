@@ -259,6 +259,31 @@ function AuthContextProvider(props) {
     }
   }
 
+  auth.verifyToken = async (email, token) => {
+    try {
+      const response = await api.verifyToken(email, token);
+      if (response.status === 200) {
+        return { success: true, errorMessage: "" };
+      }
+      return { success: false, errorMessage: "There's been an unexpected error." };
+    } catch (error) {
+      console.log(error)
+      return { success: false, errorMessage: error.response.data.errorMessage };
+    }
+  }
+
+  auth.resetForgotPassword = async (email, newPassword, confirmPassword) => {
+    try {
+      const response = await api.resetForgotPassword(email, newPassword, confirmPassword);
+      if (response.status === 200) {
+        return { success: true, errorMessage: '' }
+      }
+      return { success: false, errorMessage: "There's been an unexpected error." };
+    } catch (error) {
+      return { success: false, errorMessage: error.response.data.errorMessage };
+    }
+  };
+
   auth.updateLikedPosts = (alreadyLiked, id) => {
 
     if (alreadyLiked) {
