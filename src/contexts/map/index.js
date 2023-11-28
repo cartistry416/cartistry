@@ -274,14 +274,7 @@ function GlobalMapContextProvider(props) {
 
         try {
             const response = await api.uploadMap(formData)
-            if (response.status === 200) {
-                mapReducer({
-                    type: GlobalMapActionType.SET_CURRENT_MAP_METADATA,
-                    payload: {mapMetadata: response.data.mapMetadata}
-                })
-                navigate(`/editMap/${response.data.mapMetadata._id}`)
-            }
-            return true;
+            return response
         }
         catch (error) { 
             mapReducer({
@@ -289,7 +282,7 @@ function GlobalMapContextProvider(props) {
                 payload: { hasError: true, errorMessage: error.response.data.errorMessage }
             })
         }
-        return false;
+        return null;
     }
 
     map.renameMap = async (id, title, index) => {

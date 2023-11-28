@@ -2,12 +2,13 @@ import { useContext, useState } from "react";
 import GlobalMapContext from "../../contexts/map";
 
 import JSZip from 'jszip';
+import { useNavigate } from "react-router";
 
 function ImportModal({onClose, templateType}) {
   const { map } = useContext(GlobalMapContext);
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const navigate = useNavigate()
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
   };
@@ -32,11 +33,15 @@ function ImportModal({onClose, templateType}) {
         return
       }
   
-      const res = await map.uploadMap(selectedFile.name, ext, templateType, blob)
+      const response = await map.uploadMap(selectedFile.name, ext, templateType, blob)
+
       setLoading(false)
-      console.log("Success after upload: " + res)
-      // TODO: upload map logic
+      // console.log("Success after upload: " + res)
       onClose();
+      if (response) {
+        await map.loadMap(response.data.mapMetadata._id)
+        navigate(`/editMap/${response.data.mapMetadata._id}`)
+      }
     } else {
       alert("Please select a file to import.");
     }

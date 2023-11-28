@@ -1,14 +1,31 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useRef } from "react";
 import "../../static/css/postCard.css";
 import { useNavigate } from "react-router";
 import GlobalPostContext from "../../contexts/post";
 import AuthContext from "../../auth";
 
-function PostCard({ title, username, time, tags, alreadyLiked, likes, comments, thumbnail, postId }) {
+function PostCard({ title, username, time, tags, likes, comments, thumbnail, postId, showMenu}) {
   const {post} = useContext(GlobalPostContext)
+  const {auth} = useContext(AuthContext)
+
+  const alreadyLiked = auth.loggedIn && auth.likedPosts.has(postId)
+  
+  const [showOptions, setShowOptions] = useState(false);
+  const dropdownRef = useRef(null);
+
   const navigate = useNavigate();
   const redirectTo = (path) => {
     navigate(path);
+  };
+
+  const toggleMenu = (e) => {
+    e.stopPropagation();
+    setShowOptions(!showOptions);
+  };
+  const handleOutsideClick = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setShowOptions(false);
+    }
   };
 
   const handleLikePost = async (e) => {
@@ -17,20 +34,22 @@ function PostCard({ title, username, time, tags, alreadyLiked, likes, comments, 
   }
 
   const generateImageSrc = (image) => {
+
     const blob = new Blob([new Uint8Array(image.imageData.data)], { type: image.contentType })
     return URL.createObjectURL(blob)
   }
-  let imageData;
+  let imageSrc;
   if (thumbnail && typeof thumbnail.imageData === 'string') {
-    imageData = thumbnail.imageData
+    imageSrc = `data:${thumbnail.contentType};base64,${thumbnail.imageData}`
   }
   else if (thumbnail && thumbnail.imageData) {
-    imageData = generateImageSrc(thumbnail)
+    imageSrc = generateImageSrc(thumbnail)
+    console.log(imageSrc)
   }
   // comment for commit
   return (
         <div className="postCardWrapper">
-            {thumbnail && <img className="postCardImagePreview" src={`data:${thumbnail.contentType};base64,${thumbnail.imageData}`} alt="preview" />}
+            {thumbnail && thumbnail.imageData && <img className="postCardImagePreview" src={imageSrc} alt="preview" />}
             <div className="postCardDescription">
                 <div className="postCardTitle">{title}</div>
                 <div className="postCardDescription2">
@@ -50,6 +69,26 @@ function PostCard({ title, username, time, tags, alreadyLiked, likes, comments, 
                     <span className="material-icons">mode_comment</span>{comments}
                 </button>
             </div>
+            {showMenu && (
+              <>
+                <span className="material-icons" onClick={toggleMenu}>
+                  more_vert
+                </span>
+                {showOptions && (
+                  <div className="CardMenu" ref={dropdownRef}>           
+                    <div className="mapCardMenuItem" >
+                      <span className="material-icons">edit</span>
+                      Edit
+                    </div>
+                    <div className="mapCardMenuItem" >
+                      <span className="material-icons">delete</span>
+                      Delete
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+
         </div>
     );
 }

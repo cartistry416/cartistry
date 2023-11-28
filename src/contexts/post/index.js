@@ -344,13 +344,19 @@ function GlobalPostContextProvider(props) {
             const response = await api.createPost(formData)
             if (response.status === 200) {
                 navigate(`/post/${response.data.postId}`)
-            }
+                return { success: true }; // Indicate success
+            } else {
+                // Handle any other HTTP status codes as necessary
+                return { success: false, errorMessage: 'An unexpected error occurred.' };
+            }   
         }
         catch (error) {
             postReducer({
                 type: GlobalPostActionType.ERROR_MODAL,
                 payload: { hasError: true, errorMessage: error.response.data.errorMessage }
             })  
+            return { success: false, errorMessage: error.response?.data?.errorMessage || error.message };
+
         }
     }
     

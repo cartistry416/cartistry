@@ -157,10 +157,10 @@ function HomeWrapper() {
                 time={formatTime(postCard.createdAt)} 
                 tags={postCard.tags}
                 likes={postCard.likes}
-                alreadyLiked={auth.loggedIn && auth.likedPosts.has(postCard._id)}
                 comments={postCard.numComments}
                 thumbnail={postCard.thumbnail}
                 postId={postCard._id}
+                showMenu={false}
               />
             </div>
           ) }
