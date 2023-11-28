@@ -51,6 +51,20 @@ export const requestPasswordToken = (email) => {
     email
   })
 }
+export const verifyToken = (email, token) => {
+  return api.post('/verifyToken/', {
+    email: email,
+    token: token,
+  })
+}
+export const resetForgotPassword = (email, newPassword, confirmPassword) => {
+  return api.post('/resetForgotPassword/', {
+      email,
+      newPassword,
+      confirmPassword,
+  })
+}
+
 const apis = {
     getLoggedIn,
     registerUser,
@@ -58,6 +72,8 @@ const apis = {
     logoutUser,
     resetPassword,
     requestPasswordToken,
+    verifyToken,
+    resetForgotPassword
 }
 
 export default apis
