@@ -19,6 +19,8 @@ function MyMapsWrapper() {
   const [loaded, setLoaded] = useState(false)
   const createDropdownRef = useRef(null);
   const sortDropdownRef = useRef(null);
+  const searchInputRef = useRef(null);
+  const [refresh, setRefresh] = useState(0)
 
   useEffect(() => {
     document.addEventListener("mousedown", handleOutsideClick);
@@ -58,6 +60,10 @@ function MyMapsWrapper() {
       setSortDropdown(false);
     }
   };
+
+  const handleSearchChange = (e) => {
+    setRefresh(prev => prev + 1)
+  }
 
   return (
     <div id="myMapsWrapper">
@@ -114,7 +120,7 @@ function MyMapsWrapper() {
 
           <div className="searchBarWrapper">
             <span className="searchIcon material-icons">search</span>
-            <input id="searchInput" type="text" placeholder="Search..."></input>
+            <input ref={searchInputRef} id="searchInput" type="text" placeholder="Search..." onChange={handleSearchChange}></input>
           </div>
           <div className="sortBy" ref={sortDropdownRef}>
             <button
@@ -138,9 +144,13 @@ function MyMapsWrapper() {
           </div>
         </div>
         <div className="mapListWrapper">
-          {map.mapCardsInfo.map((map, index) => (
+          {map.mapCardsInfo.map((map, index) => {
+            if(searchInputRef.current && searchInputRef.current.value !== "" && !(map.title).includes(searchInputRef.current.value)){
+              return null
+            }
+            return ( 
             <MapCard key={index} index={index} mapId={map._id} title={map.title} updatedAt={map.updatedAt} thumbnail={map.thumbnail} />
-          ))}
+          )})}
         </div>
         { (showUploadModal !== "") && (
           <ImportModal onClose={() => setShowUploadModal("")} templateType={showUploadModal} />
