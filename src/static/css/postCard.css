@@ -90,7 +90,7 @@
 .postCardMenu{
     position: absolute;
     background-color: var(--accent3);
-    transform: translate(790%, -60%);
+    transform: translate(-20%, -120%);
     z-index: 999;
 }
 .postCardMenuItem{
