@@ -63,6 +63,13 @@ export const deleteMap = (id) => {
     return api.delete(`/maps-api/maps/${id}`)
 }
 
+export const searchMapsByTitle = (title, limit) => {
+    if(!limit){
+        limit = 20
+    }
+    return api.get(`/maps-api/maps/search-title`, {params: {limit, title} })
+}
+
 const apis = {
     uploadMap,
     renameMap,
@@ -76,6 +83,7 @@ const apis = {
     getMapMetadataOwnedByUser,
     getPublicMapMetadataOwnedByUser,
     getMapData,
-    getMapMetadata
+    getMapMetadata,
+    searchMapsByTitle,
 }
 export default apis
