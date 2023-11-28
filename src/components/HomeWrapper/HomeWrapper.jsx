@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 import { GlobalPostContext } from "../../contexts/post";
 import GlobalMapContext from "../../contexts/map";
 import AuthContext from "../../auth";
+import AlertModal from "../modals/AlertModal";
 
 export function formatTime(timeString) {
   const date = new Date(timeString);
@@ -42,6 +43,9 @@ function HomeWrapper() {
   const [sortOption, setSortOption] = useState("first"); 
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
 
   useEffect(() => {
     document.addEventListener("mousedown", handleOutsideClick);
@@ -106,11 +110,24 @@ function HomeWrapper() {
       post.searchPostsByTitle(e.target.value)
     }
   }
+
+  const handleCreatePost = () => {
+    if(auth.loggedIn){
+      redirectTo("/editpost");
+    }
+    else{
+      setErrorMessage("Please log in to post")
+      setShowError(true)
+    }
+  }
   
+  const handleReset = () => {
+    setShowError(false)
+  }
   return (
     <div id="homeWrapper">
       <div className="functionsWrapper">
-        <button id="createPostButton" onClick={() => redirectTo("/editpost")}>
+        <button id="createPostButton" onClick={handleCreatePost}>
           Create Post
         </button>
         <div className="searchBarWrapper">
@@ -170,6 +187,9 @@ function HomeWrapper() {
         <div className="tagWrapperHome">
         </div>
       </div>
+      {showError && (
+          <AlertModal errorMessage={errorMessage} onCancel={() => setShowError(false)} onReset={handleReset} />
+        )}
     </div>
   );
 }
