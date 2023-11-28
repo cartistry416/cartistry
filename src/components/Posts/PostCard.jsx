@@ -75,12 +75,12 @@ function PostCard({ title, username, time, tags, likes, comments, thumbnail, pos
                   more_vert
                 </span>
                 {showOptions && (
-                  <div className="CardMenu" ref={dropdownRef}>           
-                    <div className="mapCardMenuItem" >
+                  <div className="postCardMenu" ref={dropdownRef}>           
+                    <div className="postCardMenuItem" >
                       <span className="material-icons">edit</span>
                       Edit
                     </div>
-                    <div className="mapCardMenuItem" >
+                    <div className="postCardMenuItem" >
                       <span className="material-icons">delete</span>
                       Delete
                     </div>
