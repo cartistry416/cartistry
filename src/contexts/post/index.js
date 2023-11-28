@@ -90,12 +90,17 @@ function GlobalPostContextProvider(props) {
             case GlobalPostActionType.UPDATE_POST_LIKES: {
                 const updatedPostCardsInfo = [...post.postCardsInfo]
                 const updateIndex = post.postCardsInfo.findIndex(card => card._id === payload.id)
+                const updatedCurrentPost = post.currentPost
                 if (updateIndex !== -1) {
                     updatedPostCardsInfo[updateIndex].likes = payload.likes
                 }
+                if (post.currentPost) {
+                  updatedCurrentPost.likes = payload.likes
+                }
                 return setPost({
                     ...post,
-                    postCardsInfo: updatedPostCardsInfo
+                    postCardsInfo: updatedPostCardsInfo,
+                    currentPost: updatedCurrentPost
                 })
             }
             case GlobalPostActionType.EXIT_CURRENT_POST: {

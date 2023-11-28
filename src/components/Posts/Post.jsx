@@ -1,24 +1,40 @@
 import "../../static/css/post.css";
-import { useContext } from "react";
+import { useContext, useRef } from "react";
 import GlobalPostContext from "../../contexts/post";
 import GlobalMapContext from "../../contexts/map";
+import AuthContext from "../../auth";
 function Post({postId}) {
+  const { auth } = useContext(AuthContext)
   const {post} = useContext(GlobalPostContext)
   const { map } = useContext(GlobalMapContext)
+  const formRef = useRef()
+
   let userName = ""
   let content = ""
   let title = ""
   let images = []
+  let likes = 0
+  let comments = 0
   if (post.currentPost) {
     userName = post.currentPost.ownerUserName
     content = post.currentPost.textContent
     title = post.currentPost.title
     images = post.currentPost.images
+    likes = post.currentPost.likes
+    comments = post.currentPost.comments.length
   }
+
+  const alreadyLiked = auth.loggedIn && auth.likedPosts.has(postId)
   
   const handleSubmitComment =  (e) => {
     e.preventDefault()
     post.createComment(postId, e.target[0].value)
+    formRef.current.reset();
+  }
+
+  const handleLikePost = async (e) => {
+    e.stopPropagation();
+    await post.updatePostLikes(postId)
   }
 
   const generateImageSrc = (image) => {
@@ -45,19 +61,19 @@ function Post({postId}) {
         </> : null}
       </div>
       {/*using dangerouslySetInnerHTML, but DOMPurify usd in posteditor to mitigaterisks*/}
-      <div className="post-content" dangerouslySetInnerHTML={{ __html: content }}>
+      {/* <div className="post-content" dangerouslySetInnerHTML={{ __html: content }}>
           {images.length > 0 ? images.map( (image, index) => <img src={generateImageSrc(image)} alt={`img ${index} of this post`}/>) : null}
-      </div>
+      </div> */}
       <div className="post-footer">
         <div className="post-interactions">
-          <button className="like-button">
-            <span className="material-icons">favorite</span> 75
+          <button className={`${alreadyLiked ? "liked" : ""} like-button`} onClick={handleLikePost}>
+            <span className="material-icons">favorite</span> {likes}
           </button>
           <button className="comment-button">
-            <span className="material-icons">mode_comment</span> 12
+            <span className="material-icons">mode_comment</span> {comments}
           </button>
         </div>
-        <form onSubmit={handleSubmitComment}>
+        <form ref={formRef} onSubmit={handleSubmitComment}>
           <div className="post-add-comment">
               <input id="commentInput" type="text" placeholder="Add Comment" />
               <button type="submit" >
