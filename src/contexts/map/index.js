@@ -494,31 +494,6 @@ function GlobalMapContextProvider(props) {
         })
     }
 
-    map.searchMapsByTitle = async (title, limit) => {
-        try {
-            let response;
-            if (title === "") {
-                response = await api.getMapMetadataOwnedByUser(auth.user.userId)
-            }
-            else {
-                response = await api.searchMapsByTitle(title, limit)
-            }
-
-            if (response.status === 200) {
-                mapReducer({
-                    type: GlobalMapActionType.LOAD_MAP_CARDS,
-                    payload: { mapCards: response.data.mapMetadatas }
-                }) 
-            }
-        }
-        catch (error) {
-            mapReducer({
-                type: GlobalMapActionType.ERROR_MODAL,
-                payload: { hasError: true, errorMessage: error.response.data.errorMessage }
-            })
-        }
-    }
-
     map.addEditFeaturePropertiesTransaction = (newProperties, oldProperties, index) => {
 
     }
