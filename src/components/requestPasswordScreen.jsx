@@ -16,7 +16,7 @@ function RequestPasswordScreen() {
   const handleSubmitEmail = async (e) => {
     e.preventDefault();
     const { success, errorMessage } = await auth.requestPasswordToken(email);
-    if (success){
+    if (success) {
       setStage(2);
     } else {
       setErrorMessage(errorMessage);
@@ -27,8 +27,25 @@ function RequestPasswordScreen() {
   const handleSubmitToken = async (e) => {
     e.preventDefault();
     const token = e.target.token.value;
-    
+    const { success, errorMessage } = await auth.verifyToken(email, token);
+    if (success) {
+      setStage(3);
+    } else {
+      setErrorMessage(errorMessage);
+      setShowError(true);
+    }
   };
+
+  const handleResetSubmit = async (e) => {
+    e.preventDefault();
+    const {success, errorMessage } = await auth.resetForgotPassword(email, e.target[0].value, e.target[1].value)
+    if (success) {
+      navigate('/')
+    } else {
+      setErrorMessage(errorMessage);
+      setShowError(true);
+    }
+  }
 
   const redirectTo = (path) => {
     navigate(path);
@@ -82,6 +99,34 @@ function RequestPasswordScreen() {
                 <button type="submit">
                   Submit Token
                 </button>
+              </div>
+            </div>
+          </form>
+        )}
+        {stage === 3 &&(
+          <form onSubmit={handleResetSubmit}>
+            <div>
+              <input
+                placeholder="new password"
+                type="password"
+                id="newPassword"
+                name="newPassword"
+                required
+              />
+            </div>
+            <div>
+              <input
+                placeholder="confirm password"
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                required
+              />
+            </div>
+            <div className="authFooter">
+              <div className="authFooterContent">
+                <button className="authAltButton" onClick={() => redirectTo('/home')}>Cancel</button>
+                <button type="submit">Reset</button>
               </div>
             </div>
           </form>
