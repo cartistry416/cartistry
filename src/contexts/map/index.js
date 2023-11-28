@@ -20,7 +20,8 @@ export const GlobalMapActionType = {
     SAVE_MAP_EDITS: "SAVE_MAP_EDITS",
     SET_CURRENT_MAP_METADATA: "SET_CURRENT_MAP_METADATA",
     UPDATE_MAP_PRIVACY: "UPDATE_MAP_PRIVACY",
-    EXIT_CURRENT_MAP: "EXIT_CURRENT_MAP"
+    EXIT_CURRENT_MAP: "EXIT_CURRENT_MAP",
+    SORT_MAP_CARDS: "SORT_MAP_CARDS"
   }
 
 const tps = new jsTPS();
@@ -177,6 +178,36 @@ function GlobalMapContextProvider(props) {
                     currentMapGeoJSONOriginal: null,
                     currentMapProprietaryJSON: null,
                     currentMapProprietaryJSONOriginal: null
+                })
+            }
+            case GlobalMapActionType.SORT_MAP_CARDS: {
+                const updatedMapCardsInfo = [...map.mapCardsInfo]
+                console.log(payload.sortType)
+                console.log(updatedMapCardsInfo)
+
+                if (payload.sortType === "name") {
+                    updatedMapCardsInfo.sort((a, b) => {
+                        return a.title.localeCompare(b.title)
+                    })
+                }
+                else if (payload.sortType === "edit") {
+                    updatedMapCardsInfo.sort((a, b) => {
+                        const date1 = new Date(a.updatedAt)
+                        const date2 = new Date(b.updatedAt)
+                        return date2 - date1
+                    })
+                }
+                else if (payload.sortType === "create") {
+                    updatedMapCardsInfo.sort((a, b) => {
+                        const date1 = new Date(a.createdAt)
+                        const date2 = new Date(b.createdAt)
+                        return date2 - date1
+                    })
+                }
+                console.log(updatedMapCardsInfo)
+                return setMap({
+                    ...map,
+                    mapCardsInfo: updatedMapCardsInfo
                 })
             }
             default:
@@ -453,6 +484,13 @@ function GlobalMapContextProvider(props) {
         mapReducer({
             type: GlobalMapActionType.EXIT_CURRENT_MAP,
             payload: {}
+        })
+    }
+
+    map.sortBy = (type) => {
+        mapReducer({
+            type: GlobalMapActionType.SORT_MAP_CARDS,
+            payload: {sortType: type}
         })
     }
 
