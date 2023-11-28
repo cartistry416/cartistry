@@ -60,7 +60,7 @@ function Post({postId}) {
           {/* strange, this number doesn't increment <div> {`${post.currentPost.forks}`}</div> */}
         </> : null}
       </div>
-      {/*using dangerouslySetInnerHTML, but DOMPurify usd in posteditor to mitigaterisks*/}
+      {/*using dangerouslySetInnerHTML, but DOMPurify usd in posteditor to mitigate risks*/}
       <div className="post-content">
           <div dangerouslySetInnerHTML={{ __html: content }} />
           {images.length > 0 && images.map((image, index) => 
