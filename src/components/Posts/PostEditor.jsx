@@ -1,4 +1,5 @@
 import { useState, useContext, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import ReactQuill from "react-quill";
 import DOMPurify from 'dompurify';
 import "react-quill/dist/quill.snow.css";
@@ -7,14 +8,14 @@ import { useNavigate, useParams } from "react-router";
 import GlobalPostContext from "../../contexts/post";
 import { getAllTags } from "../../utils/utils";
 import AuthContext from "../../auth";
-
 import ForbiddenMessage from "../modals/ForbiddenMessage";
 
 const PostEditor = () => {
   const navigate = useNavigate();
   const { post } = useContext(GlobalPostContext);
   const { auth } = useContext(AuthContext);
-  const { mapMetadataId } = useParams();
+  // id can be post id or map id
+  const { id } = useParams();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [loaded, setLoaded] = useState(false);
@@ -23,6 +24,10 @@ const PostEditor = () => {
   const [attachments, setAttachments] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const editType = queryParams.get('type');
 
   useEffect(() => {
     // const loadPostData = async () => {
@@ -103,14 +108,18 @@ const PostEditor = () => {
       return;
     }
     setIsSubmitting(true); 
-    try {
-      const id = mapMetadataId !== undefined ? mapMetadataId : ""; 
-      const result = await post.createPost(title, content, attachments, postTags, id);
-      if (result && result.success) {
-        setTitle('');
-        setContent('');
-        setPostTags([]);
-        setAttachments([]);
+    const requestid = id !== undefined ? id : ""; 
+    // type a: map id
+    // type b: post id
+    try { 
+      if (editType === 'a') {
+        await post.createPost(title, content, attachments, postTags, requestid);
+      } else if (editType === 'b'){
+        //TODO: this can only edit title, body content 
+        await post.editPost(requestid, title, content);
+        navigate(`/post/${requestid}`);
+      } else {
+        await post.createPost(title, content, attachments, postTags, requestid);
       }
     } catch (error) {
       console.error('Error posting:', error);
@@ -188,7 +197,7 @@ const PostEditor = () => {
               </div>
               <div className="post-button">
                 <button onClick={handleSubmit} disabled={isSubmitting}>
-                  {isSubmitting ? 'Posting...' : 'Post'}
+                  {isSubmitting ? (editType === 'b' ? 'Editing Post...' : 'Posting...') : (editType === 'b' ? 'Edit Post' : 'Post')}
                 </button>
               </div>
             </div>

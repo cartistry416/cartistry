@@ -67,7 +67,7 @@ function MapCard(props) {
   const handlePublish = (e) => {
     e.stopPropagation();
     setShowOptions(false);
-    navigate(`/editPost/${mapId}`);
+    navigate(`/editPost/${mapId}?type=a`);
   };
 
   const handleFork = (e) => {
