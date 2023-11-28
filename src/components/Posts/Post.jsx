@@ -61,9 +61,12 @@ function Post({postId}) {
         </> : null}
       </div>
       {/*using dangerouslySetInnerHTML, but DOMPurify usd in posteditor to mitigaterisks*/}
-      {/* <div className="post-content" dangerouslySetInnerHTML={{ __html: content }}>
-          {images.length > 0 ? images.map( (image, index) => <img src={generateImageSrc(image)} alt={`img ${index} of this post`}/>) : null}
-      </div> */}
+      <div className="post-content">
+          <div dangerouslySetInnerHTML={{ __html: content }} />
+          {images.length > 0 && images.map((image, index) => 
+              <img key={index} src={generateImageSrc(image)} alt={`img ${index} of this post`} />
+          )}
+      </div>
       <div className="post-footer">
         <div className="post-interactions">
           <button className={`${alreadyLiked ? "liked" : ""} like-button`} onClick={handleLikePost}>
