@@ -4,8 +4,12 @@ import { useNavigate } from "react-router";
 import GlobalPostContext from "../../contexts/post";
 import AuthContext from "../../auth";
 
-function PostCard({ title, username, time, tags, alreadyLiked, likes, comments, thumbnail, postId, showMenu}) {
+function PostCard({ title, username, time, tags, likes, comments, thumbnail, postId, showMenu}) {
   const {post} = useContext(GlobalPostContext)
+  const {auth} = useContext(AuthContext)
+
+  const alreadyLiked = auth.loggedIn && auth.likedPosts.has(postId)
+  
   const [showOptions, setShowOptions] = useState(false);
   const dropdownRef = useRef(null);
 
