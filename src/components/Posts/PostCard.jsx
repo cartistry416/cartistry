@@ -3,6 +3,7 @@ import "../../static/css/postCard.css";
 import { useNavigate } from "react-router";
 import GlobalPostContext from "../../contexts/post";
 import AuthContext from "../../auth";
+import ConfirmDeleteModal from "../modals/ConfirmDeleteModal";
 
 function PostCard({ title, username, time, tags, likes, comments, thumbnail, postId, showMenu}) {
   const {post} = useContext(GlobalPostContext)
@@ -11,6 +12,7 @@ function PostCard({ title, username, time, tags, likes, comments, thumbnail, pos
   const alreadyLiked = auth.loggedIn && auth.likedPosts.has(postId)
   
   const [showOptions, setShowOptions] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const dropdownRef = useRef(null);
 
   const navigate = useNavigate();
@@ -33,6 +35,22 @@ function PostCard({ title, username, time, tags, likes, comments, thumbnail, pos
     await post.updatePostLikes(postId)
   }
 
+  const handleEdit = (e) => {
+    e.stopPropagation();
+    setShowOptions(false);
+    navigate(`/editPost/${postId}`);
+  };
+
+  const onDeleteClick = (e) => {
+    e.stopPropagation();
+    setShowOptions(false);
+    setShowModal(true);
+  };
+  const handleDelete = (e) => {
+    e.stopPropagation();
+    post.deletePost(postId);
+    setShowModal(false);
+  };
   const generateImageSrc = (image) => {
 
     const blob = new Blob([new Uint8Array(image.imageData.data)], { type: image.contentType })
@@ -75,12 +93,12 @@ function PostCard({ title, username, time, tags, likes, comments, thumbnail, pos
                   more_vert
                 </span>
                 {showOptions && (
-                  <div className="CardMenu" ref={dropdownRef}>           
-                    <div className="mapCardMenuItem" >
+                  <div className="postCardMenu" ref={dropdownRef}>           
+                    <div className="postCardMenuItem" onClick={handleEdit}>
                       <span className="material-icons">edit</span>
                       Edit
                     </div>
-                    <div className="mapCardMenuItem" >
+                    <div className="postCardMenuItem" onClick={onDeleteClick}>
                       <span className="material-icons">delete</span>
                       Delete
                     </div>
@@ -88,7 +106,15 @@ function PostCard({ title, username, time, tags, likes, comments, thumbnail, pos
                 )}
               </>
             )}
-
+        {showModal && (
+          <ConfirmDeleteModal
+            onCancel={(e) => {
+              e.stopPropagation();
+              setShowModal(false);
+            }}
+            onConfirm={handleDelete}
+          />
+        )}
         </div>
     );
 }
