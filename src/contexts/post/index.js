@@ -215,6 +215,7 @@ function GlobalPostContextProvider(props) {
                     type: GlobalPostActionType.LOAD_POST,
                     payload: {post: response.data.post}
                 })
+                return { success: true, mapMetadataId: response.data.mapMetadataId, postId: response.data.postId }
             }
         }
         catch (error) {
@@ -222,6 +223,7 @@ function GlobalPostContextProvider(props) {
                 type: GlobalPostActionType.ERROR_MODAL,
                 payload: { hasError: true, errorMessage: error.response.data.errorMessage }
             })
+            return { success: false, mapMetadataId: null, postId: null}
         }
 
     }
@@ -337,7 +339,9 @@ function GlobalPostContextProvider(props) {
         formData.append('title', title)
         formData.append('textContent', textContent)
         formData.append('tags', tags)
-        if (mapMetadataId !== "") {
+
+        console.log(mapMetadataId)
+        if (mapMetadataId && mapMetadataId !== "") {
             formData.append('mapMetadataId', mapMetadataId)
         }
         if (images && images.length > 0) {
@@ -348,8 +352,7 @@ function GlobalPostContextProvider(props) {
         try {
             const response = await api.createPost(formData)
             if (response.status === 200) {
-                navigate(`/post/${response.data.postId}`)
-                return { success: true }; // Indicate success
+                return { success: true, mapMetadataId: response.data.mapMetadataId, postId: response.data.postId }; // Indicate success
             } else {
                 // Handle any other HTTP status codes as necessary
                 return { success: false, errorMessage: 'An unexpected error occurred.' };
