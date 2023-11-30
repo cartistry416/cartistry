@@ -6,13 +6,14 @@ import "react-quill/dist/quill.snow.css";
 import "../../static/css/post.css";
 import { useNavigate, useParams } from "react-router";
 import GlobalPostContext from "../../contexts/post";
+import GlobalMapContext  from "../../contexts/map";
 import { getAllTags } from "../../utils/utils";
 import AuthContext from "../../auth";
-import ForbiddenMessage from "../modals/ForbiddenMessage";
 
 const PostEditor = () => {
   const navigate = useNavigate();
   const { post } = useContext(GlobalPostContext);
+  const { map } = useContext(GlobalMapContext)
   const { auth } = useContext(AuthContext);
   // id can be post id or map id
   const { id } = useParams();
@@ -112,15 +113,29 @@ const PostEditor = () => {
     // type a: map id
     // type b: post id
     try { 
+      let response;
       if (editType === 'a') {
-        await post.createPost(title, content, attachments, postTags, requestid);
+        console.log('a')
+        response = await post.createPost(title, content, attachments, postTags, requestid);
       } else if (editType === 'b'){
         //TODO: this can only edit title, body content 
-        await post.editPost(requestid, title, content);
-        navigate(`/post/${requestid}`);
+        console.log('b')
+        response = await post.editPost(requestid, title, content);
       } else {
-        await post.createPost(title, content, attachments, postTags, requestid);
+        console.log('c')
+        response = await post.createPost(title, content, attachments, postTags, requestid);
       }
+
+      const {success, mapMetadataId, postId} = response
+      if (!success) {
+        throw new Error("unsuccessful response") // this seems a bit redundant, but idk if we needed to surround this with try catch in the first place
+      }
+      console.log(mapMetadataId)
+      if (mapMetadataId) {
+        await map.loadMap(mapMetadataId)
+      }
+      navigate(`/post/${postId}`)
+
     } catch (error) {
       console.error('Error posting:', error);
     }
