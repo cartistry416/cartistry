@@ -48,7 +48,23 @@ describe("Frontend Tests", () => {
       .type("McKillaGorilla@gmail.com")
       .should("have.value", "McKillaGorilla@gmail.com");
   });
-
+  it("register user", () => {
+    cy.visit("/register");
+    cy.get("#email").should("exist");
+    cy.get("#email")
+      .type("testing@gmail.com")
+    cy.get("#username").should("exist");
+    cy.get("#username")
+      .type("testing")
+    cy.get("#password").should("exist");
+    cy.get("#password")
+      .type("testingpassword")
+    cy.get("#confirmPassword").should("exist");
+    cy.get("#confirmPassword")
+      .type("testingpassword")
+    cy.get("#registerButton").click();
+    cy.get(".success-message").should("have.text", "Successfully registered")
+  });
   // it("visits /post", () => {
   //   cy.visit("/post/",{'failOnStatusCode': false});
   //   cy.get(".post-content").should("exist");

@@ -108,6 +108,7 @@ function RegisterScreen(props) {
               </button>
               <button 
                 type="submit" 
+                id="registerButton"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'Registering...' : 'Register'}

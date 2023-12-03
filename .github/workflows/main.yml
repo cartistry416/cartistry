@@ -11,13 +11,37 @@ jobs:
   cypress-run:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Frontend Repository
         uses: actions/checkout@v4
+        with:
+            path: 'frontend'
+
+      - name: Checkout Backend Repository
+        uses: actions/checkout@v4
+        with:
+            repository: 'cartistry416/cartistry-express'
+            token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+            path: 'backend'
+
+      - name: Install and start backend server
+        run: |
+            cd backend 
+            npm install
+            npm run build && npm run start &
+            sleep 10
+        env:
+            DB_CONNECT: ${{ secrets.MONGODB_URI }}
+            JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          build: npm run build
-          start: npm start
+            working-directory: frontend
+            start: npm start
+            browser: chrome
+            wait-on: http://localhost:3000/,http://localhost:4000/
+            wait-on-timeout: 180
+
   deploy:
     needs: cypress-run
     runs-on: ubuntu-latest
