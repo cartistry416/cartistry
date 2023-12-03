@@ -67,8 +67,17 @@ function LoginScreen() {
             </div>
             <div className="authFooter">
               <div className="authFooterContent">
-                <button className="authAltButton" onClick={() => redirectTo('/requestPassword')}>Forgot Password</button>
-                <button type="submit" disabled={isSubmitting}>
+                <button 
+                  type="button" 
+                  className="authAltButton" 
+                  onClick={() => redirectTo('/requestPassword')}
+                >
+                  Forgot Password
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                >
                   {isSubmitting ? 'Logging in...' : 'Login'}
                 </button>
               </div>
