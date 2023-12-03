@@ -92,9 +92,7 @@ export const deletePost = (id) => {
 }
 
 export const deleteComment = (id, index) => {
-    api.delete(`/posts-api/posts/${id}/comment`, {
-        index
-    })
+    return api.delete(`/posts-api/posts/${id}/comment/${index}`)
 }
 
 

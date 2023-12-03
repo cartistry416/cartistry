@@ -31,7 +31,7 @@ function PostScreen() {
         {(post.currentPost && post.currentPost.comments.length > 0) && (
           <div>
             {post.currentPost.comments.map((comment, index) => (
-              <CommentThread comment={comment} key={index} replies={replies} ></CommentThread>
+              <CommentThread comment={comment} key={index} replies={replies} index={index} ></CommentThread>
             ))}
           </div>
         )}
