@@ -1,13 +1,17 @@
 import "../../static/css/post.css";
-import { useContext, useRef } from "react";
+import { useContext, useRef, useState } from "react";
 import GlobalPostContext from "../../contexts/post";
 import GlobalMapContext from "../../contexts/map";
 import AuthContext from "../../auth";
+import AlertModal from "../modals/AlertModal";
+
 function Post({postId}) {
   const { auth } = useContext(AuthContext)
   const {post} = useContext(GlobalPostContext)
   const { map } = useContext(GlobalMapContext)
   const formRef = useRef()
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   let userName = ""
   let content = ""
@@ -28,8 +32,14 @@ function Post({postId}) {
   
   const handleSubmitComment =  (e) => {
     e.preventDefault()
-    post.createComment(postId, e.target[0].value)
-    formRef.current.reset();
+    if(auth.loggedIn){
+      post.createComment(postId, e.target[0].value)
+      formRef.current.reset();
+    }
+    else{
+      setErrorMessage("Please log in to comment")
+      setShowError(true)
+    }
   }
 
   const handleLikePost = async (e) => {
@@ -45,6 +55,10 @@ function Post({postId}) {
   const handleForkClick = async (e) => {
     e.preventDefault()
     await map.forkMap(post.currentPost.mapMetadata)
+  }
+
+  const handleReset = () => {
+    setShowError(false)
   }
 
   return (
@@ -85,6 +99,9 @@ function Post({postId}) {
           </div>
         </form>
       </div>
+      {showError && (
+          <AlertModal errorMessage={errorMessage} onCancel={() => setShowError(false)} onReset={handleReset} />
+        )}
     </div>
   )
 }
