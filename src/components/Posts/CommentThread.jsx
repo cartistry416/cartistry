@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import "../../static/css/comment.css";
+import AuthContext from "../../auth";
 
 function Comment({comment}) {
+  const {auth} = useContext(AuthContext)
   const [showOptions, setShowOptions] = useState(false)
 
 
@@ -9,8 +11,8 @@ function Comment({comment}) {
   let text = ""
 
   if (comment) {
-    userName = comment.authorUserName
-    text = comment.comment
+    userName = comment.ownerUserName
+    text = comment.textContent
   }
   return (
     <div className="comment-container">
@@ -18,13 +20,16 @@ function Comment({comment}) {
         <div className="comment-details">
           <div className="comment-avatar">
             <span className="material-icons">account_circle</span>
+            <span></span>
           </div>
           <div className="comment-header">
             <span className="comment-username"> {userName} • 4d</span>
           </div>
         </div>
         <div className="comment-options">
-        <span className="material-icons comment-options" onClick={() => setShowOptions(!showOptions)}>more_vert</span>
+        {(auth.user && auth.user.userName === userName) && (
+          <span className="material-icons comment-options" onClick={() => setShowOptions(!showOptions)}>more_vert</span>
+        )}
           {showOptions && (
             <div className="dropdown">
               <div className="dropdown-list">

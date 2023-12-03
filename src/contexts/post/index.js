@@ -235,6 +235,7 @@ function GlobalPostContextProvider(props) {
             if (response.status !== 200) {
                 return 
             }
+            console.log(response.data.post)
             postReducer({
                 type: GlobalPostActionType.LOAD_POST,
                 payload: { post: response.data.post }
@@ -340,7 +341,6 @@ function GlobalPostContextProvider(props) {
         formData.append('textContent', textContent)
         formData.append('tags', tags)
 
-        console.log(mapMetadataId)
         if (mapMetadataId && mapMetadataId !== "") {
             formData.append('mapMetadataId', mapMetadataId)
         }
@@ -371,8 +371,8 @@ function GlobalPostContextProvider(props) {
     post.createComment = async (id, comment) => {
         try {
             const response = await api.commentOnPost(id, comment, auth.user.userId)
+            console.log(response.data.comment)
             if (response.status === 200) {
-                console.log(response.data.comment)
                 postReducer({
                     type: GlobalPostActionType.CREATE_COMMENT,
                     payload: {comment: response.data.comment, index: response.data.index, id}
