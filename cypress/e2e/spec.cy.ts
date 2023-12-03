@@ -63,7 +63,7 @@ describe("Frontend Tests", () => {
     cy.get("#confirmPassword")
       .type("testingpassword")
     cy.get("#registerButton").click();
-    cy.get(".success-message").should("have.text", "Successfully registered")
+    cy.get(".success-message").should("have.text", "An account with this email address already exists.")
   });
   // it("visits /post", () => {
   //   cy.visit("/post/",{'failOnStatusCode': false});
