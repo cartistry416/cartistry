@@ -61,7 +61,7 @@ function GlobalPostContextProvider(props) {
             }
             case GlobalPostActionType.EDIT_COMMENT: {
                 const updatedCurrentPost = {...post.currentPost}
-                updatedCurrentPost.comments[payload.index] = payload.comment
+                updatedCurrentPost.comments[payload.index].textContent = payload.comment
                 return setPost({
                     ...post,
                     currentPost: updatedCurrentPost
@@ -192,6 +192,7 @@ function GlobalPostContextProvider(props) {
         try {
             const response = await api.editComment(id, comment, index)
             if (response.status === 200) {
+              console.log(comment)
                 postReducer({
                     type: GlobalPostActionType.EDIT_COMMENT,
                     payload: { id, comment, index }
