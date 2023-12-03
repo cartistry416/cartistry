@@ -49,7 +49,11 @@ function MyPostsScreen() {
     }
   };
 
-  const handlePostCardClick = (id) => {
+  const handlePostCardClick =  async (id, mapMetadata) => {
+    if(mapMetadata){
+      map.exitCurrentMap()
+      await map.loadMap(mapMetadata);
+    }
     navigate(`/post/${id}`);
   };
 
@@ -104,7 +108,7 @@ function MyPostsScreen() {
               return null
             }
             return (
-              <div onClick={() => handlePostCardClick(postCard._id)} key={index}>
+              <div onClick={() => handlePostCardClick(postCard._id, postCard.mapMetadata)} key={index}>
                 <PostCard
                   title={postCard.title}
                   username={postCard.ownerUserName}
