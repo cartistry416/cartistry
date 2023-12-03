@@ -27,11 +27,14 @@ jobs:
         run: |
             cd backend 
             npm install
-            npm run build && npm run start &
-            sleep 10
+            npm run build
+            npm run start &
+            sleep 5
+            npx wait-on http://localhost:4000
         env:
-            DB_CONNECT: ${{ secrets.MONGODB_URI }}
+            MONGODB_URI: ${{ secrets.MONGODB_URI }}
             JWT_SECRET: ${{ secrets.JWT_SECRET }}
+            FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
