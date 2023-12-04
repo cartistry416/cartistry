@@ -1,3 +1,40 @@
+describe("Post Tests", () => {
+  beforeEach(() => {
+    cy.visit("/");
+    cy.get("#email").type("testing@gmail.com");
+    cy.get("#password").type("testingpassword");
+    cy.get("#loginButton").click();
+    cy.url().should("include", "/home");
+  });
+  it("create text post", () => {
+    cy.get("#createPostButton").click();
+    cy.url().should("include", "/editpost");
+    cy.get(".title-input").type("test post one");
+    cy.get(".ql-editor").type("test body post one");
+    cy.get(".post-button button").click();
+    cy.url().should("include", "/post");
+    cy.get(".post-title").should("have.text", "test post one");
+    cy.get(".post-body").should("have.text", "test body post one");
+  });
+  it("post exists", () => {
+    cy.get(".postCardTitle:contains('test post one')").should("exist");
+  });
+  it("post is in my posts", () => {
+    cy.get(".profileIcon").click()
+    cy.get(".nav-dropdown-option span:contains('My Posts')").click()
+    cy.url().should("include", "/myposts")
+    cy.get(".postCardTitle:contains('test post one')").should("exist");
+  });
+  it("delete post", () => {
+    cy.get(".profileIcon").click()
+    cy.get(".nav-dropdown-option span:contains('My Posts')").click()
+    cy.get(".post-card-more-options").eq(0).click()
+    cy.get(".postCardMenuItem").eq(1).click()
+    cy.get(".modalButton").click()
+    cy.get(".postCardTitle:contains('test post one')").should("not.exist");
+  })
+});
+
 describe("Frontend Tests", () => {
   it("Search Bar", () => {
     cy.visit("/home");
@@ -48,33 +85,23 @@ describe("Frontend Tests", () => {
       .type("McKillaGorilla@gmail.com")
       .should("have.value", "McKillaGorilla@gmail.com");
   });
-  it("register user", () => {
+  it("register user already exists", () => {
     cy.visit("/register");
-    cy.get("#email").should("exist");
-    cy.get("#email")
-      .type("testing@gmail.com")
-    cy.get("#username").should("exist");
-    cy.get("#username")
-      .type("testing")
-    cy.get("#password").should("exist");
-    cy.get("#password")
-      .type("testingpassword")
-    cy.get("#confirmPassword").should("exist");
-    cy.get("#confirmPassword")
-      .type("testingpassword")
+    cy.get("#email").type("testing@gmail.com");
+    cy.get("#username").type("testing");
+    cy.get("#password").type("testingpassword");
+    cy.get("#confirmPassword").type("testingpassword");
     cy.get("#registerButton").click();
-    cy.get(".error-message").should("have.text", "An account with this email address already exists.")
+    cy.get(".error-message").should(
+      "have.text",
+      "An account with this email address already exists."
+    );
   });
-  // it("visits /post", () => {
-  //   cy.visit("/post/",{'failOnStatusCode': false});
-  //   cy.get(".post-content").should("exist");
-  //   cy.get("#commentInput").type("Hello!!!");
-  // });
-
-  // it("visits /editMap/", () => {
-  //   cy.visit("/editMap",{'failOnStatusCode': false});
-  //   cy.get(".leaflet-container").should("exist");
-  //   cy.get(".rightPanel").should("exist");
-  //   cy.get(".legend").should("exist");
-  // });
+  it("login user", () => {
+    cy.visit("/");
+    cy.get("#email").type("testing@gmail.com");
+    cy.get("#password").type("testingpassword");
+    cy.get("#loginButton").click();
+    cy.url().should("include", "/home");
+  });
 });
