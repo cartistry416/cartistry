@@ -21,7 +21,9 @@ export const GlobalMapActionType = {
     SET_CURRENT_MAP_METADATA: "SET_CURRENT_MAP_METADATA",
     UPDATE_MAP_PRIVACY: "UPDATE_MAP_PRIVACY",
     EXIT_CURRENT_MAP: "EXIT_CURRENT_MAP",
-    SORT_MAP_CARDS: "SORT_MAP_CARDS"
+    SORT_MAP_CARDS: "SORT_MAP_CARDS",
+    SET_COLOR_SELECTED: "SET_COLOR_SELECTED",
+    EDIT_FEATURE_PROPERTY: "EDIT_FEATURE_PROPERTY"
   }
 
 const tps = new jsTPS();
@@ -44,6 +46,7 @@ function GlobalMapContextProvider(props) {
         currentMapGeoJSON: null,
         currentMapProprietaryJSON: null,
         currentMapProprietaryJSONOriginal: null,
+        colorSelected: null,
         // mapCardIndexMarkedForDeletion: null, // Don't think we need these
         // mapCardMarkedForDeletion: null,
     });
@@ -208,6 +211,23 @@ function GlobalMapContextProvider(props) {
                 return setMap({
                     ...map,
                     mapCardsInfo: updatedMapCardsInfo
+                })
+            }
+            case GlobalMapActionType.SET_COLOR_SELECTED: {
+                return setMap({
+                    ...map,
+                    colorSelected: payload.color
+                })
+            }
+            case GlobalMapActionType.EDIT_FEATURE_PROPERTY: {
+                const updatedGeoJSON = map.currentMapGeoJSON
+                if (updatedGeoJSON.features[payload.index].properties.name !== payload.newStyle.name) {
+                    updatedGeoJSON.features[payload.index].properties.name = payload.newStyle.name
+                }  
+                updatedGeoJSON.features[payload.index].properties.style = payload.newStyle
+                return setMap({
+                    ...map,
+                    currentMapGeoJSON: updatedGeoJSON
                 })
             }
             default:
@@ -494,7 +514,11 @@ function GlobalMapContextProvider(props) {
         })
     }
 
-    map.addEditFeaturePropertiesTransaction = (newProperties, oldProperties, index) => {
+    map.addEditFeaturePropertiesTransaction = (newStyle, oldStyle, index) => {
+        mapReducer({
+            type: GlobalMapActionType.EDIT_FEATURE_PROPERTY,
+            payload: {newStyle, index}
+        })
 
     }
     map.addCreateFeatureTransaction = (newFeature, index) => {
@@ -502,6 +526,13 @@ function GlobalMapContextProvider(props) {
     } 
     map.addDeleteFeatureTransaction = (feature, index) => {
 
+    }
+
+    map.setColorSelected = (color) => {
+        mapReducer({
+            type: GlobalMapActionType.SET_COLOR_SELECTED,
+            payload: {color}
+        })
     }
 
 

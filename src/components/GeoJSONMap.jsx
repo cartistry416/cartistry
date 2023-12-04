@@ -1,11 +1,14 @@
 // eslint-disable-next-line
 import GlobalMapContext from '../contexts/map'
-import React, { useEffect, useState, useContext } from 'react'
-import { MapContainer, TileLayer, GeoJSON, FeatureGroup, Circle } from 'react-leaflet'
+import React, { useEffect, useState, useContext, useRef } from 'react'
+import { MapContainer, TileLayer, GeoJSON, FeatureGroup, Popup, useMap} from 'react-leaflet'
 import { EditControl } from "react-leaflet-draw"
 import L from 'leaflet';
 import "leaflet/dist/leaflet.css"
 import "leaflet-draw/dist/leaflet.draw.css"
+import * as ReactDOM from 'react-dom/client';
+
+import EditFeaturePopup from './EditFeaturePopup';
 
 function getNameFromConvertedShapeFile(properties) {
 
@@ -23,49 +26,82 @@ function getNameFromConvertedShapeFile(properties) {
 // https://react-leaflet.js.org/docs/example-popup-marker/
 // https://github.com/CodingWith-Adam/geoJson-map-with-react-leaflet/blob/master/src/components/MyMap.jsx
 // https://github.com/alex3165/react-leaflet-draw/blob/7963cfee5ea7f0c85bd294251fa0e150c59641a7/examples/class/edit-control.js
+// https://stackoverflow.com/questions/73353506/extracting-values-from-html-forms-rendered-in-react-leaflet-popup
+
 function GeoJSONMap({mapMetadataId, position, editEnabled, width, height}) {
     const { map } = useContext(GlobalMapContext)
-    const loaded = true;
 
+    const editMapRef = useRef(null)
+    let mapContainerRef = useRef(null)
+
+    const [selectedFeature, setSelectedFeature] = useState(null)
+    const [refresh, setRefresh] = useState(0)
+
+    // useEffect(() => {
+
+    //   console.log(mapContainerRef)
+    //   if (selectedFeature && mapContainerRef.current.current) {
+    //     // Create a container for the portal
+    //     console.log('inside if')
+    //     const container = document.createElement('div');
+    //     setPopupContainer(container);
+  
+    //     const popup = L.popup().setLatLng(selectedFeature.geometry.coordinates);
+    //     popup.setContent(container);
+    //     popup.openOn(mapContainerRef.current.current.leafletElement); 
+    //   }
+    // }, [selectedFeature, mapContainerRef]);
+  
     const onEachFeature = (feature, layer) => {
-        let name = null;
-        if ('name' in feature.properties) {
-            name = feature.properties.name
+        const idx = map.currentMapGeoJSON.features.indexOf(feature)
+
+        if (!feature.properties.name) {
+          feature.properties.name = getNameFromConvertedShapeFile(feature.properties)
         }
-        else {
-            name = getNameFromConvertedShapeFile(feature.properties)
-        }
-        layer.bindTooltip(name, { permanent: true, direction: 'center' });
+
+
+        // layer.on('click', handleFeatureClick);
+        layer.bindTooltip(feature.properties.name, { permanent: true, direction: 'center' });
+        layer.bindPopup(renderPopupForm(feature, idx, layer))
+
     }
+
+
+    const renderPopupForm = (feature, idx, layer) => {
+
+      const popup = L.popup();
+      const container = L.DomUtil.create('div');
+      popup.setContent(container);
+      const root = ReactDOM.createRoot(container);
+      root.render(<EditFeaturePopup feature={feature} idx={idx} handlePopupSubmit={handlePopupSubmit} layer={layer}> </EditFeaturePopup>)
+      return popup;
+    }
+    const handlePopupSubmit = (e, feature, idx, layer) => {
+      const oldStyle = feature.properties.style
+      const newStyle = {
+        fillColor: e.target[1].value,
+        color: e.target[2].value,
+        weight: e.target[3].value,
+        opacity: parseInt(e.target[4].value),
+        fillOpacity: parseInt(e.target[5].value),
+        name: e.target[0].value
+      }
+      map.addEditFeaturePropertiesTransaction(newStyle, oldStyle, idx)
+      layer.unbindTooltip()
+      layer.bindTooltip(feature.properties.name, { permanent: true, direction: 'center' });
+      
+    }
+
+    const handlePropertyChange = (propertyName, newValue) => {
+      setSelectedFeature((prevSelectedFeature) => ({
+        ...prevSelectedFeature,
+        [propertyName]: newValue,
+      }));
+    };
+
+    
 
     // const position = [39.74739, -105]
-    const myCustomStyle = {
-        fillColor: 'transparent',
-        color: 'blue',
-        weight: 2,
-        opacity: 1,
-        fillOpacity: 0,
-    }
-
-
-    // TODO: See what we can use from the example code snippet.
-
-    // const _editableFG = null;
-    
-    // const _onFeatureGroupReady = (reactFGref) => {
-    //   // populate the leaflet FeatureGroup with the geoJson layers
-  
-    //   let leafletGeoJSON = new L.GeoJSON(currentGeoJSON); 
-    //   let leafletFG = reactFGref;
-  
-    //   leafletGeoJSON.eachLayer((layer) => {
-    //     leafletFG.addLayer(layer);
-    //   });
-  
-    //   // store the ref for future access to content
-  
-    //   this._editableFG = reactFGref;
-    // };
   
     const _onChange = () => {
     
@@ -100,7 +136,10 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height}) {
           console.log('_onCreated: something else created:', type, e);
         }
 
-        console.log(layer)
+        console.log(editMapRef.current._layers)
+        console.log('------')
+        // console.log(mapRef.current)
+
         // Do whatever else you need to. (save to db; etc)
     
         _onChange();
@@ -137,11 +176,26 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height}) {
       };
 
 
+      const getFeatureStyle = (feature) => {
+
+        if (!feature.properties.style) {
+          feature.properties.style = {
+            fillColor: 'transparent',
+            color: 'blue',
+            weight: 2,
+            opacity: 1,
+            fillOpacity: 100,
+            name: feature.properties.name || ""
+          }
+        }
+        return feature.properties.style
+      }
+    
     return (
         <div className="mapContainerSize">
-            <MapContainer center={position} zoom={4} style={{ width:`${width}`, height: `${height}`, zIndex: '1', borderRadius: '1rem'}}>
+            <MapContainer ref={mapContainerRef} center={position} zoom={4} style={{ width:`${width}`, height: `${height}`, zIndex: '1', borderRadius: '1rem'}} >
                 {editEnabled ? 
-                <FeatureGroup 
+                <FeatureGroup ref={editMapRef}
                     // ref={(reactFGref) => {
                     // _onFeatureGroupReady(reactFGref)}}
                 >
@@ -159,7 +213,8 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height}) {
                             rectangle: false, // if we use this library, we can easily disable which drawing tools are available
                         }}
                         />
-                        <Circle center={[51.51, -0.06]} radius={200} />
+
+                        {/* <Circle center={[51.51, -0.06]} radius={200} /> */}
                 </FeatureGroup> : null}
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -168,9 +223,10 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height}) {
                 {map.currentMapGeoJSON && (
                     <GeoJSON
                         data={map.currentMapGeoJSON}
-                        style={myCustomStyle}
+                        style={feature => { return getFeatureStyle(feature) }}
                         onEachFeature={onEachFeature}
-                    /> 
+                    >
+                    </GeoJSON> 
                 )}
             </MapContainer>
         </div>
