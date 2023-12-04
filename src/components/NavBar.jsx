@@ -13,7 +13,7 @@ function NavBar() {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
       setShowDropdown(false);
     }
-    console.log(dropdownRef);
+    // console.log(dropdownRef);
   };
 
   useEffect(() => {
