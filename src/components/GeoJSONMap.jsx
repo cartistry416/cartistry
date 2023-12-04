@@ -89,7 +89,7 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height}) {
       map.addEditFeaturePropertiesTransaction(newStyle, oldStyle, idx)
       layer.unbindTooltip()
       layer.bindTooltip(feature.properties.name, { permanent: true, direction: 'center' });
-      
+
     }
 
     const handlePropertyChange = (propertyName, newValue) => {
@@ -118,11 +118,13 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height}) {
       };
     const _onEdited = (e) => {
         let numEdited = 0;
-        e.layers.eachLayer((layer) => {
-          numEdited += 1;
-        });
-        console.log(`_onEdited: edited ${numEdited} layers`, e);
-    
+        // e.layers.eachLayer((layer) => {
+        //   numEdited += 1;
+        // });
+        //console.log(`_onEdited: edited ${numEdited} layers`, e);
+        console.log(e)
+        console.log('-----')
+        console.log(editMapRef.current._layers)
         _onChange();
       };
     
@@ -138,7 +140,7 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height}) {
 
         console.log(editMapRef.current._layers)
         console.log('------')
-        // console.log(mapRef.current)
+
 
         // Do whatever else you need to. (save to db; etc)
     
@@ -160,11 +162,12 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height}) {
       };
     
       const _onEditStart = (e) => {
-        console.log('_onEditStart', e);
+        //console.log('_onEditStart', e);
+        console.log(editMapRef.current._layers)
       };
     
       const _onEditStop = (e) => {
-        console.log('_onEditStop', e);
+        console.log(e)
       };
     
       const _onDeleteStart = (e) => {
@@ -213,8 +216,6 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height}) {
                             rectangle: false, // if we use this library, we can easily disable which drawing tools are available
                         }}
                         />
-
-                        {/* <Circle center={[51.51, -0.06]} radius={200} /> */}
                 </FeatureGroup> : null}
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

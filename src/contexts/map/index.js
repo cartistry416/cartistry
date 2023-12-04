@@ -450,13 +450,14 @@ function GlobalMapContextProvider(props) {
     }
 
     map.saveMapEdits = async (id) => {
-
+        console.log(id)
         const delta1 = generateDiff(map.currentMapGeoJSONOriginal, map.currentMapGeoJSON)
         const delta2 = generateDiff(map.currentMapProprietaryJSONOriginal, map.currentMapProprietaryJSON)
         if (!delta1 && !delta2) {
             console.error("no deltas created. Was the map even edited to begin with?")
             return
         }
+
 
         try {
             const proprietaryJSON = delta2 ? map.currentMapProprietaryJSON : null
