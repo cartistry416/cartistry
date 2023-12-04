@@ -5,6 +5,7 @@ import AuthContext from '../../auth'
 import jsTPS from '../../common/jsTPS'
 import { generateDiff, unzipBlobToJSON, jsonToZip} from '../../utils/utils'
 import _, { findIndex } from 'lodash'
+import EditFeature_Transaction from '../../transactions/EditFeature_Transaction'
 
 
 export const GlobalMapContext = createContext({});
@@ -514,18 +515,41 @@ function GlobalMapContextProvider(props) {
         })
     }
 
-    map.addEditFeaturePropertiesTransaction = (newStyle, oldStyle, index) => {
+    map.addEditFeaturePropertiesTransaction = (newStyle, oldStyle, index) => {     
+        const transaction = new EditFeature_Transaction(map, index, oldStyle, newStyle)
+        tps.addTransaction(transaction)
+    }
+
+    map.editFeatureProperties = (newStyle, index) => {
+
         mapReducer({
             type: GlobalMapActionType.EDIT_FEATURE_PROPERTY,
             payload: {newStyle, index}
         })
-
     }
+
     map.addCreateFeatureTransaction = (newFeature, index) => {
 
     } 
+
+    map.createFeatureDo = () => {
+
+    }
+
+    map.createFeatureUndo = () => {
+        
+    }
+
     map.addDeleteFeatureTransaction = (feature, index) => {
 
+    }
+
+    map.deleteFeatureDo = () => {
+
+    }
+
+    map.deleteFeatureUndo = () => {
+        
     }
 
     map.setColorSelected = (color) => {
@@ -542,6 +566,15 @@ function GlobalMapContextProvider(props) {
     map.canRedo = function() {
         return ((map.currentMapGeoJSONOriginal !== null) && tps.hasTransactionToRedo())
     }
+
+
+    map.undo = () => {
+        tps.undoTransaction()
+    }
+    map.redo = () => {
+        tps.doTransaction()
+    }
+
     return (
         <GlobalMapContext.Provider value={{map}}>
             {props.children}
