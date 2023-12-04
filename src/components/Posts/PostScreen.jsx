@@ -28,7 +28,7 @@ function PostScreen() {
     <div className='post-wrapper'>
       <div className='post-content-wrapper'>
         <Post postId={id}/>
-        {(post.currentPost && post.currentPost.comments.length > 0) && (
+        {(post.currentPost && post.currentPost.comments && post.currentPost.comments.length > 0) && (
           <div>
             {post.currentPost.comments.map((comment, index) => (
               <CommentThread comment={comment} key={index} replies={replies} index={index} ></CommentThread>
