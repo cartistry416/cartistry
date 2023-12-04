@@ -298,3 +298,9 @@
   background-color: var(--background-color);
   color: var(--main-text-color)
 }
+
+.post-img{
+  background-color: var(--accent1);
+  height: 100%;
+  width: 100%;
+}
