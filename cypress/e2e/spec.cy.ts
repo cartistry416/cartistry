@@ -38,8 +38,8 @@ describe("Post Tests", () => {
   it("edit post", () => {
     cy.get(".profileIcon").click();
     cy.get(".nav-dropdown-option span:contains('My Posts')").click();
-    cy.get(".post-card-more-options").eq(0).click();
-    cy.get(".postCardMenuItem").eq(0).click();
+    cy.get(".post-card-more-options").first().click();
+    cy.get(".postCardMenuItem:contains('Edit')").click();
     cy.get(".title-input").type(" edit");
     cy.get("#editPostButton").click();
     cy.url().should("include", "/post");
