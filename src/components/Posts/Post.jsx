@@ -25,7 +25,7 @@ function Post({postId}) {
     title = post.currentPost.title
     images = post.currentPost.images
     likes = post.currentPost.likes
-    comments = post.currentPost.comments.length
+    comments = post.currentPost.comments
   }
 
   const alreadyLiked = auth.loggedIn && auth.likedPosts.has(postId)
@@ -87,7 +87,7 @@ function Post({postId}) {
             <span className="material-icons">favorite</span> {likes}
           </button>
           <button className="comment-button">
-            <span className="material-icons">mode_comment</span> {comments}
+            <span className="material-icons">mode_comment</span> {comments ? comments.length : 0}
           </button>
         </div>
         <form ref={formRef} onSubmit={handleSubmitComment}>
