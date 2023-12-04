@@ -97,6 +97,10 @@ const Toolbox = (props) => {
     setShowOptions(!showOptions);
   };
 
+  const handleColorSelectorChange = (e) => {
+    map.setColorSelected(e.target.value)
+  }
+
   return (
     <div className="toolbox">
       <div className="toolbox-header">
@@ -181,7 +185,7 @@ const Toolbox = (props) => {
           <div className="toolbox-separator"></div>
           <div className="toolbox-bin-controls">
             <span className="toolbox-bin-label">Color</span>
-            <input type="color" className="toolbox-bin-controls-colorInput" />
+            <input type="color" className="toolbox-bin-controls-colorInput" onChange={handleColorSelectorChange} />
           </div>
           <div className="toolbox-separator"></div>
           <div className="toolbox-landmark-controls">
@@ -202,6 +206,7 @@ const Toolbox = (props) => {
               <input
                 type="color"
                 className="toolbox-gradient-controls-colorInput"
+                onChange={handleColorSelectorChange}
               />
             </div>
             <div className="toolbox-gradient-controls-row">
