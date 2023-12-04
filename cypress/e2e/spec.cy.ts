@@ -20,19 +20,39 @@ describe("Post Tests", () => {
     cy.get(".postCardTitle:contains('test post one')").should("exist");
   });
   it("post is in my posts", () => {
-    cy.get(".profileIcon").click()
-    cy.get(".nav-dropdown-option span:contains('My Posts')").click()
-    cy.url().should("include", "/myposts")
+    cy.get(".profileIcon").click();
+    cy.get(".nav-dropdown-option span:contains('My Posts')").click();
+    cy.url().should("include", "/myposts");
     cy.get(".postCardTitle:contains('test post one')").should("exist");
   });
-  it("delete post", () => {
-    cy.get(".profileIcon").click()
-    cy.get(".nav-dropdown-option span:contains('My Posts')").click()
-    cy.get(".post-card-more-options").eq(0).click()
-    cy.get(".postCardMenuItem").eq(1).click()
-    cy.get(".modalButton").click()
+  it("search post fail", () => {
+    cy.get("#searchInput").type("no post should show");
+    cy.get("input").type("{enter}");
     cy.get(".postCardTitle:contains('test post one')").should("not.exist");
-  })
+  });
+  it("search post", () => {
+    cy.get("#searchInput").type("test post one");
+    cy.get("input").type("{enter}");
+    cy.get(".postCardTitle:contains('test post one')").should("exist");
+  });
+  it("edit post", () => {
+    cy.get(".profileIcon").click();
+    cy.get(".nav-dropdown-option span:contains('My Posts')").click();
+    cy.get(".post-card-more-options").eq(0).click();
+    cy.get(".postCardMenuItem").eq(0).click();
+    cy.get(".title-input").type(" edit");
+    cy.get("#editPostButton").click();
+    cy.url().should("include", "/post");
+    cy.get(".post-title").should("have.text", "test post one edit");
+  });
+  it("delete post", () => {
+    cy.get(".profileIcon").click();
+    cy.get(".nav-dropdown-option span:contains('My Posts')").click();
+    cy.get(".post-card-more-options").eq(0).click();
+    cy.get(".postCardMenuItem").eq(1).click();
+    cy.get(".modalButton").click();
+    cy.get(".postCardTitle:contains('test post one')").should("not.exist");
+  });
 });
 
 describe("Frontend Tests", () => {
