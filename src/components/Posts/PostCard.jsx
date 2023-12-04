@@ -96,7 +96,7 @@ function PostCard({ title, username, time, tags, likes, comments, thumbnail, pos
             </div>
             {showMenu && (
               <>
-                <span className="material-icons" onClick={toggleMenu}>
+                <span className="material-icons post-card-more-options" onClick={toggleMenu}>
                   more_vert
                 </span>
                 <div className="postCardMore" ref={dropdownRef}>

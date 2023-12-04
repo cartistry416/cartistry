@@ -75,6 +75,7 @@ function LoginScreen() {
                   Forgot Password
                 </button>
                 <button 
+                  id="loginButton"
                   type="submit" 
                   disabled={isSubmitting}
                 >

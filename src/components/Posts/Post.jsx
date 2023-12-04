@@ -65,7 +65,7 @@ function Post({postId}) {
     <div className="post-container">
       <div className="post-header">
         <div className="post-details">
-          <h2>{title}</h2>
+          <h2 className="post-title">{title}</h2>
           <span className="post-username">{userName} • 4d</span>
         </div>
         {post.currentPost && post.currentPost.mapMetadata ?
@@ -76,7 +76,7 @@ function Post({postId}) {
       </div>
       {/*using dangerouslySetInnerHTML, but DOMPurify usd in posteditor to mitigate risks*/}
       <div className="post-content">
-          <div dangerouslySetInnerHTML={{ __html: content }} />
+          <div className="post-body" dangerouslySetInnerHTML={{ __html: content }} />
           {images.length > 0 && images.map((image, index) => 
               <img key={index} src={generateImageSrc(image)} alt={`img ${index} of this post`} />
           )}
