@@ -211,7 +211,7 @@ const PostEditor = () => {
                 {errorMessage}
               </div>
               <div className="post-button">
-                <button onClick={handleSubmit} disabled={isSubmitting}>
+                <button id="editPostButton" onClick={handleSubmit} disabled={isSubmitting}>
                   {isSubmitting ? (editType === 'b' ? 'Editing Post...' : 'Posting...') : (editType === 'b' ? 'Edit Post' : 'Post')}
                 </button>
               </div>
