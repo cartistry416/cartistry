@@ -5,7 +5,7 @@ import GlobalPostContext from "../../contexts/post";
 import AuthContext from "../../auth";
 import ConfirmDeleteModal from "../modals/ConfirmDeleteModal";
 
-function PostCard({ title, username, time, tags, likes, comments, thumbnail, postId, showMenu}) {
+function PostCard({ title, username, time, tags, likes, comments, thumbnail, postId, ownerId, showMenu}) {
   const {post} = useContext(GlobalPostContext)
   const {auth} = useContext(AuthContext)
 
@@ -71,14 +71,18 @@ function PostCard({ title, username, time, tags, likes, comments, thumbnail, pos
     imageSrc = generateImageSrc(thumbnail)
     console.log(imageSrc)
   }
-  // comment for commit
+
+  const visitProfile = (e) => {
+    e.stopPropagation();
+    navigate(`/profile/${username}/${ownerId}`)
+  }
   return (
         <div className="postCardWrapper">
             {thumbnail && thumbnail.imageData && <img className="postCardImagePreview" src={imageSrc} alt="preview" />}
             <div className="postCardDescription">
                 <div className="postCardTitle">{title}</div>
                 <div className="postCardDescription2">
-                    <div>{username}</div>
+                    <div onClick={visitProfile}>{username}</div>
                     <div className="dividerCircle"></div>
                     <div>{time}</div>
                     {tags.map((tag, index) => (

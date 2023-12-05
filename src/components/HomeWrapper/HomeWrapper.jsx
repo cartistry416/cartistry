@@ -182,6 +182,7 @@ function HomeWrapper() {
                 comments={postCard.numComments}
                 thumbnail={postCard.thumbnail}
                 postId={postCard._id}
+                ownerId={postCard.owner}
                 showMenu={false}
               />
             </div>

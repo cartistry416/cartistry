@@ -2,10 +2,13 @@
 import GlobalMapContext from '../contexts/map'
 import React, { useEffect, useState, useContext, useRef } from 'react'
 import { MapContainer, TileLayer, GeoJSON, FeatureGroup, Popup, useMap} from 'react-leaflet'
-import { EditControl } from "react-leaflet-draw"
-import L from 'leaflet';
-import "leaflet/dist/leaflet.css"
-import "leaflet-draw/dist/leaflet.draw.css"
+
+import * as L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import "@geoman-io/leaflet-geoman-free";
+import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
+import Geoman from "./Geoman";
+
 import * as ReactDOM from 'react-dom/client';
 
 import EditFeaturePopup from './EditFeaturePopup';
@@ -123,7 +126,7 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height}) {
       }));
     };
 
-    
+
 
     // const position = [39.74739, -105]
   
@@ -201,7 +204,7 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height}) {
       const _onDeleteStop = (e) => {
         console.log('_onDeleteStop', e);
       };
-
+    
 
       const getFeatureStyle = (feature) => {
 
@@ -226,20 +229,8 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height}) {
                     // ref={(reactFGref) => {
                     // _onFeatureGroupReady(reactFGref)}}
                 >
-                        <EditControl
-                        position='topleft'
-                        onEdited={_onEdited}
-                        onCreated={_onCreated}
-                        onDeleted={_onDeleted}
-                        onMounted={_onMounted}
-                        onEditStart={_onEditStart}
-                        onEditStop={_onEditStop}
-                        onDeleteStart={_onDeleteStart}
-                        onDeleteStop={_onDeleteStop}
-                        draw={{
-                            rectangle: false, // if we use this library, we can easily disable which drawing tools are available
-                        }}
-                        />
+                <Geoman />
+                        {/* <Circle center={[51.51, -0.06]} radius={200} /> */}
                 </FeatureGroup> : null}
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

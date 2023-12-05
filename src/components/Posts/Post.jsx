@@ -4,6 +4,8 @@ import GlobalPostContext from "../../contexts/post";
 import GlobalMapContext from "../../contexts/map";
 import AuthContext from "../../auth";
 import AlertModal from "../modals/AlertModal";
+import { formatTime } from "../HomeWrapper/HomeWrapper";
+import { useNavigate } from "react-router";
 
 function Post({postId}) {
   const { auth } = useContext(AuthContext)
@@ -12,6 +14,7 @@ function Post({postId}) {
   const formRef = useRef()
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
 
   let userName = ""
   let content = ""
@@ -19,6 +22,8 @@ function Post({postId}) {
   let images = []
   let likes = 0
   let comments = 0
+  let time = ""
+  let ownerId = 0
   if (post.currentPost) {
     userName = post.currentPost.ownerUserName
     content = post.currentPost.textContent
@@ -26,6 +31,8 @@ function Post({postId}) {
     images = post.currentPost.images
     likes = post.currentPost.likes
     comments = post.currentPost.comments
+    time = formatTime(post.currentPost.createdAt)
+    ownerId = post.currentPost.owner
   }
 
   const alreadyLiked = auth.loggedIn && auth.likedPosts.has(postId)
@@ -61,12 +68,21 @@ function Post({postId}) {
     setShowError(false)
   }
 
+  const visitProfile = (e) => {
+    e.stopPropagation();
+    navigate(`/profile/${userName}/${ownerId}`)
+  }
+
   return (
     <div className="post-container">
       <div className="post-header">
         <div className="post-details">
           <h2 className="post-title">{title}</h2>
-          <span className="post-username">{userName} • 4d</span>
+          <div className="postCardDescription2">
+            <div className="clickable" onClick={visitProfile}>{userName}</div>
+            <div className="dividerCircle"></div>
+            <div>{time}</div>
+          </div>
         </div>
         {post.currentPost && post.currentPost.mapMetadata ?
         <>
