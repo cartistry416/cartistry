@@ -12,6 +12,7 @@ import Geoman from "./Geoman";
 import * as ReactDOM from 'react-dom/client';
 
 import EditFeaturePopup from './EditFeaturePopup';
+import { fill } from 'lodash';
 
 function getNameFromConvertedShapeFile(properties) {
 
@@ -80,19 +81,42 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height}) {
       return popup;
     }
     const handlePopupSubmit = (e, feature, idx, layer) => {
-      const oldStyle = feature.properties.style
-      const newStyle = {
-        fillColor: e.target[1].value,
-        color: e.target[2].value,
-        weight: e.target[3].value,
-        opacity: parseInt(e.target[4].value),
-        fillOpacity: parseInt(e.target[5].value),
-        name: e.target[0].value
+
+      try {
+        const oldStyle = feature.properties.style
+
+        const weight = parseInt(e.target[3].value)
+        const opacity =  parseInt(e.target[4].value)
+        const fillOpacity =  parseInt(e.target[5].value)
+
+        if (weight > 100 || opacity > 100 || fillOpacity > 100) {
+          alert("invalid input")
+          return 
+        }
+        
+        if (weight < 0 || opacity < 0 || fillOpacity < 0) {
+          alert("invalid input")
+          return 
+        }
+
+        const newStyle = {
+          fillColor: e.target[1].value,
+          color: e.target[2].value,
+          weight,
+          opacity,
+          fillOpacity,
+          name: e.target[0].value
+        }
+        map.addEditFeaturePropertiesTransaction(newStyle, oldStyle, idx)
       }
-      map.addEditFeaturePropertiesTransaction(newStyle, oldStyle, idx)
+      catch (err) {
+        alert("invalid input")
+        return 
+      }
+
       layer.unbindTooltip()
       layer.bindTooltip(feature.properties.name, { permanent: true, direction: 'center' });
-      
+
     }
 
     const handlePropertyChange = (propertyName, newValue) => {
@@ -121,11 +145,13 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height}) {
       };
     const _onEdited = (e) => {
         let numEdited = 0;
-        e.layers.eachLayer((layer) => {
-          numEdited += 1;
-        });
-        console.log(`_onEdited: edited ${numEdited} layers`, e);
-    
+        // e.layers.eachLayer((layer) => {
+        //   numEdited += 1;
+        // });
+        //console.log(`_onEdited: edited ${numEdited} layers`, e);
+        console.log(e)
+        console.log('-----')
+        console.log(editMapRef.current._layers)
         _onChange();
       };
     
@@ -141,7 +167,7 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height}) {
 
         console.log(editMapRef.current._layers)
         console.log('------')
-        // console.log(mapRef.current)
+
 
         // Do whatever else you need to. (save to db; etc)
     
@@ -163,11 +189,12 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height}) {
       };
     
       const _onEditStart = (e) => {
-        console.log('_onEditStart', e);
+        //console.log('_onEditStart', e);
+        console.log(editMapRef.current._layers)
       };
     
       const _onEditStop = (e) => {
-        console.log('_onEditStop', e);
+        console.log(e)
       };
     
       const _onDeleteStart = (e) => {
