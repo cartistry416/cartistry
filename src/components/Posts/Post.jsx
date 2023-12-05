@@ -4,6 +4,7 @@ import GlobalPostContext from "../../contexts/post";
 import GlobalMapContext from "../../contexts/map";
 import AuthContext from "../../auth";
 import AlertModal from "../modals/AlertModal";
+import { formatTime } from "../HomeWrapper/HomeWrapper";
 
 function Post({postId}) {
   const { auth } = useContext(AuthContext)
@@ -19,6 +20,7 @@ function Post({postId}) {
   let images = []
   let likes = 0
   let comments = 0
+  let time = ""
   if (post.currentPost) {
     userName = post.currentPost.ownerUserName
     content = post.currentPost.textContent
@@ -26,6 +28,7 @@ function Post({postId}) {
     images = post.currentPost.images
     likes = post.currentPost.likes
     comments = post.currentPost.comments
+    time = formatTime(post.currentPost.createdAt)
   }
 
   const alreadyLiked = auth.loggedIn && auth.likedPosts.has(postId)
@@ -66,7 +69,11 @@ function Post({postId}) {
       <div className="post-header">
         <div className="post-details">
           <h2 className="post-title">{title}</h2>
-          <span className="post-username">{userName} • 4d</span>
+          <div className="postCardDescription2">
+            <div>{userName}</div>
+            <div className="dividerCircle"></div>
+            <div>{time}</div>
+          </div>
         </div>
         {post.currentPost && post.currentPost.mapMetadata ?
         <>
