@@ -88,8 +88,10 @@ const Toolbox = (props) => {
     navigate("/myMaps");
   };
 
-  const onSaveClick = (e) => {
+  const handleSave = (e) => {
     e.stopPropagation();
+    map.saveMapEdits(mapId)
+    setShowOptions(false);
   };
 
   const toggleMenu = (e) => {
@@ -142,7 +144,7 @@ const Toolbox = (props) => {
                 <span className="material-icons">delete</span>
                 Delete
               </div>
-              <div className="mapCardMenuItem" onClick={onSaveClick}>
+              <div className="mapCardMenuItem" onClick={handleSave}>
                 <span className="material-icons">save</span>
                 Save
               </div>
