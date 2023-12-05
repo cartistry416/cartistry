@@ -44,7 +44,7 @@ const EditMapWrapper = () =>{
                 <GeoJSONMap className="mapOverlay" position={[39.74739, -105]} mapMetadataId={id} editEnabled={true} width="100vw" height="100vh"/>
                 <div className="rightPanel">
                     <Toolbox mapId={id} />
-                    <Legend />
+                    {/* <Legend /> */}
                     <div className="sideControls">
                     <div className="iconGroup">
                         <span className="material-icons" onClick={handleUndo} >undo</span>
