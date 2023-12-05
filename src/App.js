@@ -94,7 +94,7 @@ function App() {
                               <Route path="/myMaps/" element={<MyMapsWrapper/>}/>
                               <Route path="/myPosts/" element={<MyPostsScreen/>}/>
                               <Route path="/editPost/:id?" element={<PostEditor/>} />
-                              <Route path="/profile/" element={<ProfileScreen/>} />
+                              <Route path="/profile/:username/:id" element={<ProfileScreen/>} />
                               {/* <Route path="/login/" exact component={LoginScreen} />
                               <Route path="/register/" exact component={RegisterScreen} />
                               <Route path="/playlist/:id" exact component={WorkspaceScreen} /> */}

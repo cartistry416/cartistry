@@ -48,6 +48,7 @@ function MyMapsWrapper() {
   };
 
   useEffect(() => {
+    console.log(map.mapCardsInfo)
     post.exitCurrentPost()
     map.exitCurrentMap()
   }, [])
