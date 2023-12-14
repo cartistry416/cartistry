@@ -113,7 +113,6 @@ function HomeWrapper() {
 
   const handleCreatePost = () => {
     if(auth.loggedIn){
-      
       if (post.currentPost) {
         post.exitCurrentPost()
         map.exitCurrentMap()

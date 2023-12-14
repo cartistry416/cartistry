@@ -32,6 +32,9 @@ function ProfileScreen() {
         <MapCard />
       </div> */}
       <div className="mapListWrapper">
+        {(map.mapCardsInfo.length === 0) && (
+          <div>No public maps to display</div>
+        )}
         {map.mapCardsInfo.map((map, index) => {
           return (
             <MapCard
