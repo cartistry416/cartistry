@@ -6,15 +6,21 @@ import Legend from './Legend';
 import GeoJSONMap from "../GeoJSONMap";
 
 import { matchPath, useParams } from "react-router";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import GlobalPostContext from "../../contexts/post";
 import GlobalMapContext from "../../contexts/map";
 
 
+
+
+//https://stackoverflow.com/questions/66704970/take-a-screenshot-of-leaflet-map
 const EditMapWrapper = () =>{
     const {id} = useParams()
     const {post} = useContext(GlobalPostContext)
     const {map} = useContext(GlobalMapContext)
+    const [mapRef, setMapRef] = useState(null)
+
+
     useEffect(() => {
         post.exitCurrentPost()
       }, [])
@@ -41,9 +47,9 @@ const EditMapWrapper = () =>{
     return (
         <div className="editMapWrapper">
             <div className="mapScreen">
-                <GeoJSONMap className="mapOverlay" position={[39.74739, -105]} mapMetadataId={id} editEnabled={true} width="100vw" height="100vh"/>
+                <GeoJSONMap className="mapOverlay" position={[39.74739, -105]} setMapRef={setMapRef} mapMetadataId={id} editEnabled={true} width="100vw" height="100vh"/>
                 <div className="rightPanel">
-                    <Toolbox mapId={id} />
+                    <Toolbox mapId={id} mapRef={mapRef} />
                     {/* <Legend /> */}
                     <div className="sideControls">
                     <div className="iconGroup">
