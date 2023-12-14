@@ -1,6 +1,6 @@
 // eslint-disable-next-line
 import {useState, useEffect} from 'react'
-import GeoJSONMap from './components/Map/GeoJSONMap';
+import GeoJSONMap from './components/map/GeoJSONMap';
 import './App.css';
 // import MapFileParserFactory from './classes/mapFileParser.ts';
 // eslint-disable-next-line

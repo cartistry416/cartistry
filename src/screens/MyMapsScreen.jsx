@@ -1,11 +1,11 @@
-import MapCard from "../components/Map/MapCard";
+import MapCard from "../components/map/MapCard";
 import "../static/css/myMaps.css";
 import { useContext, useState, useRef, useEffect } from "react";
 import { GlobalMapContext } from "../contexts/map";
-import ImportModal from "../components/Modals/ImportModal";
+import ImportModal from "../components/modals/ImportModal";
 import AuthContext from "../auth";
 import GlobalPostContext from "../contexts/post";
-import ForbiddenMessage from "../components/Modals/ForbiddenMessage";
+import ForbiddenMessage from "../components/modals/ForbiddenMessage";
 
 
 function MyMapsScreen() {

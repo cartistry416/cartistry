@@ -1,4 +1,4 @@
-import MapCard from "../components/Map/MapCard";
+import MapCard from "../components/map/MapCard";
 import "../static/css/profile.css";
 import { useParams } from "react-router-dom";
 import { useEffect, useContext, useState } from "react";
