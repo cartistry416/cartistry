@@ -3,7 +3,7 @@ import React, { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
 import api from './auth-request-api'
-import SuccessfulLoginLogoutModal from "../components/Modals/SuccessfulLoginLogoutModal";
+import SuccessfulLoginLogoutModal from "../components/modals/SuccessfulLoginLogoutModal";
 export const AuthContext = createContext();
 
 // THESE ARE ALL THE TYPES OF UPDATES TO OUR AUTH STATE THAT CAN BE PROCESSED

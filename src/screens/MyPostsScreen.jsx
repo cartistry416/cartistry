@@ -1,5 +1,5 @@
 import "../static/css/myPosts.css";
-import PostCard from "../components/Posts/PostCard";
+import PostCard from "../components/posts/PostCard";
 import { useEffect, useRef, useState, useContext } from "react";
 import { formatTime } from "./HomeScreen";
 import { GlobalPostContext } from "../contexts/post";
