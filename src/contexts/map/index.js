@@ -449,8 +449,7 @@ function GlobalMapContextProvider(props) {
       }
     }
 
-    map.saveMapEdits = async (id) => {
-        console.log(id)
+    map.saveMapEdits = async (id, thumbnail) => {
         const delta1 = generateDiff(map.currentMapGeoJSONOriginal, map.currentMapGeoJSON)
         const delta2 = generateDiff(map.currentMapProprietaryJSONOriginal, map.currentMapProprietaryJSON)
         if (!delta1 && !delta2) {
@@ -461,7 +460,7 @@ function GlobalMapContextProvider(props) {
 
         try {
             const proprietaryJSON = delta2 ? map.currentMapProprietaryJSON : null
-            const response = await api.saveMapEdits(id, delta1, proprietaryJSON)
+            const response = await api.saveMapEdits(id, delta1, proprietaryJSON, thumbnail)
             if (response.status === 200) {
                 tps.clearAllTransactions()
                 alert("Map edits saved successfully. Clearing TPS stack and setting original geoJSON to current geoJSON")

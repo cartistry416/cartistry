@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 import GlobalMapContext from '../contexts/map'
 import React, { useEffect, useState, useContext, useRef } from 'react'
-import { MapContainer, TileLayer, GeoJSON, FeatureGroup, Popup, useMap} from 'react-leaflet'
+import { MapContainer, TileLayer, GeoJSON, FeatureGroup, Popup, useLeaflet} from 'react-leaflet'
 
 import * as L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -12,7 +12,8 @@ import Geoman from "./Geoman";
 import * as ReactDOM from 'react-dom/client';
 
 import EditFeaturePopup from './EditFeaturePopup';
-import { fill } from 'lodash';
+
+
 
 function getNameFromConvertedShapeFile(properties) {
 
@@ -32,11 +33,12 @@ function getNameFromConvertedShapeFile(properties) {
 // https://github.com/alex3165/react-leaflet-draw/blob/7963cfee5ea7f0c85bd294251fa0e150c59641a7/examples/class/edit-control.js
 // https://stackoverflow.com/questions/73353506/extracting-values-from-html-forms-rendered-in-react-leaflet-popup
 
-function GeoJSONMap({mapMetadataId, position, editEnabled, width, height}) {
+function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMapRef}) {
     const { map } = useContext(GlobalMapContext)
 
     const editMapRef = useRef(null)
-    let mapContainerRef = useRef(null)
+    // let mapContainerRef = useRef(null)
+
 
     const [selectedFeature, setSelectedFeature] = useState(null)
     const [refresh, setRefresh] = useState(0)
@@ -223,7 +225,7 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height}) {
     
     return (
         <div className="mapContainerSize">
-            <MapContainer ref={mapContainerRef} center={position} zoom={4} style={{ width:`${width}`, height: `${height}`, zIndex: '1', borderRadius: '1rem'}} >
+            <MapContainer ref={setMapRef} center={position} zoom={4} style={{ width:`${width}`, height: `${height}`, zIndex: '1', borderRadius: '1rem'}} >
                 {editEnabled ? 
                 <FeatureGroup ref={editMapRef}
                     // ref={(reactFGref) => {

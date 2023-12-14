@@ -4,8 +4,8 @@ import "../../static/css/editMap/toolBox.css";
 import ConfirmDeleteModal from "../modals/ConfirmDeleteModal";
 import AuthContext from "../../auth";
 import GlobalMapContext from "../../contexts/map";
-
-const Toolbox = (props) => {
+import {SimpleMapScreenshoter} from 'leaflet-simple-map-screenshoter'
+const Toolbox = ({mapRef}) => {
   const { auth } = useContext(AuthContext);
   const { map } = useContext(GlobalMapContext);
   const [showOptions, setShowOptions] = useState(false);
@@ -32,6 +32,10 @@ const Toolbox = (props) => {
       setMapId(map.currentMapMetadata._id)
     }
   }, [map.currentMapMetadata])
+
+  useEffect(() => {
+
+  }, [mapRef])
 
   const handleOutsideClick = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -90,8 +94,27 @@ const Toolbox = (props) => {
 
   const handleSave = (e) => {
     e.stopPropagation();
-    map.saveMapEdits(mapId)
-    setShowOptions(false);
+    if (!mapRef) {
+      alert("no map ref")
+      return
+    }
+
+    const snapshotOptions = {
+      hideElementsWithSelectors: [
+        ".leaflet-control-container",
+      ],
+      hidden: true
+    };
+
+    const screenshotter = new SimpleMapScreenshoter(snapshotOptions);
+    screenshotter.addTo(mapRef);
+    screenshotter
+    .takeScreen("image")
+    .then((image) => {
+      map.saveMapEdits(mapId, image)
+      setShowOptions(false);
+    })
+
   };
 
   const toggleMenu = (e) => {
