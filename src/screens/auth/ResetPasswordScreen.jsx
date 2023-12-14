@@ -1,13 +1,14 @@
 import React, { useContext } from "react";
-import AuthContext from "../auth";
+import AuthContext from "../../auth";
 import { useNavigate } from "react-router";
 
-function ForgotPasswordScreen() {
+function ResetPasswordScreen() {
   const { auth } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    console.log("submit");
+    e.preventDefault()
+    await auth.resetPassword(e.target[0].value, e.target[1].value)
   };
 
   const redirectTo = (path) => {
@@ -18,7 +19,7 @@ function ForgotPasswordScreen() {
     <div className="authScreenWrapper">
       <span className="authScreenLogotype">Cartistry</span>
       <div className="authWrapper">
-        <form>
+        <form onSubmit={handleSubmit}>
           <div>
             <input
               placeholder="new password"
@@ -40,7 +41,7 @@ function ForgotPasswordScreen() {
           <div className="authFooter">
             <div className="authFooterContent">
               <button className="authAltButton" onClick={() => redirectTo('/home')}>Cancel</button>
-              <button type="submit" onClick={handleSubmit}>Reset</button>
+              <button type="submit">Reset</button>
             </div>
           </div>
         </form>
@@ -49,4 +50,4 @@ function ForgotPasswordScreen() {
   );
 }
 
-export default ForgotPasswordScreen;
+export default ResetPasswordScreen;

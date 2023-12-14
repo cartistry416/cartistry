@@ -1,10 +1,10 @@
-import CommentThread from './CommentThread'
-import Post from './Post'
-import "../../static/css/post.css";
+import CommentThread from '../components/Posts/CommentThread'
+import Post from '../components/Posts/Post'
+import "../static/css/post.css";
 import { useParams } from 'react-router-dom';
 import { useContext, useEffect, useState} from 'react';
-import GlobalPostContext from '../../contexts/post';
-import GeoJSONMap from '../GeoJSONMap';
+import GlobalPostContext from '../contexts/post';
+import GeoJSONMap from '../components/Map/GeoJSONMap';
 
 function PostScreen() {
 

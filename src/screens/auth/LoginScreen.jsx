@@ -1,7 +1,7 @@
 import React, { useState, useContext, useRef} from "react";
-import AuthContext from "../auth";
+import AuthContext from "../../auth";
 import { useNavigate } from "react-router";
-import AlertModal from "./modals/AlertModal";
+import AlertModal from "../../components/Modals/AlertModal";
 
 function LoginScreen() {
   const { auth } = useContext(AuthContext);

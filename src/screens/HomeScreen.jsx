@@ -1,11 +1,11 @@
-import "../../static/css/home.css";
-import PostCard from "../Posts/PostCard";
+import "../static/css/home.css";
+import PostCard from "../components/Posts/PostCard";
 import { useEffect, useState, useRef, useContext } from "react";
 import { useNavigate } from "react-router";
-import { GlobalPostContext } from "../../contexts/post";
-import GlobalMapContext from "../../contexts/map";
-import AuthContext from "../../auth";
-import AlertModal from "../modals/AlertModal";
+import { GlobalPostContext } from "../contexts/post";
+import GlobalMapContext from "../contexts/map";
+import AuthContext from "../auth";
+import AlertModal from "../components/Modals/AlertModal";
 
 export function formatTime(timeString) {
   const date = new Date(timeString);
@@ -34,7 +34,7 @@ export function formatTime(timeString) {
   }
 }
 
-function HomeWrapper() {
+function HomeScreen() {
   const { post } = useContext(GlobalPostContext);
   const { map } = useContext(GlobalMapContext)
   const { auth } = useContext(AuthContext)
@@ -199,4 +199,4 @@ function HomeWrapper() {
   );
 }
 
-export default HomeWrapper;
+export default HomeScreen;

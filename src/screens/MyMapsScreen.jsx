@@ -1,14 +1,14 @@
-import MapCard from "./MapCard";
+import MapCard from "../components/Map/MapCard";
 import "../static/css/myMaps.css";
 import { useContext, useState, useRef, useEffect } from "react";
 import { GlobalMapContext } from "../contexts/map";
-import ImportModal from "./modals/ImportModal";
+import ImportModal from "../components/Modals/ImportModal";
 import AuthContext from "../auth";
 import GlobalPostContext from "../contexts/post";
-import ForbiddenMessage from "./modals/ForbiddenMessage";
+import ForbiddenMessage from "../components/Modals/ForbiddenMessage";
 
 
-function MyMapsWrapper() {
+function MyMapsScreen() {
   const { auth } = useContext(AuthContext);
   const { map } = useContext(GlobalMapContext);
   const { post } = useContext(GlobalPostContext)
@@ -164,4 +164,4 @@ function MyMapsWrapper() {
   );
 }
 
-export default MyMapsWrapper;
+export default MyMapsScreen;

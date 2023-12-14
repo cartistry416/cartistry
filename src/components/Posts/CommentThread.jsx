@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import "../../static/css/comment.css";
 import AuthContext from "../../auth";
 import GlobalPostContext from "../../contexts/post";
-import ConfirmDeleteModal from "../modals/ConfirmDeleteModal";
+import ConfirmDeleteModal from "../Modals/ConfirmDeleteModal";
 
 function Comment({comment, index}) {
   const {auth} = useContext(AuthContext)

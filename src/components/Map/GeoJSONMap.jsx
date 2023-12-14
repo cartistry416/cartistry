@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import GlobalMapContext from '../contexts/map'
+import GlobalMapContext from '../../contexts/map'
 import React, { useEffect, useState, useContext, useRef } from 'react'
 import { MapContainer, TileLayer, GeoJSON, FeatureGroup, Popup, useLeaflet} from 'react-leaflet'
 

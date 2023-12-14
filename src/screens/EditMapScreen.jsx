@@ -1,20 +1,20 @@
-import "../../static/css/editMap/editMap.css";
+import "../static/css/editMap/editMap.css";
 // eslint-disable-next-line
-import MapContainer from './MapContainer';
-import Toolbox from './Toolbox';
-import Legend from './Legend';
-import GeoJSONMap from "../GeoJSONMap";
+import MapContainer from '../components/Map/MapContainer';
+import Toolbox from '../components/Map/Toolbox';
+import Legend from '../components/Map/Legend';
+import GeoJSONMap from "../components/Map/GeoJSONMap";
 
 import { matchPath, useParams } from "react-router";
 import { useContext, useEffect, useState } from "react";
-import GlobalPostContext from "../../contexts/post";
-import GlobalMapContext from "../../contexts/map";
+import GlobalPostContext from "../contexts/post";
+import GlobalMapContext from "../contexts/map";
 
 
 
 
 //https://stackoverflow.com/questions/66704970/take-a-screenshot-of-leaflet-map
-const EditMapWrapper = () =>{
+const EditMapScreen = () =>{
     const {id} = useParams()
     const {post} = useContext(GlobalPostContext)
     const {map} = useContext(GlobalMapContext)
@@ -62,4 +62,4 @@ const EditMapWrapper = () =>{
         </div>
     );
 }
-export default EditMapWrapper;
+export default EditMapScreen;

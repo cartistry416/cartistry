@@ -3,14 +3,14 @@ import { useLocation } from "react-router-dom";
 import ReactQuill from "react-quill";
 import DOMPurify from 'dompurify';
 import "react-quill/dist/quill.snow.css";
-import "../../static/css/post.css";
+import "../static/css/post.css";
 import { useNavigate, useParams } from "react-router";
-import GlobalPostContext from "../../contexts/post";
-import GlobalMapContext  from "../../contexts/map";
-import { getAllTags } from "../../utils/utils";
-import AuthContext from "../../auth";
+import GlobalPostContext from "../contexts/post";
+import GlobalMapContext  from "../contexts/map";
+import { getAllTags } from "../utils/utils";
+import AuthContext from "../auth";
 
-const PostEditor = () => {
+const EditPostScreen = () => {
   const navigate = useNavigate();
   const { post } = useContext(GlobalPostContext);
   const { map } = useContext(GlobalMapContext)
@@ -242,4 +242,4 @@ const PostEditor = () => {
   );
 };
 
-export default PostEditor;
+export default EditPostScreen;
