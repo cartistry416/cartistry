@@ -5,9 +5,9 @@ import { MapContainer, TileLayer, GeoJSON, FeatureGroup, Popup, useMap} from 're
 
 import * as L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import "@geoman-io/leaflet-geoman-free";
-import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
-import Geoman from "./Geoman";
+// import "@geoman-io/leaflet-geoman-free";
+// import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
+// import Geoman from "./Geoman";
 
 import * as ReactDOM from 'react-dom/client';
 
@@ -229,7 +229,7 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height}) {
                     // ref={(reactFGref) => {
                     // _onFeatureGroupReady(reactFGref)}}
                 >
-                <Geoman />
+                {/* <Geoman /> */}
                         {/* <Circle center={[51.51, -0.06]} radius={200} /> */}
                 </FeatureGroup> : null}
                 <TileLayer
