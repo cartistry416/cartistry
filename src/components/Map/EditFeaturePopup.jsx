@@ -1,6 +1,6 @@
 
 import { useContext } from "react";
-import GlobalMapContext from "../contexts/map";
+import GlobalMapContext from "../../contexts/map";
 
 const EditFeaturePopup = (props) => {
     const {map} = useContext(GlobalMapContext)

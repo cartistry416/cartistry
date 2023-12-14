@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useContext } from "react";
 import { useNavigate } from "react-router";
 import "../../static/css/editMap/toolBox.css";
-import ConfirmDeleteModal from "../modals/ConfirmDeleteModal";
+import ConfirmDeleteModal from "../Modals/ConfirmDeleteModal";
 import AuthContext from "../../auth";
 import GlobalMapContext from "../../contexts/map";
 import {SimpleMapScreenshoter} from 'leaflet-simple-map-screenshoter'

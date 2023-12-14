@@ -3,8 +3,8 @@ import { useContext, useRef, useState } from "react";
 import GlobalPostContext from "../../contexts/post";
 import GlobalMapContext from "../../contexts/map";
 import AuthContext from "../../auth";
-import AlertModal from "../modals/AlertModal";
-import { formatTime } from "../HomeWrapper/HomeWrapper";
+import AlertModal from "../Modals/AlertModal";
+import { formatTime } from "../../screens/HomeScreen";
 import { useNavigate } from "react-router";
 
 function Post({ postId }) {

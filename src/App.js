@@ -1,6 +1,6 @@
 // eslint-disable-next-line
 import {useState, useEffect} from 'react'
-import GeoJSONMap from './components/GeoJSONMap';
+import GeoJSONMap from './components/Map/GeoJSONMap';
 import './App.css';
 // import MapFileParserFactory from './classes/mapFileParser.ts';
 // eslint-disable-next-line
@@ -9,22 +9,21 @@ import { AuthContextProvider } from './auth';
 import { GlobalMapContextProvider } from './contexts/map';
 // eslint-disable-next-line
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import HomeWrapper from './components/HomeWrapper/HomeWrapper'
 import NavBar from './components/NavBar';
 import './static/css/global.css'
 import './static/css/fonts.css'
-import AlertModal from './components/modals/AlertModal';
-import EditMapWrapper from './components/EditMapWrapper/EditMapWrapper.jsx';
-import PostScreen from './components/Posts/PostScreen.jsx';
-import MyMapsWrapper from './components/MyMapsWrapper';
-import PostEditor from './components/Posts/PostEditor.jsx';
-import ProfileScreen from './components/ProfileScreen.jsx';
-import MyPostsScreen from './components/MyPostsScreen.jsx';
-import LoginScreen from './components/LoginScreen.jsx';
-import RegisterScreen from './components/RegisterScreen.jsx';
-import ForgotPasswordScreen from './components/ForgotPasswordScreen.jsx';
-import ResetPasswordScreen from './components/ResetPasswordScreen.jsx';
-import RequestPasswordScreen from './components/requestPasswordScreen.jsx';
+import HomeScreen from './screens/HomeScreen.jsx'
+import EditMapScreen from './screens/EditMapScreen.jsx';
+import PostScreen from './screens/PostScreen.jsx';
+import MyMapsScreen from './screens/MyMapsScreen.jsx';
+import EditPostScreen from './screens/EditPostScreen.jsx';
+import ProfileScreen from './screens/ProfileScreen.jsx';
+import MyPostsScreen from './screens/MyPostsScreen.jsx';
+import LoginScreen from './screens/auth/LoginScreen.jsx';
+import RegisterScreen from './screens/auth/RegisterScreen.jsx';
+import ForgotPasswordScreen from './screens/auth/ForgotPasswordScreen.jsx';
+import ResetPasswordScreen from './screens/auth/ResetPasswordScreen.jsx';
+import RequestPasswordScreen from './screens/auth/requestPasswordScreen.jsx';
 import '../src/static/css/modals.css'
 import '../src/static/css/authScreens.css'
 import { GlobalPostContextProvider } from './contexts/post/index.js';
@@ -88,12 +87,12 @@ function App() {
                               <Route path="/forgotPassword/" element={<ForgotPasswordScreen/>}/>
                               <Route path="/resetPassword/" element={<ResetPasswordScreen/>}/>
                               <Route path="/requestPassword/" element={<RequestPasswordScreen/>}/>
-                              <Route path="/home/" element={<HomeWrapper/>} />
-                              <Route path="/editMap/:id" element={<EditMapWrapper/>} />
+                              <Route path="/home/" element={<HomeScreen/>} />
+                              <Route path="/editMap/:id" element={<EditMapScreen/>} />
                               <Route path="/post/:id" element={<PostScreen/>} />
-                              <Route path="/myMaps/" element={<MyMapsWrapper/>}/>
+                              <Route path="/myMaps/" element={<MyMapsScreen/>}/>
                               <Route path="/myPosts/" element={<MyPostsScreen/>}/>
-                              <Route path="/editPost/:id?" element={<PostEditor/>} />
+                              <Route path="/editPost/:id?" element={<EditPostScreen/>} />
                               <Route path="/profile/:username/:id" element={<ProfileScreen/>} />
                               {/* <Route path="/login/" exact component={LoginScreen} />
                               <Route path="/register/" exact component={RegisterScreen} />

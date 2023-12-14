@@ -1,5 +1,5 @@
 import React, { useState, useContext, useRef } from "react";
-import AuthContext from "../auth";
+import AuthContext from "../../auth";
 import { useNavigate } from "react-router";
 
 function RegisterScreen(props) {

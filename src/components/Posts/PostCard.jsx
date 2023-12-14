@@ -3,8 +3,8 @@ import "../../static/css/postCard.css";
 import { useNavigate } from "react-router";
 import GlobalPostContext from "../../contexts/post";
 import AuthContext from "../../auth";
-import ConfirmDeleteModal from "../modals/ConfirmDeleteModal";
-import AlertModal from "../modals/AlertModal";
+import ConfirmDeleteModal from "../Modals/ConfirmDeleteModal";
+import AlertModal from "../Modals/AlertModal";
 
 function PostCard({
   title,

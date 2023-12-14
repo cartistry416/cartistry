@@ -2,7 +2,7 @@ import { useEffect, useContext } from "react";
 import { useLeafletContext } from "@react-leaflet/core";
 import "@geoman-io/leaflet-geoman-free";
 import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
-import GlobalMapContext from '../contexts/map'
+import GlobalMapContext from '../../contexts/map'
 
 const Geoman = () => {
   const context = useLeafletContext();

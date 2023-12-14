@@ -1,7 +1,7 @@
 import React, { useContext, useRef, useState } from "react";
 import { useNavigate } from "react-router";
-import AuthContext from "../auth";
-import AlertModal from "./modals/AlertModal";
+import AuthContext from "../../auth";
+import AlertModal from "../../components/Modals/AlertModal";
 
 function RequestPasswordScreen() {
   const { auth } = useContext(AuthContext);
