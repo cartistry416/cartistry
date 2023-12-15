@@ -36,35 +36,10 @@ function App() {
   const [mapData, setMapData] = useState(null)
   // eslint-disable-next-line
   const [fileExtension, setFileExtension] = useState(null)
-  const [dummyData, setDummyData] = useState(null)
-
-
   let map = null
   const position = [0,0]
   // eslint-disable-next-line
   map = <GeoJSONMap geoData={mapData} position={position}> </GeoJSONMap>
-
-  // eslint-disable-next-line
-  const handleDummyOnClick = () => {
-    // api.getDummyData().then((res) => {
-    //   setDummyData(res.data)
-    // })
-    setDummyData('dummyData')
-  }
-
-  // eslint-disable-next-line
-  const dummyRequest = () => {
-    // api.getDummyData().then((res) => {
-    //   setDummyData(res.data)
-    // })
-  }
-
-  // eslint-disable-next-line
-  let dummyNode = <div> </div>
-  if (dummyData) {
-    dummyNode = <div id="dummyText">{JSON.stringify(dummyData)}</div>
-  }
-
 
   return (
     <BrowserRouter>
@@ -72,31 +47,20 @@ function App() {
         <GlobalMapContextProvider>
           <GlobalPostContextProvider>
             <div className="App">
-                  {/* <h1> Map Viewer</h1>
-                    <button id="dummy" onClick={handleDummyOnClick}> dummy </button>
-                    {dummyNode}
-                    <RegisterModal></RegisterModal>
-                    <LoginModal> </LoginModal>
-                    <button onClick={dummyRequest}>Get Most Recent Posts</button>
-                    <input type="file" id="geojsonFile" accept="*" onChange={handleFileUpload} />
-                    {map} */}
                   <NavBar/>
                   <Routes>
-                              <Route path="/" element={<LoginScreen/>} />
-                              <Route path="/register/" element={<RegisterScreen/>} />
-                              <Route path="/forgotPassword/" element={<ForgotPasswordScreen/>}/>
-                              <Route path="/resetPassword/" element={<ResetPasswordScreen/>}/>
-                              <Route path="/requestPassword/" element={<RequestPasswordScreen/>}/>
-                              <Route path="/home/" element={<HomeScreen/>} />
-                              <Route path="/editMap/:id" element={<EditMapScreen/>} />
-                              <Route path="/post/:id" element={<PostScreen/>} />
-                              <Route path="/myMaps/" element={<MyMapsScreen/>}/>
-                              <Route path="/myPosts/" element={<MyPostsScreen/>}/>
-                              <Route path="/editPost/:id?" element={<EditPostScreen/>} />
-                              <Route path="/profile/:username/:id" element={<ProfileScreen/>} />
-                              {/* <Route path="/login/" exact component={LoginScreen} />
-                              <Route path="/register/" exact component={RegisterScreen} />
-                              <Route path="/playlist/:id" exact component={WorkspaceScreen} /> */}
+                    <Route path="/" element={<LoginScreen/>} />
+                    <Route path="/register/" element={<RegisterScreen/>} />
+                    <Route path="/forgotPassword/" element={<ForgotPasswordScreen/>}/>
+                    <Route path="/resetPassword/" element={<ResetPasswordScreen/>}/>
+                    <Route path="/requestPassword/" element={<RequestPasswordScreen/>}/>
+                    <Route path="/home/" element={<HomeScreen/>} />
+                    <Route path="/editMap/:id" element={<EditMapScreen/>} />
+                    <Route path="/post/:id" element={<PostScreen/>} />
+                    <Route path="/myMaps/" element={<MyMapsScreen/>}/>
+                    <Route path="/myPosts/" element={<MyPostsScreen/>}/>
+                    <Route path="/editPost/:id?" element={<EditPostScreen/>} />
+                    <Route path="/profile/:username/:id" element={<ProfileScreen/>} />
                   </Routes>
             </div>
           </GlobalPostContextProvider>
