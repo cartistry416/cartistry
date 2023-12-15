@@ -5,7 +5,7 @@ import ConfirmDeleteModal from "../modals/ConfirmDeleteModal";
 import AuthContext from "../../auth";
 import GlobalMapContext from "../../contexts/map";
 import {SimpleMapScreenshoter} from 'leaflet-simple-map-screenshoter'
-const Toolbox = ({mapRef}) => {
+const Toolbox = ({mapRef, setCurrentMarkerIcon}) => {
   const { auth } = useContext(AuthContext);
   const { map } = useContext(GlobalMapContext);
   const [showOptions, setShowOptions] = useState(false);
@@ -125,6 +125,9 @@ const Toolbox = ({mapRef}) => {
   const handleColorSelectorChange = (e) => {
     map.setColorSelected(e.target.value)
   }
+  const handleIconClick = (iconType) => {
+    setCurrentMarkerIcon(iconType);
+};
 
   return (
     <div className="toolbox">
@@ -176,52 +179,17 @@ const Toolbox = ({mapRef}) => {
         </div>
       </div>
       <div className="toolbox-body">
-        <div className="toolbox-iconRows">
-          <span className="material-icons">pan_tool</span>
-          <span className="material-icons">format_color_fill</span>
-          <span className="material-icons">pin_drop</span>
-          <span className="material-icons">gradient</span>
-          <span className="material-icons">start</span>
-          <span className="material-icons">polyline</span>
-        </div>
-        <div className="toolbox-separator"></div>
         <div className="toolbox-controls">
-          <div className="toolbox-pan-controls">
-            <span className="toolbox-pan-controls-label">Zoom</span>
-            <input
-              type="range"
-              className="toolbox-pan-range"
-              min="0"
-              max="100"
-              value="50"
-            />
-            <div className="toolbox-pan-controls-inner">
-              <div className="toolbox-pan-controls-buttons">
-                <span className="material-icons">remove</span>
-                <span className="material-icons">add</span>
-              </div>
-              <input
-                type="number"
-                className="toolbox-pan-zoom-value"
-                value="50"
-              />
-            </div>
-          </div>
-          <div className="toolbox-separator"></div>
-          <div className="toolbox-bin-controls">
-            <span className="toolbox-bin-label">Color</span>
-            <input type="color" className="toolbox-bin-controls-colorInput" onChange={handleColorSelectorChange} />
-          </div>
-          <div className="toolbox-separator"></div>
           <div className="toolbox-landmark-controls">
             <div className="toolbox-landmark-iconRows">
-              <span className="material-icons">apartment</span>
-              <span className="material-icons">restaurant</span>
-              <span className="material-icons">school</span>
-              <span className="material-icons">museum</span>
-              <span className="material-icons">store</span>
-              <span className="material-icons">home</span>
-              <span className="material-icons">church</span>
+            <span className="material-icons" onClick={() => handleIconClick('default')}>location_on</span>
+            <span className="material-icons" onClick={() => handleIconClick('apartment')}>apartment</span>
+            <span className="material-icons" onClick={() => handleIconClick('restaurant')}>restaurant</span>
+            <span className="material-icons" onClick={() => handleIconClick('school')}>school</span>
+            <span className="material-icons" onClick={() => handleIconClick('museum')}>museum</span>
+            <span className="material-icons" onClick={() => handleIconClick('store')}>store</span>
+            <span className="material-icons" onClick={() => handleIconClick('home')}>home</span>
+            <span className="material-icons" onClick={() => handleIconClick('church')}>church</span>
             </div>
           </div>
           <div className="toolbox-separator"></div>

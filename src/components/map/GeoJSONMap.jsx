@@ -29,7 +29,7 @@ function getNameFromConvertedShapeFile(properties) {
 // https://github.com/alex3165/react-leaflet-draw/blob/7963cfee5ea7f0c85bd294251fa0e150c59641a7/examples/class/edit-control.js
 // https://stackoverflow.com/questions/73353506/extracting-values-from-html-forms-rendered-in-react-leaflet-popup
 
-function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMapRef, mapRef}) {
+function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMapRef, mapRef, currentMarkerIcon}) {
     const { map } = useContext(GlobalMapContext)
 
     const featureGroupRef = useRef(null)
@@ -176,9 +176,38 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
         console.log(e)
       }
 
+
       const handleLayerRotate = (e) => {
         console.log(e)
       }
+
+    const handleEditModeToggle = (e) => {
+      console.log(e)
+      toggleBindPopup(e.enabled)
+    }
+    
+    const createIcon = (iconName) => {
+      return L.divIcon({
+        className: 'custom-icon',
+        html: `<span class="material-icons">${iconName}</span>`,
+        iconSize: L.point(50, 50),
+      });
+    };
+
+  const icons = {
+    'default': createIcon('location_on'),
+    'apartment': createIcon('apartment'),
+    'restaurant': createIcon('restaurant'),
+    'school': createIcon('school'),
+    'museum': createIcon('museum'),
+    'store': createIcon('store'),
+    'home': createIcon('home'),
+    'church': createIcon('church'),
+    // Add more icons as needed
+  };
+
+  const currentLIcon = icons[currentMarkerIcon] || icons['default'];
+
 
     return (
         <div className="mapContainerSize">
@@ -187,6 +216,7 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
                   <Geoman toggleBindPopup={toggleBindPopup} handleLayerCreate={handleLayerCreate} handleLayerUpdate={handleLayerUpdate} 
                   handleLayerCut={handleLayerCut} handleLayerRemove={handleLayerRemove} handleLayerRotate={handleLayerRotate} /> : null
                 }
+
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     maxZoom={19}

@@ -1,0 +1,11 @@
+.mapEditInput{
+    position: relative;
+    width: 100%;
+    background-color: var(--accent3);
+    border: none;
+    color: var(--accent2);
+}
+
+label{
+    width: 100%;
+}
