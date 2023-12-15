@@ -1,6 +1,5 @@
 import "../static/css/editMap/editMap.css";
 import Toolbox from '../components/map/Toolbox';
-import Legend from '../components/map/Legend';
 import GeoJSONMap from "../components/map/GeoJSONMap";
 
 import { useParams } from "react-router";
