@@ -10,6 +10,7 @@ import "leaflet/dist/leaflet.css";
 import * as ReactDOM from 'react-dom/client';
 import EditFeaturePopup from './EditFeaturePopup';
 
+import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 import { GeomanControls } from 'react-leaflet-geoman-v2'
 
 function getNameFromConvertedShapeFile(properties) {
@@ -35,8 +36,8 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
 
     const featureGroupRef = useRef(null)
 
-    // const [geoManActive, setGeoManActive] = useState(false)
-    // const geoManActiveRef = useRef(geoManActive);
+    const [originalLatLngs, setOriginalLatLngs] = useState(null)
+    const originalLatLngsRef = useRef(null)
 
     useEffect(() => {
 
@@ -45,6 +46,10 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
     useEffect(() => {
       console.log(currentMarkerIcon)
     }, [currentMarkerIcon])
+
+    useEffect(() => {
+      originalLatLngsRef.current = originalLatLngs
+    }, [originalLatLngs])
     
     // useEffect(() => {
 
@@ -140,7 +145,7 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
     
 
 
-      const toggleBindPopup = (enabled, mapRef) => {
+      const toggleBindPopup = (enabled) => {
         if (!enabled) {
           Object.entries(mapRef._layers).forEach(([key, layer]) => {
             if (layer.prevPopup) {
@@ -160,31 +165,59 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
         }
       }
 
-      const handleLayerCreate = (e) => {
+      const handleLayerDraw = (e) => {
         console.log(e)
+      }
+
+      const handleVertexClick = (e) => {
+        console.log('vertex clicked')
+        const layer = e.layer;
+        setOriginalLatLngs(layer.getLatLngs())
       }
 
       const handleLayerUpdate = (e) => {
-        console.log(e)
+        const layer = e.layer;
+        const updatedLatLngs = layer.getLatLngs();
+        console.log('Original LatLngs:', originalLatLngsRef.current);
+        console.log('Updated LatLngs:', updatedLatLngs);
+
       }
 
       const handleLayerCut = (e) => {
-        console.log(e)
+        console.log(e.originalLayer)
+        console.log(e.layer)
       }
 
       const handleLayerRemove = (e) => {
-        console.log(e)
+        console.log(e.layer)
       }
 
+      const handleLayerRotateStart = (e) => {
+        const layer = e.layer;
+        setOriginalLatLngs(layer.getLatLngs())
+      }
+      const handleLayerRotateEnd = (e) => {
+        console.log('rotate end')
+        // console.log(e.layer)
+        // console.log(e.startAngle)
+        // console.log(e.angle)
+        // console.log(e.originLatLngs)
+        // console.log(e.newLatLngs)
 
-      const handleLayerRotate = (e) => {
-        console.log(e)
       }
 
-    const handleEditModeToggle = (e) => {
-      console.log(e)
-      toggleBindPopup(e.enabled)
-    }
+      const handleLayerCreate = (e) => {
+        console.log(e.layer)
+      }
+
+      const handleDragStart = (e) => {
+        const layer = e.layer;
+        setOriginalLatLngs(layer.getLatLngs())
+      }
+
+      const handleDragEnd = (e) => {
+        console.log(e.layer)
+      }
     
     const createIcon = (iconName) => {
       return L.divIcon({
@@ -224,25 +257,29 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
                       drawText: false,
                     }}
                     globalOptions={{
-                      continueDrawing: true,
-                      editable: false,
+                      continueDrawing: false,
                       markerStyle:{
                          icon: currentLIcon
                       },
                     }}
+                    // onDrawEnd={handleLayerDraw}
                     onCreate={handleLayerCreate}
+
+                    onVertexClick={handleVertexClick}
                     onUpdate={handleLayerUpdate}
+                    
+                    onMapCut={handleLayerCut}
                     onLayerCut={handleLayerCut}
-                    onLayerRotateEnd={handleLayerRotate}
+
+                    onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
+
+                    onLayerRotateStart={ handleLayerRotateStart}
+                    onLayerRotateEnd={handleLayerRotateEnd}
                     onLayerRemove={handleLayerRemove}
-                    onGlobalDrawModeToggled={e => {
-                      const mapRef = useMap()
-                      toggleBindPopup(e.enabled, mapRef)
-                    }}
-                    onGlobalEditModeToggled={e => {
-                      const mapRef = useMap()
-                      toggleBindPopup(e.enabled, mapRef)
-                    }}
+                    onGlobalDrawModeToggled={e => toggleBindPopup(e.enabled)}
+                    onGlobalEditModeToggled={e => toggleBindPopup(e.enabled)}
+                    onGlobalRemovalModeToggled={e => toggleBindPopup(e.enabled)}
                   />
                </FeatureGroup> : null}
 
