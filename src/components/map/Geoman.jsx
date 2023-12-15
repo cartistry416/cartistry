@@ -1,58 +1,28 @@
-import { useEffect, useContext } from "react";
-import { useLeafletContext } from "@react-leaflet/core";
+import { useMap } from "react-leaflet";
+
+import * as L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import "@geoman-io/leaflet-geoman-free";
 import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
-import GlobalMapContext from '../../contexts/map'
 
-const Geoman = () => {
-  const context = useLeafletContext();
-  const globalMap = useContext(GlobalMapContext); // access the global map context
+export default function Geoman({toggleBindPopup,handleLayerCreate, handleLayerUpdate, 
+  handleLayerCut, handleLayerRemove, handleLayerRotate}) {
+  const map = useMap();
 
-  useEffect(() => {
-    const leafletContainer = context.map;
 
-    leafletContainer.pm.addControls({
-    });
+  map.pm.addControls();
+  map.on('pm:globaleditmodetoggled', e => toggleBindPopup(e.enabled, map))
+  map.on('pm:globaldrawmodetoggled', e => toggleBindPopup(e.enabled, map))
+  map.on('pm:globalcutmodetoggled', e => toggleBindPopup(e.enabled, map))
+  map.on('pm:globalremovalmodetoggled', e => toggleBindPopup(e.enabled, map))
+  map.on('pm:globalrotatemodetoggled', e => toggleBindPopup(e.enabled, map))
 
-    leafletContainer.pm.setGlobalOptions({ pmIgnore: true });
 
-    leafletContainer.on("pm:create", (e) => {
-      if (e.layer && e.layer.pm) {
-        const shape = e;
-        console.log(e);
+  map.on('pm:create', handleLayerCreate)
+  map.on('pm:update', handleLayerUpdate)
+  map.on('pm:remove', handleLayerRemove)
+  map.on('pm:cut', handleLayerCut)
 
-        // enable editing of circle
-        shape.layer.pm.enable();
+  map.on('pm:rotate', handleLayerRotate)
 
-        console.log(`object created: ${shape.layer.pm.getShape()}`);
-        // console.log(leafletContainer.pm.getGeomanLayers(true).toGeoJSON());
-        // leafletContainer.pm
-        //   .getGeomanLayers(true)
-        //   .bindPopup("i am whole")
-        //   .openPopup();
-        // leafletContainer.pm
-        //   .getGeomanLayers()
-        //   .map((layer, index) => layer.bindPopup(`I am figure N° ${index}`));
-        shape.layer.on("pm:edit", (e) => {
-          const event = e;
-          console.log("placed");
-          // console.log(leafletContainer.pm.getGeomanLayers(true).toGeoJSON());
-        });
-      }
-    });
-
-    leafletContainer.on("pm:remove", (e) => {
-      console.log("object removed");
-      // console.log(leafletContainer.pm.getGeomanLayers(true).toGeoJSON());
-    });
-
-    return () => {
-      leafletContainer.pm.removeControls();
-      leafletContainer.pm.setGlobalOptions({ pmIgnore: true });
-    };
-  }, [context]);
-
-  return null;
-};
-
-export default Geoman;
+}
