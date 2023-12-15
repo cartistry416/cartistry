@@ -1,6 +1,4 @@
 import "../static/css/editMap/editMap.css";
-// eslint-disable-next-line
-import MapContainer from '../components/map/MapContainer';
 import Toolbox from '../components/map/Toolbox';
 import GeoJSONMap from "../components/map/GeoJSONMap";
 
@@ -8,6 +6,7 @@ import { useParams } from "react-router";
 import { useContext, useEffect, useState } from "react";
 import GlobalPostContext from "../contexts/post";
 import GlobalMapContext from "../contexts/map";
+// import GeoJSONMapPureLeaflet from "../components/map/GeoJSONMapPureLeaflet";
 
 
 
@@ -46,6 +45,7 @@ const EditMapScreen = () =>{
     return (
         <div className="editMapWrapper">
             <div className="mapScreen">
+                {/* <GeoJSONMapPureLeaflet  className="mapOverlay" position={[39.74739, -105]} setMapRef={setMapRef} mapRef={mapRef} mapMetadataId={id} editEnabled={true} width="100vw" height="100vh"/>  */}
                 <GeoJSONMap className="mapOverlay" position={[39.74739, -105]} setMapRef={setMapRef} mapRef={mapRef} mapMetadataId={id} editEnabled={true} width="100vw" height="100vh"
                 currentMarkerIcon={currentMarkerIcon}/>
                 <div className="rightPanel">
