@@ -5,7 +5,7 @@ import ConfirmDeleteModal from "../modals/ConfirmDeleteModal";
 import AuthContext from "../../auth";
 import GlobalMapContext from "../../contexts/map";
 import {SimpleMapScreenshoter} from 'leaflet-simple-map-screenshoter'
-const Toolbox = ({mapRef}) => {
+const Toolbox = ({mapRef, setCurrentMarkerIcon}) => {
   const { auth } = useContext(AuthContext);
   const { map } = useContext(GlobalMapContext);
   const [showOptions, setShowOptions] = useState(false);
@@ -125,6 +125,9 @@ const Toolbox = ({mapRef}) => {
   const handleColorSelectorChange = (e) => {
     map.setColorSelected(e.target.value)
   }
+  const handleIconClick = (iconType) => {
+    setCurrentMarkerIcon(iconType);
+};
 
   return (
     <div className="toolbox">
@@ -179,14 +182,14 @@ const Toolbox = ({mapRef}) => {
         <div className="toolbox-controls">
           <div className="toolbox-landmark-controls">
             <div className="toolbox-landmark-iconRows">
-              <span className="material-icons">location_on</span>
-              <span className="material-icons">apartment</span>
-              <span className="material-icons">restaurant</span>
-              <span className="material-icons">school</span>
-              <span className="material-icons">museum</span>
-              <span className="material-icons">store</span>
-              <span className="material-icons">home</span>
-              <span className="material-icons">church</span>
+            <span className="material-icons" onClick={() => handleIconClick('default')}>location_on</span>
+            <span className="material-icons" onClick={() => handleIconClick('apartment')}>apartment</span>
+            <span className="material-icons" onClick={() => handleIconClick('restaurant')}>restaurant</span>
+            <span className="material-icons" onClick={() => handleIconClick('school')}>school</span>
+            <span className="material-icons" onClick={() => handleIconClick('museum')}>museum</span>
+            <span className="material-icons" onClick={() => handleIconClick('store')}>store</span>
+            <span className="material-icons" onClick={() => handleIconClick('home')}>home</span>
+            <span className="material-icons" onClick={() => handleIconClick('church')}>church</span>
             </div>
           </div>
           <div className="toolbox-separator"></div>
