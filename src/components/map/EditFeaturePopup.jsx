@@ -19,9 +19,10 @@ const EditFeaturePopup = (props) => {
         
         >
           <label>
-            Name:
+            Name
             <input
               type="text"
+              className='mapEditInput'
               defaultValue={feature.properties.name}
             />
           </label>
@@ -29,6 +30,7 @@ const EditFeaturePopup = (props) => {
             Fill Color
             <input
               type="color"
+              className='mapEditInput'
               defaultValue={feature.properties.style.fillColor}
             />
           </label>
@@ -36,33 +38,37 @@ const EditFeaturePopup = (props) => {
             Border Color
             <input
               type="color"
+              className='mapEditInput'
               defaultValue={feature.properties.style.color}
             />
           </label>
           <label>
             Weight 
             <input
-              type="text"
+              type="number"
+              className='mapEditInput'
               defaultValue={feature.properties.style.weight}
             />
           </label>
           <label>
             Opacity
             <input
-              type="text"
+              type="number"
+              className='mapEditInput'
               defaultValue={feature.properties.style.opacity}
             />
           </label>
           <label>
             Fill Opacity
             <input
-              type="text"
+              type="number"
+              className='mapEditInput'
               defaultValue={feature.properties.style.fillOpacity}
             />
           </label>
 
           <button type="submit">
-            Edit Feature
+            Save Edit
           </button>
         </form>
       )}
