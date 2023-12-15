@@ -1,3 +1,6 @@
+
+// this file is equivalent to GeomanControls but uses pure leaflet-geoman 
+
 import { useMap } from "react-leaflet";
 
 import * as L from "leaflet";
@@ -6,11 +9,13 @@ import "@geoman-io/leaflet-geoman-free";
 import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
 
 export default function Geoman({toggleBindPopup,handleLayerCreate, handleLayerUpdate, 
-  handleLayerCut, handleLayerRemove, handleLayerRotate}) {
+  handleLayerCut, handleLayerRemove, handleLayerRotate, icon}) {
   const map = useMap();
 
 
-  map.pm.addControls();
+  map.pm.addControls({
+    
+  });
   map.on('pm:globaleditmodetoggled', e => toggleBindPopup(e.enabled, map))
   map.on('pm:globaldrawmodetoggled', e => toggleBindPopup(e.enabled, map))
   map.on('pm:globalcutmodetoggled', e => toggleBindPopup(e.enabled, map))

@@ -1,15 +1,16 @@
 // eslint-disable-next-line
 import GlobalMapContext from '../../contexts/map'
 import React, { useEffect, useState, useContext, useRef } from 'react'
-import { MapContainer, TileLayer, GeoJSON, FeatureGroup, Popup, useLeaflet, } from 'react-leaflet'
+import { MapContainer, TileLayer, GeoJSON, FeatureGroup, useMap } from 'react-leaflet'
 
-import Geoman  from './Geoman';
+// import Geoman  from './Geoman';
 
 import * as L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import * as ReactDOM from 'react-dom/client';
 import EditFeaturePopup from './EditFeaturePopup';
 
+import { GeomanControls } from 'react-leaflet-geoman-v2'
 
 function getNameFromConvertedShapeFile(properties) {
 
@@ -40,6 +41,10 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
     useEffect(() => {
 
     }, [mapRef])
+
+    useEffect(() => {
+      console.log(currentMarkerIcon)
+    }, [currentMarkerIcon])
     
     // useEffect(() => {
 
@@ -56,10 +61,6 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
     //   }
     // }, [selectedFeature, mapContainerRef]);
   
-    function handleDrawModeToggleLayer(e) {
-      console.log(this.layer)
-
-    }
     const onEachFeature = (feature, layer) => {
         const idx = map.currentMapGeoJSON.features.indexOf(feature)
 
@@ -68,7 +69,6 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
         }
         layer.bindTooltip(feature.properties.name, { permanent: true, direction: 'center' });
         layer.bindPopup(renderPopupForm(feature, idx, layer))
-        // layer.pm.disable()
     }
 
 
@@ -212,10 +212,39 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
     return (
         <div className="mapContainerSize">
             <MapContainer ref={setMapRef} center={[51.505, -0.09]} zoom={3} style={{ width:`${width}`, height: `${height}`, zIndex: '1', borderRadius: '1rem'}} >
-                {editEnabled ? 
+                {/* {editEnabled ? 
                   <Geoman toggleBindPopup={toggleBindPopup} handleLayerCreate={handleLayerCreate} handleLayerUpdate={handleLayerUpdate} 
-                  handleLayerCut={handleLayerCut} handleLayerRemove={handleLayerRemove} handleLayerRotate={handleLayerRotate} /> : null
-                }
+                  handleLayerCut={handleLayerCut} handleLayerRemove={handleLayerRemove} handleLayerRotate={handleLayerRotate} icon={currentLIcon}/> : null
+                } */}
+                {editEnabled ? 
+                 <FeatureGroup>
+                  <GeomanControls
+                    options={{
+                      position: 'topleft',
+                      drawText: false,
+                    }}
+                    globalOptions={{
+                      continueDrawing: true,
+                      editable: false,
+                      markerStyle:{
+                         icon: currentLIcon
+                      },
+                    }}
+                    onCreate={handleLayerCreate}
+                    onUpdate={handleLayerUpdate}
+                    onLayerCut={handleLayerCut}
+                    onLayerRotateEnd={handleLayerRotate}
+                    onLayerRemove={handleLayerRemove}
+                    onGlobalDrawModeToggled={e => {
+                      const mapRef = useMap()
+                      toggleBindPopup(e.enabled, mapRef)
+                    }}
+                    onGlobalEditModeToggled={e => {
+                      const mapRef = useMap()
+                      toggleBindPopup(e.enabled, mapRef)
+                    }}
+                  />
+               </FeatureGroup> : null}
 
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
