@@ -2,10 +2,9 @@ import "../static/css/editMap/editMap.css";
 // eslint-disable-next-line
 import MapContainer from '../components/map/MapContainer';
 import Toolbox from '../components/map/Toolbox';
-import Legend from '../components/map/Legend';
 import GeoJSONMap from "../components/map/GeoJSONMap";
 
-import { matchPath, useParams } from "react-router";
+import { useParams } from "react-router";
 import { useContext, useEffect, useState } from "react";
 import GlobalPostContext from "../contexts/post";
 import GlobalMapContext from "../contexts/map";
