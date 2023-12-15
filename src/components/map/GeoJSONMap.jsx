@@ -45,7 +45,7 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
     useEffect(() => {
 
     }, [mapRef])
-
+    
     // useEffect(() => {
 
     //   console.log(mapContainerRef)
@@ -178,11 +178,26 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
         toggleBindPopup(e.enabled)
       }
 
-      const handleEditModeToggle = (e) => {
-        console.log(e)
-        toggleBindPopup(e.enabled)
-      }
-
+    const handleEditModeToggle = (e) => {
+      console.log(e)
+      toggleBindPopup(e.enabled)
+    }
+    const apartmentIcon = L.divIcon({
+      className: 'custom-icon',
+      html: '<span class="material-icons">apartment</span>',
+      iconSize: L.point(50, 50),
+    });
+    const defaultIcon = L.divIcon({
+      className: 'custom-icon',
+      html: '<span class="material-icons">location_on</span>',
+      iconSize: L.point(50, 50),
+    });
+  
+    const schoolIcon = L.divIcon({
+        className: 'custom-icon',
+        html: '<span class="material-icons">school</span>',
+        iconSize: L.point(50, 50),
+    });
     return (
         <div className="mapContainerSize">
             <MapContainer ref={setMapRef} center={[51.505, -0.09]} zoom={3} style={{ width:`${width}`, height: `${height}`, zIndex: '1', borderRadius: '1rem'}} >
@@ -196,6 +211,9 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
                     globalOptions={{
                       continueDrawing: true,
                       editable: false,
+                      markerStyle:{
+                         icon: defaultIcon
+                      },
                     }}
                     onCreate={handleChange}
                     onChange={(e) => console.log('onChange', e)}
