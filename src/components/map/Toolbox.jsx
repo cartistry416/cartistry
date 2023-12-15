@@ -179,6 +179,7 @@ const Toolbox = ({mapRef}) => {
         <div className="toolbox-controls">
           <div className="toolbox-landmark-controls">
             <div className="toolbox-landmark-iconRows">
+              <span className="material-icons">location_on</span>
               <span className="material-icons">apartment</span>
               <span className="material-icons">restaurant</span>
               <span className="material-icons">school</span>
