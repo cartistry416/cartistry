@@ -5,14 +5,13 @@ import { MapContainer, TileLayer, GeoJSON, FeatureGroup, Popup, useLeaflet} from
 
 import * as L from "leaflet";
 import "leaflet/dist/leaflet.css";
-// import "@geoman-io/leaflet-geoman-free";
-// import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
-// import Geoman from "./Geoman";
+import "@geoman-io/leaflet-geoman-free";
+import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
+import { GeomanControls } from 'react-leaflet-geoman-v2'
 
 import * as ReactDOM from 'react-dom/client';
 
 import EditFeaturePopup from './EditFeaturePopup';
-
 
 
 function getNameFromConvertedShapeFile(properties) {
@@ -33,7 +32,7 @@ function getNameFromConvertedShapeFile(properties) {
 // https://github.com/alex3165/react-leaflet-draw/blob/7963cfee5ea7f0c85bd294251fa0e150c59641a7/examples/class/edit-control.js
 // https://stackoverflow.com/questions/73353506/extracting-values-from-html-forms-rendered-in-react-leaflet-popup
 
-function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMapRef}) {
+function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMapRef, mapRef}) {
     const { map } = useContext(GlobalMapContext)
 
     const editMapRef = useRef(null)
@@ -42,6 +41,10 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
 
     const [selectedFeature, setSelectedFeature] = useState(null)
     const [refresh, setRefresh] = useState(0)
+
+    useEffect(() => {
+
+    }, [mapRef])
 
     // useEffect(() => {
 
@@ -58,6 +61,10 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
     //   }
     // }, [selectedFeature, mapContainerRef]);
   
+    function handleDrawModeToggleLayer(e) {
+      console.log(this.layer)
+
+    }
     const onEachFeature = (feature, layer) => {
         const idx = map.currentMapGeoJSON.features.indexOf(feature)
 
@@ -69,6 +76,8 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
         // layer.on('click', handleFeatureClick);
         layer.bindTooltip(feature.properties.name, { permanent: true, direction: 'center' });
         layer.bindPopup(renderPopupForm(feature, idx, layer))
+
+        // layer.on('pm:globaldrawmodetoggled', handleDrawModeToggleLayer.bind(layer))
 
     }
 
@@ -121,92 +130,6 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
 
     }
 
-    const handlePropertyChange = (propertyName, newValue) => {
-      setSelectedFeature((prevSelectedFeature) => ({
-        ...prevSelectedFeature,
-        [propertyName]: newValue,
-      }));
-    };
-
-
-
-    // const position = [39.74739, -105]
-  
-    const _onChange = () => {
-    
-        //const { onChange } = this.props;
-        // const onChange = true;
-    
-        // if (_editableFG || !onChange) {
-        //   return;
-        // }
-        // console.log(_editableFG);
-        // const geojsonData = this._editableFG.toGeoJSON();
-        // console.log(geojsonData)
-        //onChange(geojsonData);
-      };
-    const _onEdited = (e) => {
-        let numEdited = 0;
-        // e.layers.eachLayer((layer) => {
-        //   numEdited += 1;
-        // });
-        //console.log(`_onEdited: edited ${numEdited} layers`, e);
-        console.log(e)
-        console.log('-----')
-        console.log(editMapRef.current._layers)
-        _onChange();
-      };
-    
-      const _onCreated = (e) => {
-        let type = e.layerType;
-        let layer = e.layer;
-        if (type === 'marker') {
-          // Do marker specific actions
-          console.log('_onCreated: marker created', e);
-        } else {
-          console.log('_onCreated: something else created:', type, e);
-        }
-
-        console.log(editMapRef.current._layers)
-        console.log('------')
-
-
-        // Do whatever else you need to. (save to db; etc)
-    
-        _onChange();
-      };
-    
-      const _onDeleted = (e) => {
-        let numDeleted = 0;
-        e.layers.eachLayer((layer) => {
-          numDeleted += 1;
-        });
-        console.log(`onDeleted: removed ${numDeleted} layers`, e);
-    
-        _onChange();
-      };
-    
-      const _onMounted = (drawControl) => {
-        console.log('_onMounted', drawControl);
-      };
-    
-      const _onEditStart = (e) => {
-        //console.log('_onEditStart', e);
-        console.log(editMapRef.current._layers)
-      };
-    
-      const _onEditStop = (e) => {
-        console.log(e)
-      };
-    
-      const _onDeleteStart = (e) => {
-        console.log('_onDeleteStart', e);
-      };
-    
-      const _onDeleteStop = (e) => {
-        console.log('_onDeleteStop', e);
-      };
-    
 
       const getFeatureStyle = (feature) => {
 
@@ -223,17 +146,63 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
         return feature.properties.style
       }
     
+
+      const handleChange = (e) => {
+        console.log('Event fired!')
+      }
+
+      const toggleBindPopup = (enabled) => {
+        if (!enabled) {
+          Object.entries(mapRef._layers).forEach(([key, layer]) => {
+            if (layer.prevPopup) {
+              layer.bindPopup(layer.prevPopup)
+              layer.prevPopup = null
+            }
+          })
+        }
+        else {
+          Object.entries(mapRef._layers).forEach(([key, layer]) => {
+            const popup = layer.getPopup()
+            if (popup) {
+              layer.prevPopup = popup
+              layer.unbindPopup()
+            }
+          });
+        }
+      }
+
+      const handleDrawModeToggle = (e) => {
+        console.log(e)
+
+        // console.log(mapRef._panes.overlayPane)
+        toggleBindPopup(e.enabled)
+      }
+
+      const handleEditModeToggle = (e) => {
+        console.log(e)
+        toggleBindPopup(e.enabled)
+      }
+
     return (
         <div className="mapContainerSize">
-            <MapContainer ref={setMapRef} center={position} zoom={4} style={{ width:`${width}`, height: `${height}`, zIndex: '1', borderRadius: '1rem'}} >
+            <MapContainer ref={setMapRef} center={[51.505, -0.09]} zoom={3} style={{ width:`${width}`, height: `${height}`, zIndex: '1', borderRadius: '1rem'}} >
                 {editEnabled ? 
-                <FeatureGroup ref={editMapRef}
-                    // ref={(reactFGref) => {
-                    // _onFeatureGroupReady(reactFGref)}}
-                >
-                {/* <Geoman /> */}
-                        {/* <Circle center={[51.51, -0.06]} radius={200} /> */}
-                </FeatureGroup> : null}
+                 <FeatureGroup>
+                  <GeomanControls
+                    options={{
+                      position: 'topleft',
+                      drawText: false,
+                    }}
+                    globalOptions={{
+                      continueDrawing: true,
+                      editable: false,
+                    }}
+                    onCreate={handleChange}
+                    onChange={(e) => console.log('onChange', e)}
+                    onGlobalDrawModeToggled={handleDrawModeToggle}
+                    onGlobalEditModeToggled={handleEditModeToggle}
+                  />
+               </FeatureGroup> : null}
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     maxZoom={19}

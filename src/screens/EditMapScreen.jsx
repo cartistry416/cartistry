@@ -47,7 +47,7 @@ const EditMapScreen = () =>{
     return (
         <div className="editMapWrapper">
             <div className="mapScreen">
-                <GeoJSONMap className="mapOverlay" position={[39.74739, -105]} setMapRef={setMapRef} mapMetadataId={id} editEnabled={true} width="100vw" height="100vh"/>
+                <GeoJSONMap className="mapOverlay" position={[39.74739, -105]} setMapRef={setMapRef} mapRef={mapRef} mapMetadataId={id} editEnabled={true} width="100vw" height="100vh"/>
                 <div className="rightPanel">
                     <Toolbox mapId={id} mapRef={mapRef} />
                     {/* <Legend /> */}
