@@ -1,4 +1,4 @@
-
+import '../../static/css/editMap/editFeaturePopup.css'
 import { useContext } from "react";
 import GlobalMapContext from "../../contexts/map";
 
