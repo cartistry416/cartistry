@@ -7,11 +7,11 @@ import { GlobalMapContext } from "../contexts/map";
 function ProfileScreen() {
   const { username, id } = useParams();
   const { map } = useContext(GlobalMapContext);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    map.loadMapCards(id)
-    console.log(username, id);
-    console.log(map.mapCardsInfo)
+    map.loadMapCards(id);
+    setLoaded(true);
   }, []);
 
   return (
@@ -20,33 +20,26 @@ function ProfileScreen() {
         <span className="material-icons">account_circle</span>
         <h3>{username}</h3>
       </div>
-      {/* <div className="mapListWrapper">
-        <MapCard />
-        <MapCard />
-        <MapCard />
-        <MapCard />
-        <MapCard />
-        <MapCard />
-        <MapCard />
-        <MapCard />
-        <MapCard />
-      </div> */}
       <div className="mapListWrapper">
-        {(map.mapCardsInfo.length === 0) && (
-          <div>No public maps to display</div>
+        {map.mapCardsInfo.length === 0 && <div>No public maps to display</div>}
+        {loaded ? (
+          <>
+            {map.mapCardsInfo.map((map, index) => {
+              return (
+                <MapCard
+                  key={index}
+                  index={index}
+                  mapId={map._id}
+                  title={map.title}
+                  updatedAt={map.updatedAt}
+                  thumbnail={map.thumbnail}
+                />
+              );
+            })}
+          </>
+        ) : (
+          <div>Loading...</div>
         )}
-        {map.mapCardsInfo.map((map, index) => {
-          return (
-            <MapCard
-              key={index}
-              index={index}
-              mapId={map._id}
-              title={map.title}
-              updatedAt={map.updatedAt}
-              thumbnail={map.thumbnail}
-            />
-          );
-        })}
       </div>
     </div>
   );
