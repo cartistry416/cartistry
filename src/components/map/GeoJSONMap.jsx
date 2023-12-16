@@ -222,7 +222,7 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
     const createIcon = (iconName) => {
       return L.divIcon({
         className: 'custom-icon',
-        html: `<span class="material-icons">${iconName}</span>`,
+        html: `<span class="material-icons" style="color: ${map.colorSelected};">${iconName}</span>`,
         iconSize: L.point(50, 50),
       });
     };
