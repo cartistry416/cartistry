@@ -30,7 +30,8 @@ export const GlobalMapActionType = {
     SORT_MAP_CARDS: "SORT_MAP_CARDS",
     SET_COLOR_SELECTED: "SET_COLOR_SELECTED",
     EDIT_FEATURE_PROPERTY: "EDIT_FEATURE_PROPERTY",
-    SET_MARKER_ACTIVE: "SET_MARKER_ACTIVE"
+    SET_MARKER_ACTIVE: "SET_MARKER_ACTIVE",
+    SET_HEAT_COLORS: "SET_HEAT_COLORS"
   }
 
 const tps = new jsTPS();
@@ -55,6 +56,7 @@ function GlobalMapContextProvider(props) {
         currentMapProprietaryJSONOriginal: null,
         colorSelected: "#3388ff",
         markerActive: false,
+        heatColors: [],
         // mapCardIndexMarkedForDeletion: null, // Don't think we need these
         // mapCardMarkedForDeletion: null,
     });
@@ -103,7 +105,9 @@ function GlobalMapContextProvider(props) {
                     ...map,
                     currentMapGeoJSONOriginal: payload.originalGeoJSON,
                     currentMapGeoJSON: payload.currentGeoJSON,
-                    currentMapMetadata: payload.mapMetadata
+                    currentMapMetadata: payload.mapMetadata,
+                    currentMapProprietaryJSON: payload.currentProprietaryJSON,
+                    currentMapProprietaryJSONOriginal: payload.originalProprietaryJSON,
                 })
             }
 
@@ -235,6 +239,14 @@ function GlobalMapContextProvider(props) {
                     markerActive: payload.active
                 })
             }
+            case GlobalMapActionType.SET_HEAT_COLORS: {
+                const updatedHeatColors = map.heatColors.slice(0, payload.numColors);
+                updatedHeatColors[payload.index] = payload.color;
+                return setMap({
+                    ...map,
+                    heatColors: updatedHeatColors
+                })
+            }
             case GlobalMapActionType.EDIT_FEATURE_PROPERTY: {
                 const updatedGeoJSON = map.currentMapGeoJSON
                 if (updatedGeoJSON.features[payload.index].properties.name !== payload.newStyle.name) {
@@ -288,9 +300,16 @@ function GlobalMapContextProvider(props) {
             }
             response = await api.getMapData(id)
             const {currentGeoJSON, originalGeoJSON} = await unzipBlobToJSON(response.data)
+            response = await api.getMapProprietaryData(id)
             mapReducer({
                 type: GlobalMapActionType.LOAD_MAP,
-                payload: {currentGeoJSON, originalGeoJSON, mapMetadata}
+                payload: {
+                    currentGeoJSON,
+                    originalGeoJSON,
+                    mapMetadata,
+                    currentProprietaryJSON: response.data.proprietaryJSON,
+                    originalProprietaryJSON: response.data.proprietaryJSON
+                }
             })
         }
         catch (error) {
@@ -686,6 +705,13 @@ function GlobalMapContextProvider(props) {
         mapReducer({
             type: GlobalMapActionType.SET_MARKER_ACTIVE,
             payload: {active}
+        })
+    }
+
+    map.setHeatColors = (index, color, numColors) => {
+        mapReducer({
+            type: GlobalMapActionType.SET_HEAT_COLORS,
+            payload: {index, color, numColors}
         })
     }
 
