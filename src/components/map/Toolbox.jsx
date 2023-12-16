@@ -77,7 +77,6 @@ const Toolbox = ({ mapRef }) => {
     if (mapRef) {
       const markerHandler = mapRef.pm.Draw.Marker;
       if (markerHandler) {
-        console.log(markerHandler);
         markerHandler.setOptions({
             markerStyle: {
               icon: currentLIcon
