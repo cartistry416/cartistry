@@ -5,7 +5,9 @@ import ConfirmDeleteModal from "../modals/ConfirmDeleteModal";
 import AuthContext from "../../auth";
 import GlobalMapContext from "../../contexts/map";
 import { SimpleMapScreenshoter } from "leaflet-simple-map-screenshoter";
-const Toolbox = ({ mapRef, setCurrentMarkerIcon }) => {
+import * as L from "leaflet";
+
+const Toolbox = ({ mapRef }) => {
   const { auth } = useContext(AuthContext);
   const { map } = useContext(GlobalMapContext);
   const [showOptions, setShowOptions] = useState(false);
@@ -15,6 +17,7 @@ const Toolbox = ({ mapRef, setCurrentMarkerIcon }) => {
   const [newTitle, setNewTitle] = useState("");
   const [mapId, setMapId] = useState("");
   const navigate = useNavigate();
+  const [currentMarkerIcon, setCurrentMarkerIcon] = useState('defaultIcon');
 
   useEffect(() => {
     document.addEventListener("mousedown", handleOutsideClick);
@@ -48,6 +51,41 @@ const Toolbox = ({ mapRef, setCurrentMarkerIcon }) => {
       ))
     }
   }, [map.colorSelected]);
+
+  const createIcon = (iconName) => {
+    return L.divIcon({
+      className: 'custom-icon',
+      html: `<span class="material-icons" style="color: ${map.colorSelected};">${iconName}</span>`,
+      iconSize: L.point(50, 50),
+    });
+  };
+
+  const icons = {
+    'default': createIcon('location_on'),
+    'apartment': createIcon('apartment'),
+    'restaurant': createIcon('restaurant'),
+    'school': createIcon('school'),
+    'museum': createIcon('museum'),
+    'store': createIcon('store'),
+    'home': createIcon('home'),
+    'church': createIcon('church'),
+  };
+  
+  const currentLIcon = icons[currentMarkerIcon] || icons['default'];
+
+  useEffect(() => {
+    if (mapRef) {
+      const markerHandler = mapRef.pm.Draw.Marker;
+      if (markerHandler) {
+        console.log(markerHandler);
+        markerHandler.setOptions({
+            markerStyle: {
+              icon: currentLIcon
+          }
+        });
+      }
+    }
+  }, [currentMarkerIcon]);
 
   const handleOutsideClick = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -133,8 +171,8 @@ const Toolbox = ({ mapRef, setCurrentMarkerIcon }) => {
     map.setColorSelected(e.target.value);
   };
   const handleIconClick = (e, iconType) => {
-    console.log(e);
-    console.log(iconType);
+    // console.log(e);
+    // console.log(iconType);
     setCurrentMarkerIcon(iconType);
   };
 
