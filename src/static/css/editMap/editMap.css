@@ -57,6 +57,7 @@
     background-color: var(--background-color);
     border-radius: 1rem; /* This will give you rounded corners for the whole group */
     overflow: hidden; /* Ensures that inner items do not break the rounded corners */
+    cursor: pointer;
 }
 
 .sideControls .material-icons {

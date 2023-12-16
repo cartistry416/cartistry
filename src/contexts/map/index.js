@@ -28,7 +28,8 @@ export const GlobalMapActionType = {
     EXIT_CURRENT_MAP: "EXIT_CURRENT_MAP",
     SORT_MAP_CARDS: "SORT_MAP_CARDS",
     SET_COLOR_SELECTED: "SET_COLOR_SELECTED",
-    EDIT_FEATURE_PROPERTY: "EDIT_FEATURE_PROPERTY"
+    EDIT_FEATURE_PROPERTY: "EDIT_FEATURE_PROPERTY",
+    SET_MARKER_ACTIVE: "SET_MARKER_ACTIVE"
   }
 
 const tps = new jsTPS();
@@ -51,7 +52,8 @@ function GlobalMapContextProvider(props) {
         currentMapGeoJSON: null,
         currentMapProprietaryJSON: null,
         currentMapProprietaryJSONOriginal: null,
-        colorSelected: null,
+        colorSelected: "#3388ff",
+        markerActive: false,
         // mapCardIndexMarkedForDeletion: null, // Don't think we need these
         // mapCardMarkedForDeletion: null,
     });
@@ -185,7 +187,9 @@ function GlobalMapContextProvider(props) {
                     currentMapGeoJSON: null,
                     currentMapGeoJSONOriginal: null,
                     currentMapProprietaryJSON: null,
-                    currentMapProprietaryJSONOriginal: null
+                    currentMapProprietaryJSONOriginal: null,
+                    colorSelected: '#3388ff',
+                    markerActive: false
                 })
             }
             case GlobalMapActionType.SORT_MAP_CARDS: {
@@ -222,6 +226,12 @@ function GlobalMapContextProvider(props) {
                 return setMap({
                     ...map,
                     colorSelected: payload.color
+                })
+            }
+            case GlobalMapActionType.SET_MARKER_ACTIVE: {
+                return setMap({
+                    ...map,
+                    markerActive: payload.active
                 })
             }
             case GlobalMapActionType.EDIT_FEATURE_PROPERTY: {
@@ -523,7 +533,7 @@ function GlobalMapContextProvider(props) {
         })
     }
 
-    map.addEditFeaturePropertiesTransaction = (newStyle, oldStyle, index) => {     
+    map.addEditFeaturePropertiesTransaction = (newStyle, oldStyle, index) => { 
         const transaction = new EditFeature_Transaction(map, index, oldStyle, newStyle)
         tps.addTransaction(transaction, true)
     }
@@ -637,6 +647,12 @@ function GlobalMapContextProvider(props) {
         })
     }
 
+    map.setMarkerActive = (active) => {
+        mapReducer({
+            type: GlobalMapActionType.SET_MARKER_ACTIVE,
+            payload: {active}
+        })
+    }
 
     map.canUndo = function() {
         return ((map.currentMapGeoJSONOriginal !== null) && tps.hasTransactionToUndo())

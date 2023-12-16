@@ -102,6 +102,7 @@
     text-align: center; /* This will center the icons if they are not full width */
     padding: 1rem 0; /* Adjust the padding as needed */
     box-sizing: border-box; /* Makes sure padding is included in width */
+    cursor: pointer;
 }
 .toolbox-gradient-controls-row{
     padding: 0 1rem 0 1rem;
