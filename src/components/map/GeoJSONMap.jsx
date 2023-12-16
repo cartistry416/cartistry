@@ -256,13 +256,13 @@ function GeoJSONMap({
         })
       }
 
-      const enableEdits = (option) => {
+      const enableEdits = () => {
         if (!featureGroupRef.current) {
           console.log('no layers')
           return
         }
         Object.entries(featureGroupRef.current._layers).forEach(([key, layer]) => {
-          layer.pm.enable(option)
+          layer.pm.enable()
         })
     }
 
@@ -345,7 +345,7 @@ function GeoJSONMap({
               onGlobalEditModeToggled={(e) => {
                       toggleBindPopup(e.enabled)
                       if (e.enabled) {
-                        enableEdits({allowEditing: true})
+                        enableEdits()
                       }
                       else {
                         disableAllEdits()
@@ -353,23 +353,23 @@ function GeoJSONMap({
                     }}
               onGlobalRemovalModeToggled={(e) => {
                       toggleBindPopup(e.enabled)
-                      if (e.enabled) {
-                        enableEdits({allowRemoval: true, allowEditing: false})
-                      }
-                      else {
-                        disableAllEdits()
-                      }
+                      // if (e.enabled) {
+                      //   enableEdits({allowRemoval: true, allowEditing: false})
+                      // }
+                      // else {
+                      //   disableAllEdits()
+                      // }
                       // toggleEdits(e.enabled, {allowEditing: false, allowRemoval: true, allowCutting: false, 
                       //    draggable: false, allowRotation: false})
                     }}
                     onGlobalCutModeToggled = {e => {
                       toggleBindPopup(e.enabled)
-                      if (e.enabled) {
-                        enableEdits({allowCutting: true, allowEditing: false})
-                      }
-                      else {
-                        disableAllEdits()
-                      }
+                      // if (e.enabled) {
+                      //   enableEdits({allowCutting: true, allowEditing: false})
+                      // }
+                      // else {
+                      //   disableAllEdits()
+                      // }
 
                       // toggleEdits(e.enabled, {allowEditing: false, allowRemoval: false, allowCutting: true, 
                       //    draggable: false, allowRotation: false})
@@ -377,24 +377,24 @@ function GeoJSONMap({
                     }}
                     onGlobalRotateModeToggled={e => {
                       toggleBindPopup(e.enabled)
-                      if (e.enabled) {
-                        enableEdits({allowRotation: true})
-                      }
-                      else {
-                        disableAllEdits()
-                      }
+                      // if (e.enabled) {
+                      //   enableEdits({allowRotation: true, allowEditing: false})
+                      // }
+                      // else {
+                      //   disableAllEdits()
+                      // }
                       // toggleEdits(e.enabled, {allowEditing: false, allowRemoval: false, allowCutting: false, 
                       //    draggable: false, allowRotation: true})
 
                     }}
                     onGlobalDragModeToggled={e => {
                       toggleBindPopup(e.enabled)
-                      if (e.enabled) {
-                        enableDrags()
-                      }
-                      else {
-                        disableAllEdits()
-                      }
+                      // if (e.enabled) {
+                      //   enableEdits({draggable: true,  allowEditing: false})
+                      // }
+                      // else {
+                      //   disableAllEdits()
+                      // }
                       // toggleEdits(e.enabled, {allowEditing: false, allowRemoval: false, allowCutting: false, 
                       //    draggable: true, allowRotation: false})
                     }}

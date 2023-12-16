@@ -621,7 +621,7 @@ function GlobalMapContextProvider(props) {
         featureGroupRef.current.removeLayer(afterLayer)
         // console.log(beforeLayer)
         featureGroupRef.current.addLayer(beforeLayer)
-        beforeLayer.pm.enable()
+        beforeLayer.pm.enable() 
         // beforeLayer.pm.setOptions({
         //     allowEditing: false
         // })
