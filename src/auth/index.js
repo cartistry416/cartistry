@@ -162,7 +162,6 @@ function AuthContextProvider(props) {
           };
         }
       });
-    console.log(response);
     // Check if the response is successful
     if (response.status === 200) {
       authReducer({
@@ -184,7 +183,6 @@ function AuthContextProvider(props) {
     try {
       response = await api.loginUser(email, password);
       if (response.status === 200) {
-        console.log(response.data.user)
         authReducer({
           type: AuthActionType.LOGIN_USER,
           payload: {
