@@ -27,7 +27,7 @@ const Toolbox = ({mapRef, setCurrentMarkerIcon}) => {
 
   useEffect(() => {
     if (map.currentMapMetadata) {
-      console.log("switched map, title is: "+ map.currentMapMetadata.title)
+      // console.log("switched map, title is: "+ map.currentMapMetadata.title)
       setNewTitle(map.currentMapMetadata.title)
       setMapId(map.currentMapMetadata._id)
     }

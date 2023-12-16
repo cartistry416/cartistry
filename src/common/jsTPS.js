@@ -129,9 +129,10 @@ export default class jsTPS {
      * Method for adding a transaction to the TPS stack, note it
      * also then does the transaction.
      * 
-     * @param {jsTPS_Transaction} transaction Transaction to add to the stack and do.
+     * @param {jsTPS_Transaction} transaction Transaction to add to the stack
+     * @param {boolean} shouldDoTransaction option as to whether or not the transaction should be done after adding to stack
      */
-    addTransaction(transaction) {
+    addTransaction(transaction, shouldDoTransaction) {
         // ARE WE BRANCHING?
         if ((this.mostRecentTransaction < 0) 
             || (this.mostRecentTransaction < (this.transactions.length - 1))) {
@@ -146,9 +147,7 @@ export default class jsTPS {
 
         // ADD THE TRANSACTION
         this.transactions[this.mostRecentTransaction+1] = transaction;
-
-        // AND EXECUTE IT
-        this.doTransaction();
+        this.doTransaction(shouldDoTransaction);
     }
 
     /**
@@ -158,11 +157,14 @@ export default class jsTPS {
      * counter. Note this function may be invoked as a result of either adding
      * a transaction (which also does it), or redoing a transaction.
      */
-    doTransaction() {
+    doTransaction(shouldDoTransaction) {
         if (this.hasTransactionToRedo()) {
             this.performingDo = true;
             let transaction = this.transactions[this.mostRecentTransaction+1];
-            transaction.doTransaction();
+
+            if (shouldDoTransaction) {
+                transaction.doTransaction();
+            }
             this.mostRecentTransaction++;
             this.performingDo = false;
         }

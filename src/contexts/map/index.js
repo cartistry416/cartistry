@@ -6,6 +6,9 @@ import jsTPS from '../../common/jsTPS'
 import { generateDiff, unzipBlobToJSON, jsonToZip} from '../../utils/utils'
 import _, { findIndex } from 'lodash'
 import EditFeature_Transaction from '../../transactions/EditFeature_Transaction'
+import CreateLayer_Transaction from '../../transactions/CreateLayer_Transaction'
+import RemoveLayer_Transaction from '../../transactions/RemoveLayer_Transaction'
+import { LayerGroup } from 'react-leaflet'
 
 
 export const GlobalMapContext = createContext({});
@@ -186,8 +189,8 @@ function GlobalMapContextProvider(props) {
             }
             case GlobalMapActionType.SORT_MAP_CARDS: {
                 const updatedMapCardsInfo = [...map.mapCardsInfo]
-                console.log(payload.sortType)
-                console.log(updatedMapCardsInfo)
+                // console.log(payload.sortType)
+                // console.log(updatedMapCardsInfo)
 
                 if (payload.sortType === "name") {
                     updatedMapCardsInfo.sort((a, b) => {
@@ -208,7 +211,7 @@ function GlobalMapContextProvider(props) {
                         return date2 - date1
                     })
                 }
-                console.log(updatedMapCardsInfo)
+                // console.log(updatedMapCardsInfo)
                 return setMap({
                     ...map,
                     mapCardsInfo: updatedMapCardsInfo
@@ -460,6 +463,10 @@ function GlobalMapContextProvider(props) {
 
         try {
             const proprietaryJSON = delta2 ? map.currentMapProprietaryJSON : null
+
+            console.log("Size of geoJSON: " + JSON.stringify(map.currentMapGeoJSON).length) 
+            console.log("Size of delta: " + JSON.stringify(delta1).length) 
+
             const response = await api.saveMapEdits(id, delta1, proprietaryJSON, thumbnail)
             if (response.status === 200) {
                 tps.clearAllTransactions()
@@ -517,7 +524,7 @@ function GlobalMapContextProvider(props) {
 
     map.addEditFeaturePropertiesTransaction = (newStyle, oldStyle, index) => {     
         const transaction = new EditFeature_Transaction(map, index, oldStyle, newStyle)
-        tps.addTransaction(transaction)
+        tps.addTransaction(transaction, true)
     }
 
     map.editFeatureProperties = (newStyle, index) => {
@@ -528,28 +535,32 @@ function GlobalMapContextProvider(props) {
         })
     }
 
-    map.addCreateFeatureTransaction = (newFeature, index) => {
-
+    map.addCreateLayerTransaction = (layer, featureGroupRef) => {
+        const transaction = new CreateLayer_Transaction(map, layer, featureGroupRef)
+        tps.addTransaction(transaction, false)
     } 
 
-    map.createFeatureDo = () => {
-
+    map.createLayerDo = (layer, featureGroupRef) => {
+        console.log(featureGroupRef.current)
+        featureGroupRef.current.addLayer(layer)
+        console.log(featureGroupRef.current)
     }
 
-    map.createFeatureUndo = () => {
-        
+    map.createLayerUndo= (layer, featureGroupRef) => {
+        featureGroupRef.current.removeLayer(layer)
     }
 
-    map.addDeleteFeatureTransaction = (feature, index) => {
-
+    map.addDeleteLayerTransaction = (layer, featureGroupRef) => {
+        const transaction = new RemoveLayer_Transaction(map, layer, featureGroupRef)
+        tps.addTransaction(transaction, false)
     }
 
-    map.deleteFeatureDo = () => {
-
+    map.deleteLayerDo = (layer, featureGroupRef) => {
+        featureGroupRef.current.removeLayer(layer)
     }
 
-    map.deleteFeatureUndo = () => {
-        
+    map.deleteLayerUndo = (layer, featureGroupRef) => {
+        featureGroupRef.current.addLayer(layer)
     }
 
     map.setColorSelected = (color) => {
@@ -572,7 +583,7 @@ function GlobalMapContextProvider(props) {
         tps.undoTransaction()
     }
     map.redo = () => {
-        tps.doTransaction()
+        tps.doTransaction(true)
     }
 
     return (
