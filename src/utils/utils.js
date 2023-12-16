@@ -1,6 +1,7 @@
 
 import {create as createDiffPatcher} from 'jsondiffpatch'
 import JSZip from 'jszip';
+import * as L from "leaflet";
 
 async function unzipBlobToJSON(blob) {
     const zip = await JSZip.loadAsync(blob);
@@ -71,40 +72,20 @@ function getAllTags() {
   ]
 }
 
-export {generateDiff, unzipBlobToJSON, jsonToZip, getImage, formatDate, getAllTags}
 
-// // TODO MOVE THESE TO APPROPRIATE PLACES LATER
+function deepCopyLayer(originalLayer) {
+  let newLayer;
 
-// // <input type="file" id="geojsonFile" accept="*" onChange={handleFileUpload} />
-// const handleFileUpload = (event) => {
-//     const file = event.target.files[0]
-//     if (!file) {
-//       console.error("No file uploaded?")
-//       return 
-//     }
+  if (originalLayer instanceof L.Marker) {
+      newLayer = L.marker(originalLayer.getLatLng(), { ...originalLayer.options, pmIgnore: false });
+  } else if (originalLayer instanceof L.Polyline) {
+      newLayer = L.polyline(originalLayer.getLatLngs(), { ...originalLayer.options, pmIgnore: false });
+  } else if (originalLayer instanceof L.Polygon) {
+      newLayer = L.polygon(originalLayer.getLatLngs(), { ...originalLayer.options, pmIgnore: false });
+  }
 
-//     const ext = file.name.split('.').pop().toLowerCase()
 
-//     const formData = new FormData()
-//     if (ext === ".json" || ext === ".kml") {
+  return newLayer;
+}
 
-//       const zip = new JSZip()
-//       zip.file(file.name, file)
-
-//       zip.generateAsync({type: 'blob'}).then(blob => {
-//         formData.append('zipFile', blob)
-//         formData.append('json', JSON.stringify({fileExtension: ext}))
-//         api.uploadMap(formData)
-//       })
-
-//     }
-//     else if (ext === ".zip") {
-//       formData.append('zipFile', file)
-//       formData.append('json', JSON.stringify({fileExtension: ext}))
-//       api.uploadMap(formData)
-//     }
-//     else {
-//       console.error("Unsupported file extension: " + ext)
-//       return
-//     }
-//   }
+export {generateDiff, unzipBlobToJSON, jsonToZip, getImage, formatDate, getAllTags, deepCopyLayer}

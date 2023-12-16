@@ -184,12 +184,22 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
       }
 
       const handleLayerCut = (e) => {
-        console.log(e.originalLayer)
-        console.log(e.layer)
+
+        // console.log(e.originalLayer)
+        // console.log(e.layer)
+
+        if (e.layer.alreadyCut) {
+          delete e.layer.alreadyCut
+          return
+        }
+        console.log('hi')
+
+        e.layer.alreadyCut = true
+        map.addCutLayerTransaction(e.originalLayer, e.layer, featureGroupRef, mapRef)
       }
 
       const handleLayerRemove = (e) => {
-        console.log(e.layer)
+        map.addDeleteLayerTransaction(e.layer, featureGroupRef)
       }
 
       const handleLayerRotateStart = (e) => {
@@ -218,6 +228,40 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
       const handleDragEnd = (e) => {
         console.log(e.layer)
       }
+
+      const disableAllEdits = () => {
+        if (!featureGroupRef.current) {
+          console.log('no layers')
+          return
+        }
+        Object.entries(featureGroupRef.current._layers).forEach(([key, layer]) => {
+          layer.pm.disable()
+        })
+      }
+
+      const enableEdits = (option) => {
+        if (!featureGroupRef.current) {
+          console.log('no layers')
+          return
+        }
+        Object.entries(featureGroupRef.current._layers).forEach(([key, layer]) => {
+          layer.pm.enable(option)
+        })
+    }
+
+      const enableDrags = () => {
+        if (!featureGroupRef.current) {
+          console.log('no layers')
+          return
+        }
+        Object.entries(featureGroupRef.current._layers).forEach(([key, layer]) => {
+          layer.pm.enableLayerDrag()
+        })
+      }
+
+
+
+
     
     const createIcon = (iconName) => {
       return L.divIcon({
@@ -250,7 +294,7 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
                   handleLayerCut={handleLayerCut} handleLayerRemove={handleLayerRemove} handleLayerRotate={handleLayerRotate} icon={currentLIcon}/> : null
                 } */}
                 {editEnabled ? 
-                 <FeatureGroup ref={featureGroupRef}>
+                 <FeatureGroup ref={featureGroupRef} pmIgnore={false}>
                   <GeomanControls
                     options={{
                       position: 'topleft',
@@ -277,9 +321,68 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
                     onLayerRotateStart={ handleLayerRotateStart}
                     onLayerRotateEnd={handleLayerRotateEnd}
                     onLayerRemove={handleLayerRemove}
-                    onGlobalDrawModeToggled={e => toggleBindPopup(e.enabled)}
-                    onGlobalEditModeToggled={e => toggleBindPopup(e.enabled)}
-                    onGlobalRemovalModeToggled={e => toggleBindPopup(e.enabled)}
+                    onGlobalDrawModeToggled={e => {
+                      toggleBindPopup(e.enabled)
+                      disableAllEdits()
+                     }
+                    }
+                    onGlobalEditModeToggled={e => {
+                      toggleBindPopup(e.enabled)
+                      if (e.enabled) {
+                        enableEdits({allowEditing: true})
+                      }
+                      else {
+                        disableAllEdits()
+                      }
+                    }}
+                    onGlobalRemovalModeToggled={e => {
+                      toggleBindPopup(e.enabled)
+                      if (e.enabled) {
+                        enableEdits({allowRemoval: true, allowEditing: false})
+                      }
+                      else {
+                        disableAllEdits()
+                      }
+                      // toggleEdits(e.enabled, {allowEditing: false, allowRemoval: true, allowCutting: false, 
+                      //    draggable: false, allowRotation: false})
+                    }}
+                    onGlobalCutModeToggled = {e => {
+                      toggleBindPopup(e.enabled)
+                      if (e.enabled) {
+                        enableEdits({allowCutting: true, allowEditing: false})
+                      }
+                      else {
+                        disableAllEdits()
+                      }
+
+                      // toggleEdits(e.enabled, {allowEditing: false, allowRemoval: false, allowCutting: true, 
+                      //    draggable: false, allowRotation: false})
+
+                    }}
+                    onGlobalRotateModeToggled={e => {
+                      toggleBindPopup(e.enabled)
+                      if (e.enabled) {
+                        enableEdits({allowRotation: true})
+                      }
+                      else {
+                        disableAllEdits()
+                      }
+                      // toggleEdits(e.enabled, {allowEditing: false, allowRemoval: false, allowCutting: false, 
+                      //    draggable: false, allowRotation: true})
+
+                    }}
+                    onGlobalDragModeToggled={e => {
+                      toggleBindPopup(e.enabled)
+                      if (e.enabled) {
+                        enableDrags()
+                      }
+                      else {
+                        disableAllEdits()
+                      }
+                      // toggleEdits(e.enabled, {allowEditing: false, allowRemoval: false, allowCutting: false, 
+                      //    draggable: true, allowRotation: false})
+                    }}
+            
                   />
                </FeatureGroup> : null}
 
