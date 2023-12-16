@@ -548,10 +548,16 @@ function GlobalMapContextProvider(props) {
     }
 
     map.addCreateLayerTransaction = (layer, featureGroupRef) => {
-        // const layerGeoJSON = layer.toGeoJSON()
-        // const options = {pmIgnore: false, style: function (feature) {
-        //     return layer.options;
-        // }}
+        const layerGeoJSON = layer.toGeoJSON()
+        const options = {
+            pmIgnore: false,
+            style: function (feature) {
+              return {...layer.options};
+            },
+            pointToLayer: (feature, latlng) => {
+              return L.marker(latlng, { icon: layer.options.icon || new L.Icon.Default() });
+            }
+          };
 
         // featureGroupRef.current.removeLayer(layer)
         // const layerClone =  L.geoJSON(layerGeoJSON, options)
