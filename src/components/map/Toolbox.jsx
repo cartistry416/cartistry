@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useContext } from "react";
+import { useState, useRef, useEffect, useContext, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 import "../../static/css/editMap/toolBox.css";
 import ConfirmDeleteModal from "../modals/ConfirmDeleteModal";
@@ -18,7 +18,7 @@ const Toolbox = ({ mapRef }) => {
   const [mapId, setMapId] = useState("");
   const navigate = useNavigate();
   const [currentMarkerIcon, setCurrentMarkerIcon] = useState('defaultIcon');
-
+  
   useEffect(() => {
     document.addEventListener("mousedown", handleOutsideClick);
     return () => {
@@ -52,15 +52,15 @@ const Toolbox = ({ mapRef }) => {
     }
   }, [map.colorSelected]);
 
-  const createIcon = (iconName) => {
+  const createIcon = useCallback((iconName) => {
     return L.divIcon({
       className: 'custom-icon',
       html: `<span class="material-icons" style="color: ${map.colorSelected};">${iconName}</span>`,
       iconSize: L.point(50, 50),
     });
-  };
+  }, [map.colorSelected]);
 
-  const icons = {
+  const icons = useMemo(() => ({
     'default': createIcon('location_on'),
     'apartment': createIcon('apartment'),
     'restaurant': createIcon('restaurant'),
@@ -69,13 +69,14 @@ const Toolbox = ({ mapRef }) => {
     'store': createIcon('store'),
     'home': createIcon('home'),
     'church': createIcon('church'),
-  };
+  }), [map.colorSelected]);
   
   const currentLIcon = icons[currentMarkerIcon] || icons['default'];
 
   useEffect(() => {
     if (mapRef) {
       const markerHandler = mapRef.pm.Draw.Marker;
+      console.log("test");
       if (markerHandler) {
         markerHandler.setOptions({
             markerStyle: {
@@ -84,7 +85,7 @@ const Toolbox = ({ mapRef }) => {
         });
       }
     }
-  }, [currentMarkerIcon]);
+  }, [mapRef, currentLIcon, map.colorSelected]);
 
   const handleOutsideClick = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
