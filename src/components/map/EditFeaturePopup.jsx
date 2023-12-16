@@ -1,32 +1,37 @@
-import '../../static/css/editMap/editFeaturePopup.css'
+import "../../static/css/editMap/editFeaturePopup.css";
 import { useContext } from "react";
 import GlobalMapContext from "../../contexts/map";
 
 const EditFeaturePopup = (props) => {
-    const {map} = useContext(GlobalMapContext)
-    const {feature, idx, handlePopupSubmit, layer} = props
-    
+  const { map } = useContext(GlobalMapContext);
+  const { feature, idx, handlePopupSubmit, layer } = props;
 
-    return (
-      <div id={`featurePopUp${idx}`}>
+  return (
+    <div id={`featurePopUp${idx}`}>
       <h3>Edit Feature Properties</h3>
       {feature && (
-        <form 
+        <form
           onSubmit={(e) => {
-            e.preventDefault()
-            handlePopupSubmit(e, feature, idx, layer)
+            e.preventDefault();
+            handlePopupSubmit(e, feature, idx, layer);
           }}
-        
         >
           <label>
             Name
             <input
               type="text"
-              className='mapEditInput'
+              className="mapEditInput"
               defaultValue={feature.properties.name}
             />
           </label>
-          <label>
+          {(map && map.currentMapProprietaryJSON.templateType === "Choropleth") && (
+            <label>
+              Value
+              <input type="number" className="mapEditInput" />
+            </label>
+          )}
+
+          {/* <label>
             Fill Color
             <input
               type="color"
@@ -65,14 +70,13 @@ const EditFeaturePopup = (props) => {
               className='mapEditInput'
               defaultValue={feature.properties.style.fillOpacity}
             />
-          </label>
+          </label> */}
 
-          <button type="submit">
-            Save Edit
-          </button>
+          <button type="submit">Save Edit</button>
         </form>
       )}
-    </div>) 
-  } 
+    </div>
+  );
+};
 
-  export default EditFeaturePopup
+export default EditFeaturePopup;

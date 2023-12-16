@@ -14,10 +14,10 @@ import {
 import * as L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import * as ReactDOM from "react-dom/client";
-import EditFeaturePopup from "./EditFeaturePopup";
 
 import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
 import { GeomanControls } from "react-leaflet-geoman-v2";
+import EditFeaturePopup from "./EditFeaturePopup";
 import 'leaflet-choropleth';
 
 function getNameFromConvertedShapeFile(properties) {

@@ -18,6 +18,7 @@ const Toolbox = ({ mapRef }) => {
   const [mapId, setMapId] = useState("");
   const navigate = useNavigate();
   const [currentMarkerIcon, setCurrentMarkerIcon] = useState('defaultIcon');
+  const [numColors, setNumColors] = useState(1);
   
   useEffect(() => {
     document.addEventListener("mousedown", handleOutsideClick);
@@ -162,8 +163,18 @@ const Toolbox = ({ mapRef }) => {
   };
 
   const handleColorSelectorChange = (e) => {
+    console.log(map)
     map.setColorSelected(e.target.value);
   };
+
+  const handleNumColorsChange = (e) => {
+    setNumColors(e.target.value);
+  };
+
+  const handleHeatColorSelectorChange = (index, color) => {
+    map.setHeatColors(index, color, numColors);
+  }
+
   const handleIconClick = (e, iconType) => {
     // console.log(e);
     // console.log(iconType);
@@ -279,15 +290,41 @@ const Toolbox = ({ mapRef }) => {
             </>
           )}
           <div className="toolbox-gradient-controls">
-            <div className="toolbox-gradient-controls-row">
-              <span className="toolbox-gradient-label">Color</span>
-              <input
-                type="color"
-                defaultValue={"#3388ff"}
-                className="toolbox-gradient-controls-colorInput"
-                onChange={handleColorSelectorChange}
-              />
-            </div>
+            {(map.currentMapProprietaryJSON && map.currentMapProprietaryJSON.templateType === "heat")? (
+              <div className="toolbox-gradient-controls-row">
+                <span className="toolbox-gradient-label"># of Colors</span>
+                <input
+                  type="number"
+                  className="toolbox-gradient-controls-numberInput"
+                  onChange={handleNumColorsChange}
+                />
+              </div>
+            ) : (
+              <div className="toolbox-gradient-controls-row">
+                <span className="toolbox-gradient-label">Color</span>
+                <input
+                  type="color"
+                  defaultValue={"#3388ff"}
+                  className="toolbox-gradient-controls-colorInput"
+                  onChange={handleColorSelectorChange}
+                />
+              </div>
+            )}
+            {(map.currentMapProprietaryJSON && map.currentMapProprietaryJSON.templateType === "heat") && (
+              <div>
+                {Array.from({ length: numColors }, (v, index) => (
+                  <div className="heatColorInput">
+                    <span className="toolbox-gradient-label">Color {index+1}</span>
+                    <input
+                      type="color"
+                      defaultValue={"#3388ff"}
+                      className="toolbox-gradient-controls-colorInput"
+                      onChange={(e) => handleHeatColorSelectorChange(index, e.target.value)}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
             <div className="toolbox-gradient-controls-row">
               <span className="toolbox-gradient-label">Min</span>
               <input

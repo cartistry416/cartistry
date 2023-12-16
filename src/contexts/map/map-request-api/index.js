@@ -27,6 +27,9 @@ export const getMapData = (id) => {
         responseType: 'arraybuffer'
     })
 }
+export const getMapProprietaryData = (id) => {
+    return api.get(`/maps-api/maps/${id}/props`)
+}
 
 export const uploadMap = (formData) => {
     return api.post(`/maps-api/maps/upload`, formData, {
@@ -86,5 +89,6 @@ const apis = {
     getMapData,
     getMapMetadata,
     searchMapsByTitle,
+    getMapProprietaryData
 }
 export default apis
