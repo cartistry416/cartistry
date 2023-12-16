@@ -196,9 +196,19 @@ function GeoJSONMap({
 
   const handleLayerUpdate = (e) => {
     const layer = e.layer;
-    const updatedLatLngs = layer.getLatLngs();
+    let updatedLatLngs
+    if (layer instanceof L.Marker) {
+      updatedLatLngs = layer.getLatLng()
+    } 
+    else {
+      updatedLatLngs = layer.getLatLngs()
+    }
+
     console.log("Original LatLngs:", originalLatLngsRef.current);
     console.log("Updated LatLngs:", updatedLatLngs);
+
+    map.addUpdateLayerLatLngsTransaction(layer, featureGroupRef, originalLatLngsRef.current, updatedLatLngs)
+
   };
 
       const handleLayerCut = (e) => {
@@ -206,19 +216,13 @@ function GeoJSONMap({
         // console.log(e.originalLayer)
         // console.log(e.layer)
 
-        if (e.layer.alreadyCut) {
-          delete e.layer.alreadyCut
-          return
-        }
-        console.log('hi')
-
         e.layer.alreadyCut = true
         map.addCutLayerTransaction(e.originalLayer, e.layer, featureGroupRef, mapRef)
       }
 
-      const handleLayerRemove = (e) => {
-        map.addDeleteLayerTransaction(e.layer, featureGroupRef)
-      }
+    const handleLayerRemove = (e) => {
+      map.addDeleteLayerTransaction(e.layer, featureGroupRef)
+    }
 
   const handleLayerRotateStart = (e) => {
     const layer = e.layer;
@@ -239,43 +243,65 @@ function GeoJSONMap({
 
   const handleDragStart = (e) => {
     const layer = e.layer;
-    setOriginalLatLngs(layer.getLatLngs());
+    let latLngs
+    if (layer instanceof L.Marker) {
+      latLngs = layer.getLatLng()
+    } 
+    else {
+      latLngs = layer.getLatLngs()
+    }
+    setOriginalLatLngs(latLngs);
   };
 
-      const handleDragEnd = (e) => {
-        console.log(e.layer)
-      }
-
-      const disableAllEdits = () => {
-        if (!featureGroupRef.current) {
-          console.log('no layers')
-          return
-        }
-        Object.entries(featureGroupRef.current._layers).forEach(([key, layer]) => {
-          layer.pm.disable()
-        })
-      }
-
-      const enableEdits = () => {
-        if (!featureGroupRef.current) {
-          console.log('no layers')
-          return
-        }
-        Object.entries(featureGroupRef.current._layers).forEach(([key, layer]) => {
-          layer.pm.enable()
-        })
+    const handleDragEnd = (e) => {
+      console.log(e.layer)
     }
 
-      const enableDrags = () => {
-        if (!featureGroupRef.current) {
-          console.log('no layers')
-          return
-        }
-        Object.entries(featureGroupRef.current._layers).forEach(([key, layer]) => {
-          layer.pm.enableLayerDrag()
-        })
-      }
+    // const handleEdit = (e) => {
+    //   setOriginalLatLngs(e.layer.getLatLngs());
+    // }
 
+  //   const disableAllEdits = () => {
+  //     if (!featureGroupRef.current) {
+  //       console.log('no layers')
+  //       return
+  //     }
+  //     Object.entries(featureGroupRef.current._layers).forEach(([key, layer]) => {
+  //       layer.pm.disable()
+  //     })
+  //   }
+
+  //   const enableEdits = () => {
+  //     if (!featureGroupRef.current) {
+  //       console.log('no layers')
+  //       return
+  //     }
+  //     Object.entries(featureGroupRef.current._layers).forEach(([key, layer]) => {
+  //       layer.pm.enable()
+  //     })
+  // }
+
+  //   const enableDrags = () => {
+  //     if (!featureGroupRef.current) {
+  //       console.log('no layers')
+  //       return
+  //     }
+  //     Object.entries(featureGroupRef.current._layers).forEach(([key, layer]) => {
+  //       layer.pm.enableLayerDrag()
+  //     })
+  //   }
+
+  const handleMarkerDragStart = (e) => {
+    const layer = e.layer;
+    let latLngs
+    if (layer instanceof L.Marker) {
+      latLngs = layer.getLatLng()
+    } 
+    else {
+      latLngs = layer.getLatLngs()
+    }
+    setOriginalLatLngs(latLngs);
+  }
 
 
 
@@ -309,6 +335,7 @@ function GeoJSONMap({
               options={{
                 position: "topleft",
                 drawText: false,
+                cutPolygon: false
               }}
               globalOptions={{
                 continueDrawing: false,
@@ -324,80 +351,78 @@ function GeoJSONMap({
               onCreate={handleLayerCreate}
               onVertexClick={handleVertexClick}
               onUpdate={handleLayerUpdate}
-              onMapCut={handleLayerCut}
-              onLayerCut={handleLayerCut}
+              // onMapCut={handleLayerCut}
+              // onLayerCut={handleLayerCut}
+              onMarkerDragStart={handleMarkerDragStart}
+              // onEdit={handleEdit}
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
               onLayerRotateStart={handleLayerRotateStart}
               onLayerRotateEnd={handleLayerRotateEnd}
-              onLayerRemove={handleLayerRemove}
+              onLayerRemove= {handleLayerRemove}
               onGlobalDrawModeToggled={(e) => {
                 if (e.shape === 'Marker') {
                   map.setMarkerActive(e.enabled)
                 }
-                {
-                      toggleBindPopup(e.enabled)
-                
-                      disableAllEdits()
-                     }
-                    }
-              }
+                  toggleBindPopup(e.enabled)
+              }}
               onGlobalEditModeToggled={(e) => {
                       toggleBindPopup(e.enabled)
-                      if (e.enabled) {
-                        enableEdits()
-                      }
-                      else {
-                        disableAllEdits()
-                      }
-                    }}
-              onGlobalRemovalModeToggled={(e) => {
-                      toggleBindPopup(e.enabled)
                       // if (e.enabled) {
-                      //   enableEdits({allowRemoval: true, allowEditing: false})
+                      //   enableEdits()
                       // }
                       // else {
                       //   disableAllEdits()
                       // }
-                      // toggleEdits(e.enabled, {allowEditing: false, allowRemoval: true, allowCutting: false, 
-                      //    draggable: false, allowRotation: false})
-                    }}
-                    onGlobalCutModeToggled = {e => {
-                      toggleBindPopup(e.enabled)
-                      // if (e.enabled) {
-                      //   enableEdits({allowCutting: true, allowEditing: false})
-                      // }
-                      // else {
-                      //   disableAllEdits()
-                      // }
+              }}
+              // onGlobalRemovalModeToggled={(e) => {
+              //         toggleBindPopup(e.enabled)
+              //         console.log('toggle remove')
+              //         // if (e.enabled) {
+              //         //   enableEdits({allowRemoval: true, allowEditing: false})
+              //         // }
+              //         // else {
+              //         //   disableAllEdits()
+              //         // }
+              //         // toggleEdits(e.enabled, {allowEditing: false, allowRemoval: true, allowCutting: false, 
+              //         //    draggable: false, allowRotation: false})
+              // }}
+              onGlobalCutModeToggled = {e => {
+                toggleBindPopup(e.enabled)
+                // if (e.enabled) {
+                //   enableEdits({allowCutting: true, allowEditing: false})
+                // }
+                // else {
+                //   disableAllEdits()
+                // }
 
-                      // toggleEdits(e.enabled, {allowEditing: false, allowRemoval: false, allowCutting: true, 
-                      //    draggable: false, allowRotation: false})
+                // toggleEdits(e.enabled, {allowEditing: false, allowRemoval: false, allowCutting: true, 
+                //    draggable: false, allowRotation: false})
 
-                    }}
-                    onGlobalRotateModeToggled={e => {
-                      toggleBindPopup(e.enabled)
-                      // if (e.enabled) {
-                      //   enableEdits({allowRotation: true, allowEditing: false})
-                      // }
-                      // else {
-                      //   disableAllEdits()
-                      // }
-                      // toggleEdits(e.enabled, {allowEditing: false, allowRemoval: false, allowCutting: false, 
-                      //    draggable: false, allowRotation: true})
+              }}
+              onGlobalRotateModeToggled={e => {
+                toggleBindPopup(e.enabled)
+                // if (e.enabled) {
+                //   enableEdits({allowRotation: true, allowEditing: false})
+                // }
+                // else {
+                //   disableAllEdits()
+                // }
+                // toggleEdits(e.enabled, {allowEditing: false, allowRemoval: false, allowCutting: false, 
+                //    draggable: false, allowRotation: true})
 
-                    }}
-                    onGlobalDragModeToggled={e => {
-                      toggleBindPopup(e.enabled)
-                      // if (e.enabled) {
-                      //   enableEdits({draggable: true,  allowEditing: false})
-                      // }
-                      // else {
-                      //   disableAllEdits()
-                      // }
-                      // toggleEdits(e.enabled, {allowEditing: false, allowRemoval: false, allowCutting: false, 
-                      //    draggable: true, allowRotation: false})
-                    }}
+              }}
+              onGlobalDragModeToggled={e => {
+                toggleBindPopup(e.enabled)
+                // if (e.enabled) {
+                //   enableEdits({draggable: true,  allowEditing: false})
+                // }
+                // else {
+                //   disableAllEdits()
+                // }
+                // toggleEdits(e.enabled, {allowEditing: false, allowRemoval: false, allowCutting: false, 
+                //    draggable: true, allowRotation: false})
+              }}
             
             />
           </FeatureGroup>
