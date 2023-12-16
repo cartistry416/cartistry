@@ -64,32 +64,32 @@ function GeoJSONMap({
     originalLatLngsRef.current = originalLatLngs;
   }, [originalLatLngs]);
 
-  useEffect(() => {
-    if (mapRef && map.currentMapGeoJSON) {
-      const choroplethLayer = L.choropleth(map.currentMapGeoJSON, {
-        valueProperty: 'density', // TODO: find a way to automatically detect valueProperty
-        scale: ['white', 'orange', 'red'], 
-        steps: 5,
-        mode: 'q',
-        style: {
-          color: '#fff',
-          weight: 2,
-          fillOpacity: 0.8
-        },
-        onEachFeature: function(feature, layer) {
-          layer.on({
-            click: chroroClick
-          });
-        }
+  // useEffect(() => {
+  //   if (mapRef && map.currentMapGeoJSON) {
+  //     const choroplethLayer = L.choropleth(map.currentMapGeoJSON, {
+  //       valueProperty: 'density', // TODO: find a way to automatically detect valueProperty
+  //       scale: ['white', 'orange', 'red'], 
+  //       steps: 100,
+  //       mode: 'q',
+  //       style: {
+  //         color: '#fff',
+  //         weight: 2,
+  //         fillOpacity: 0.8
+  //       },
+  //       onEachFeature: function(feature, layer) {
+  //         layer.on({
+  //           click: chroroClick
+  //         });
+  //       }
 
-      });
-      choroplethLayer.addTo(mapRef);
-    }
-  }, [mapRef, map.currentMapGeoJSON]);
-  function chroroClick(e){
-    var layer = e.target;
-    layer.bindPopup("Density: " + layer.feature.properties.density)
-  }
+  //     });
+  //     choroplethLayer.addTo(mapRef);
+  //   }
+  // }, [mapRef, map.currentMapGeoJSON]);
+  // function chroroClick(e){
+  //   var layer = e.target;
+  //   layer.bindPopup("Density: " + layer.feature.properties.density)
+  // }
   // useEffect(() => {
 
   //   console.log(mapContainerRef)
