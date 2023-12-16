@@ -18,6 +18,7 @@ import EditFeaturePopup from "./EditFeaturePopup";
 
 import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
 import { GeomanControls } from "react-leaflet-geoman-v2";
+import 'leaflet-choropleth';
 
 function getNameFromConvertedShapeFile(properties) {
   let keyBase = "NAME_";
@@ -63,6 +64,32 @@ function GeoJSONMap({
     originalLatLngsRef.current = originalLatLngs;
   }, [originalLatLngs]);
 
+  // useEffect(() => {
+  //   if (mapRef && map.currentMapGeoJSON) {
+  //     const choroplethLayer = L.choropleth(map.currentMapGeoJSON, {
+  //       valueProperty: 'density', // TODO: find a way to automatically detect valueProperty
+  //       scale: ['white', 'orange', 'red'], 
+  //       steps: 100,
+  //       mode: 'q',
+  //       style: {
+  //         color: '#fff',
+  //         weight: 2,
+  //         fillOpacity: 0.8
+  //       },
+  //       onEachFeature: function(feature, layer) {
+  //         layer.on({
+  //           click: chroroClick
+  //         });
+  //       }
+
+  //     });
+  //     choroplethLayer.addTo(mapRef);
+  //   }
+  // }, [mapRef, map.currentMapGeoJSON]);
+  // function chroroClick(e){
+  //   var layer = e.target;
+  //   layer.bindPopup("Density: " + layer.feature.properties.density)
+  // }
   // useEffect(() => {
 
   //   console.log(mapContainerRef)
@@ -183,7 +210,7 @@ function GeoJSONMap({
       });
     }
   };
-
+  
   const handleLayerDraw = (e) => {
     console.log(e);
   };
@@ -306,11 +333,11 @@ function GeoJSONMap({
 
 
     
-    const defaultIcon = L.divIcon({
-      className: 'custom-icon',
-      html: '<span class="material-icons">location_on</span>',
-      iconSize: L.point(50, 50),
-    });
+  const defaultIcon = L.divIcon({
+    className: 'custom-icon',
+    html: '<span class="material-icons">location_on</span>',
+    iconSize: L.point(50, 50),
+  });
 
   return (
     <div className="mapContainerSize">
