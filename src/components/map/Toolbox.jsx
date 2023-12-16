@@ -23,7 +23,7 @@ const Toolbox = ({ mapRef }) => {
     document.addEventListener("mousedown", handleOutsideClick);
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
-      map.setColorSelected("#000000")
+      map.setColorSelected('#3388ff')
     };
   }, []);
 
@@ -36,17 +36,11 @@ const Toolbox = ({ mapRef }) => {
   }, [map.currentMapMetadata]);
 
   useEffect(() => {
-
-  }, [mapRef]);
-
-  useEffect(() => {
     if (mapRef) {
-      console.log(map.colorSelected)
       mapRef.pm.Draw.shapes.map((shape) => (
         mapRef.pm.Draw[shape].setOptions({
           templineStyle: { color: map.colorSelected },
           hintlineStyle: { color: map.colorSelected },
-          pathOptions: { color: map.colorSelected, fillColor: map.colorSelected }
         })
       ))
     }
@@ -226,64 +220,69 @@ const Toolbox = ({ mapRef }) => {
       </div>
       <div className="toolbox-body">
         <div className="toolbox-controls">
-          <div className="toolbox-landmark-controls">
-            <div className="toolbox-landmark-iconRows">
-              <span
-                className="material-icons"
-                onClick={(e) => handleIconClick(e, "default")}
-              >
-                location_on
-              </span>
-              <span
-                className="material-icons"
-                onClick={(e) => handleIconClick(e, "apartment")}
-              >
-                apartment
-              </span>
-              <span
-                className="material-icons"
-                onClick={(e) => handleIconClick(e, "restaurant")}
-              >
-                restaurant
-              </span>
-              <span
-                className="material-icons"
-                onClick={(e) => handleIconClick(e, "school")}
-              >
-                school
-              </span>
-              <span
-                className="material-icons"
-                onClick={(e) => handleIconClick(e, "museum")}
-              >
-                museum
-              </span>
-              <span
-                className="material-icons"
-                onClick={(e) => handleIconClick(e, "store")}
-              >
-                store
-              </span>
-              <span
-                className="material-icons"
-                onClick={(e) => handleIconClick(e, "home")}
-              >
-                home
-              </span>
-              <span
-                className="material-icons"
-                onClick={(e) => handleIconClick(e, "church")}
-              >
-                church
-              </span>
-            </div>
-          </div>
-          <div className="toolbox-separator"></div>
+          {map.markerActive && (
+            <>
+              <div className="toolbox-landmark-controls">
+                <div className="toolbox-landmark-iconRows">
+                  <span
+                    className="material-icons"
+                    onClick={(e) => handleIconClick(e, "default")}
+                  >
+                    location_on
+                  </span>
+                  <span
+                    className="material-icons"
+                    onClick={(e) => handleIconClick(e, "apartment")}
+                  >
+                    apartment
+                  </span>
+                  <span
+                    className="material-icons"
+                    onClick={(e) => handleIconClick(e, "restaurant")}
+                  >
+                    restaurant
+                  </span>
+                  <span
+                    className="material-icons"
+                    onClick={(e) => handleIconClick(e, "school")}
+                  >
+                    school
+                  </span>
+                  <span
+                    className="material-icons"
+                    onClick={(e) => handleIconClick(e, "museum")}
+                  >
+                    museum
+                  </span>
+                  <span
+                    className="material-icons"
+                    onClick={(e) => handleIconClick(e, "store")}
+                  >
+                    store
+                  </span>
+                  <span
+                    className="material-icons"
+                    onClick={(e) => handleIconClick(e, "home")}
+                  >
+                    home
+                  </span>
+                  <span
+                    className="material-icons"
+                    onClick={(e) => handleIconClick(e, "church")}
+                  >
+                    church
+                  </span>
+                </div>
+              </div>
+              <div className="toolbox-separator"></div>
+            </>
+          )}
           <div className="toolbox-gradient-controls">
             <div className="toolbox-gradient-controls-row">
               <span className="toolbox-gradient-label">Color</span>
               <input
                 type="color"
+                defaultValue={"#3388ff"}
                 className="toolbox-gradient-controls-colorInput"
                 onChange={handleColorSelectorChange}
               />
