@@ -31,7 +31,7 @@ function getNameFromConvertedShapeFile(properties) {
 // https://github.com/alex3165/react-leaflet-draw/blob/7963cfee5ea7f0c85bd294251fa0e150c59641a7/examples/class/edit-control.js
 // https://stackoverflow.com/questions/73353506/extracting-values-from-html-forms-rendered-in-react-leaflet-popup
 
-function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMapRef, mapRef, currentMarkerIcon}) {
+function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMapRef, mapRef}) {
     const { map } = useContext(GlobalMapContext)
 
     const featureGroupRef = useRef(null)
@@ -42,10 +42,6 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
     useEffect(() => {
 
     }, [mapRef])
-
-    useEffect(() => {
-      // console.log(currentMarkerIcon)
-    }, [currentMarkerIcon])
 
     useEffect(() => {
       originalLatLngsRef.current = originalLatLngs
@@ -219,28 +215,11 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
         console.log(e.layer)
       }
     
-    const createIcon = (iconName) => {
-      return L.divIcon({
-        className: 'custom-icon',
-        html: `<span class="material-icons">${iconName}</span>`,
-        iconSize: L.point(50, 50),
-      });
-    };
-
-  const icons = {
-    'default': createIcon('location_on'),
-    'apartment': createIcon('apartment'),
-    'restaurant': createIcon('restaurant'),
-    'school': createIcon('school'),
-    'museum': createIcon('museum'),
-    'store': createIcon('store'),
-    'home': createIcon('home'),
-    'church': createIcon('church'),
-    // Add more icons as needed
-  };
-
-  const currentLIcon = icons[currentMarkerIcon] || icons['default'];
-
+    const defaultIcon = L.divIcon({
+      className: 'custom-icon',
+      html: '<span class="material-icons">location_on</span>',
+      iconSize: L.point(50, 50),
+    });
 
     return (
         <div className="mapContainerSize">
@@ -259,7 +238,7 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
                     globalOptions={{
                       continueDrawing: false,
                       markerStyle:{
-                         icon: currentLIcon
+                         icon: defaultIcon
                       },
                     }}
                     // onDrawEnd={handleLayerDraw}
