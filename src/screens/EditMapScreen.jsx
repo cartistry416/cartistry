@@ -46,7 +46,7 @@ const EditMapScreen = () =>{
         <div className="editMapWrapper">
             <div className="mapScreen">
                 {/* <GeoJSONMapPureLeaflet  className="mapOverlay" position={[39.74739, -105]} setMapRef={setMapRef} mapRef={mapRef} mapMetadataId={id} editEnabled={true} width="100vw" height="100vh"/>  */}
-                <GeoJSONMap className="mapOverlay" position={[39.74739, -105]} setMapRef={setMapRef} mapRef={mapRef} mapMetadataId={id} editEnabled={true} width="100vw" height="100vh"
+                <GeoJSONMap className="mapOverlay" position={[39.74739, -105]} setMapRef={setMapRef} mapRef={mapRef} mapMetadataId={id} editEnabled={true} width="100vw" height="94vh"
                 currentMarkerIcon={currentMarkerIcon}/>
                 <div className="rightPanel">
                     <Toolbox mapId={id} mapRef={mapRef} setCurrentMarkerIcon={setCurrentMarkerIcon}/>
