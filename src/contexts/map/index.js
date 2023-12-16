@@ -3,13 +3,14 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import api from './map-request-api'
 import AuthContext from '../../auth'
 import jsTPS from '../../common/jsTPS'
-import { generateDiff, unzipBlobToJSON, jsonToZip} from '../../utils/utils'
-import _, { findIndex } from 'lodash'
+import { generateDiff, unzipBlobToJSON, jsonToZip, deepCopyLayer} from '../../utils/utils'
+import _, { after, before, findIndex } from 'lodash'
 import EditFeature_Transaction from '../../transactions/EditFeature_Transaction'
 import CreateLayer_Transaction from '../../transactions/CreateLayer_Transaction'
 import RemoveLayer_Transaction from '../../transactions/RemoveLayer_Transaction'
 import { LayerGroup } from 'react-leaflet'
-
+import CutLayer_Transaction from '../../transactions/CutLayer_Transaction'
+import * as L from "leaflet";
 
 export const GlobalMapContext = createContext({});
 export const GlobalMapActionType = {
@@ -536,14 +537,21 @@ function GlobalMapContextProvider(props) {
     }
 
     map.addCreateLayerTransaction = (layer, featureGroupRef) => {
-        const transaction = new CreateLayer_Transaction(map, layer, featureGroupRef)
+        const layerGeoJSON = layer.toGeoJSON()
+        const options = {pmIgnore: false, style: function (feature) {
+            return layer.options;
+        }}
+
+        featureGroupRef.current.removeLayer(layer)
+        const layerClone =  L.geoJSON(layerGeoJSON, options)
+        featureGroupRef.current.addLayer(layerClone)
+
+        const transaction = new CreateLayer_Transaction(map, layerClone, featureGroupRef)
         tps.addTransaction(transaction, false)
     } 
 
     map.createLayerDo = (layer, featureGroupRef) => {
-        console.log(featureGroupRef.current)
         featureGroupRef.current.addLayer(layer)
-        console.log(featureGroupRef.current)
     }
 
     map.createLayerUndo= (layer, featureGroupRef) => {
@@ -561,6 +569,65 @@ function GlobalMapContextProvider(props) {
 
     map.deleteLayerUndo = (layer, featureGroupRef) => {
         featureGroupRef.current.addLayer(layer)
+    }
+
+    map.addCutLayerTransaction = (beforeLayer, afterLayer, featureGroupRef, mapRef) => {
+
+        // const beforeLayerGeoJSON = beforeLayer.toGeoJSON()
+        // const options1 = {pmIgnore: false, style: function (feature) {
+        //     return beforeLayer.options;
+        // }}
+        // const beforeLayerClone = L.geoJSON(beforeLayerGeoJSON, options1)
+
+        // featureGroupRef.current.removeLayer(afterLayer)
+
+        // const afterLayerGeoJSON = afterLayer.toGeoJSON()
+        // const options2 = {pmIgnore: false, style: function (feature) {
+        //     return afterLayer.options;
+        // }}
+        // const afterLayerClone = L.geoJSON(afterLayerGeoJSON, options2)
+
+        // featureGroupRef.current.addLayer(afterLayerClone)
+        const transaction = new CutLayer_Transaction(map, beforeLayer, afterLayer, featureGroupRef, mapRef)
+        tps.addTransaction(transaction, false)
+    }
+
+    map.cutLayerDo = (beforeLayer, afterLayer, featureGroupRef, mapRef) => {
+        featureGroupRef.current.removeLayer(beforeLayer)
+
+        // afterLayer.options.pmIgnore = false
+        // L.PM.reInitLayer(afterLayer)
+        // console.log(afterLayer)
+        // afterLayer.pm.enable()
+        featureGroupRef.current.addLayer(afterLayer)
+        afterLayer.pm.enable()
+        // if(!mapRef.pm.globalEditModeEnabled()) {
+        //     // console.log('here2')
+        //     // mapRef.pm.toggleGlobalEditMode()
+        // }
+
+    }
+    map.cutLayerUndo = (beforeLayer, afterLayer, featureGroupRef, mapRef) => {
+        featureGroupRef.current.removeLayer(afterLayer)
+        // console.log(beforeLayer)
+        featureGroupRef.current.addLayer(beforeLayer)
+        beforeLayer.pm.enable()
+        // beforeLayer.pm.setOptions({
+        //     allowEditing: false
+        // })
+        // beforeLayer.pm.setOptions({
+        //     allowEditing: true
+        // })
+        // if(!mapRef.pm.globalEditModeEnabled()) {
+        //     // console.log('here1')
+        //     mapRef.pm.toggleGlobalEditMode()
+        //     mapRef.pm.toggleGlobalEditMode()
+        //     // const button = document.querySelector('.leaflet-pm-action.action-finishMode')
+        //     // console.log(button)
+        //     // button.click()
+        // }
+        // beforeLayer.options.pmIgnore = false
+        // L.PM.reInitLayer(beforeLayer)
     }
 
     map.setColorSelected = (color) => {
