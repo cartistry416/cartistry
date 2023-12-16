@@ -11,6 +11,7 @@ import RemoveLayer_Transaction from '../../transactions/RemoveLayer_Transaction'
 import { LayerGroup } from 'react-leaflet'
 import CutLayer_Transaction from '../../transactions/CutLayer_Transaction'
 import * as L from "leaflet";
+import UpdateLayerLatLngs_Transaction from '../../transactions/UpdateLayerLatLngs_Transaction'
 
 export const GlobalMapContext = createContext({});
 export const GlobalMapActionType = {
@@ -558,32 +559,45 @@ function GlobalMapContextProvider(props) {
             }
           };
 
-        featureGroupRef.current.removeLayer(layer)
-        const layerClone =  L.geoJSON(layerGeoJSON, options)
-        featureGroupRef.current.addLayer(layerClone)
+        // featureGroupRef.current.removeLayer(layer)
+        // const layerClone =  L.geoJSON(layerGeoJSON, options)
+        // featureGroupRef.current.addLayer(layerClone)
 
-        const transaction = new CreateLayer_Transaction(map, layerClone, featureGroupRef)
+        const transaction = new CreateLayer_Transaction(map, layer, featureGroupRef)
         tps.addTransaction(transaction, false)
     } 
 
     map.createLayerDo = (layer, featureGroupRef) => {
+        if (!featureGroupRef.current) {
+            return
+        }
         featureGroupRef.current.addLayer(layer)
     }
 
-    map.createLayerUndo= (layer, featureGroupRef) => {
+    map.createLayerUndo = (layer, featureGroupRef) => {
+        if (!featureGroupRef.current) {
+            return
+        }
         featureGroupRef.current.removeLayer(layer)
     }
 
     map.addDeleteLayerTransaction = (layer, featureGroupRef) => {
         const transaction = new RemoveLayer_Transaction(map, layer, featureGroupRef)
         tps.addTransaction(transaction, false)
+        console.log('delete transaction added')
     }
 
     map.deleteLayerDo = (layer, featureGroupRef) => {
+        if (!featureGroupRef.current) {
+            return
+        }
         featureGroupRef.current.removeLayer(layer)
     }
 
     map.deleteLayerUndo = (layer, featureGroupRef) => {
+        if (!featureGroupRef.current) {
+            return
+        }
         featureGroupRef.current.addLayer(layer)
     }
 
@@ -627,7 +641,7 @@ function GlobalMapContextProvider(props) {
         featureGroupRef.current.removeLayer(afterLayer)
         // console.log(beforeLayer)
         featureGroupRef.current.addLayer(beforeLayer)
-        beforeLayer.pm.enable()
+        beforeLayer.pm.enable() 
         // beforeLayer.pm.setOptions({
         //     allowEditing: false
         // })
@@ -644,6 +658,21 @@ function GlobalMapContextProvider(props) {
         // }
         // beforeLayer.options.pmIgnore = false
         // L.PM.reInitLayer(beforeLayer)
+    }
+
+    map.addUpdateLayerLatLngsTransaction = (layer, featureGroupRef, oldLatLngs, newLatLngs) => {
+        const transaction = new UpdateLayerLatLngs_Transaction(map, layer, featureGroupRef, oldLatLngs, newLatLngs)
+        tps.addTransaction(transaction, false)
+    }
+
+    map.updateLayerLatLngs = (layer, featureGroupRef, newLatLngs) => {
+        if (layer instanceof L.Marker) {
+            layer.setLatLng(newLatLngs)
+        } 
+        else {
+            layer.setLatLngs(newLatLngs)
+        }
+
     }
 
     map.setColorSelected = (color) => {

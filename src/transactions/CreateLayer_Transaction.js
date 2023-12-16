@@ -1,4 +1,4 @@
-import jsTPS from "../common/jsTPS"
+
 import jsTPS_Transaction from '../common/jsTPS'
 export default class CreateLayer_Transaction extends jsTPS_Transaction {
     constructor(initMap, initLayer, initFeatureGroupRef) {
