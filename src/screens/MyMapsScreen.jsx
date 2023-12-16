@@ -48,7 +48,7 @@ function MyMapsScreen() {
   };
 
   useEffect(() => {
-    console.log(map.mapCardsInfo)
+    // console.log(map.mapCardsInfo)
     post.exitCurrentPost()
     map.exitCurrentMap()
   }, [])

@@ -95,7 +95,7 @@ function MapCard(props) {
 
   const handleMapCardClick = async (e) => {
     e.preventDefault();
-    console.log(mapId)
+    // console.log(mapId)
     //map.exitCurrentMap()
     await map.loadMap(mapId);
     navigate(`/editMap/${mapId}`)

@@ -44,7 +44,7 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
     }, [mapRef])
 
     useEffect(() => {
-      console.log(currentMarkerIcon)
+      // console.log(currentMarkerIcon)
     }, [currentMarkerIcon])
 
     useEffect(() => {
@@ -207,7 +207,7 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
       }
 
       const handleLayerCreate = (e) => {
-        console.log(e.layer)
+        map.addCreateLayerTransaction(e.layer, featureGroupRef)
       }
 
       const handleDragStart = (e) => {
@@ -250,7 +250,7 @@ function GeoJSONMap({mapMetadataId, position, editEnabled, width, height, setMap
                   handleLayerCut={handleLayerCut} handleLayerRemove={handleLayerRemove} handleLayerRotate={handleLayerRotate} icon={currentLIcon}/> : null
                 } */}
                 {editEnabled ? 
-                 <FeatureGroup>
+                 <FeatureGroup ref={featureGroupRef}>
                   <GeomanControls
                     options={{
                       position: 'topleft',
