@@ -17,7 +17,6 @@ const EditMapScreen = () =>{
     const {post} = useContext(GlobalPostContext)
     const {map} = useContext(GlobalMapContext)
     const [mapRef, setMapRef] = useState(null)
-    const [currentMarkerIcon, setCurrentMarkerIcon] = useState('defaultIcon'); // used for marker 
 
     useEffect(() => {
         post.exitCurrentPost()
@@ -46,10 +45,10 @@ const EditMapScreen = () =>{
         <div className="editMapWrapper">
             <div className="mapScreen">
                 {/* <GeoJSONMapPureLeaflet  className="mapOverlay" position={[39.74739, -105]} setMapRef={setMapRef} mapRef={mapRef} mapMetadataId={id} editEnabled={true} width="100vw" height="100vh"/>  */}
-                <GeoJSONMap className="mapOverlay" position={[39.74739, -105]} setMapRef={setMapRef} mapRef={mapRef} mapMetadataId={id} editEnabled={true} width="100vw" height="100vh"
-                currentMarkerIcon={currentMarkerIcon}/>
+                <GeoJSONMap className="mapOverlay" position={[39.74739, -105]} setMapRef={setMapRef} mapRef={mapRef} mapMetadataId={id} editEnabled={true} width="100vw" height="94vh"
+                />
                 <div className="rightPanel">
-                    <Toolbox mapId={id} mapRef={mapRef} setCurrentMarkerIcon={setCurrentMarkerIcon}/>
+                    <Toolbox mapId={id} mapRef={mapRef}/>
                     {/* <Legend /> */}
                     <div className="sideControls">
                     <div className="iconGroup">
