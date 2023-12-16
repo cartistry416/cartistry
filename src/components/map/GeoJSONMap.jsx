@@ -78,7 +78,7 @@ function GeoJSONMap({
         },
         onEachFeature: function(feature, layer) {
           layer.on({
-            click: feature
+            click: chroroClick
           });
         }
 
@@ -86,7 +86,7 @@ function GeoJSONMap({
       choroplethLayer.addTo(mapRef);
     }
   }, [mapRef, map.currentMapGeoJSON]);
-  function zoomToFeature(e){
+  function chroroClick(e){
     var layer = e.target;
     layer.bindPopup("Density: " + layer.feature.properties.density)
   }
