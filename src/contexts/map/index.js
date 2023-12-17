@@ -504,7 +504,7 @@ function GlobalMapContextProvider(props) {
         }
 
         let layersGeoJSON = []
-        const layers = featureGroupRef.current.pm.getLayers()
+        const layers = featureGroupRef.current.getLayers() //featureGroupRef.current.pm.getLayers()
         if (layers.length > 0) {
             layersGeoJSON = layers.map(layer => {
                 const gj = layer.toGeoJSON()
@@ -748,6 +748,8 @@ function GlobalMapContextProvider(props) {
     map.addUpdateLayerLatLngsTransaction = (layer, featureGroupRef, oldLatLngs, newLatLngs) => {
         const transaction = new UpdateLayerLatLngs_Transaction(map, layer, featureGroupRef, oldLatLngs, newLatLngs)
         tps.addTransaction(transaction, false)
+
+        //console.log(featureGroupRef.current.getLayers())
     }
 
     map.updateLayerLatLngs = (layer, featureGroupRef, newLatLngs) => {
@@ -757,6 +759,8 @@ function GlobalMapContextProvider(props) {
         else {
             layer.setLatLngs(newLatLngs)
         }
+
+        // console.log(featureGroupRef.current.getLayers())
 
     }
 
