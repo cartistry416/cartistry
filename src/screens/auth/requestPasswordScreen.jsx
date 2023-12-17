@@ -57,7 +57,8 @@ function RequestPasswordScreen() {
       <div className="authWrapper">
         {stage === 1 && (
           <form onSubmit={handleSubmitEmail}>
-            <div>
+            <div className="forgotPasswordStep">
+              <span>Enter Token</span>
               <input
                 placeholder="email"
                 type="email"
@@ -70,7 +71,7 @@ function RequestPasswordScreen() {
             </div>
             <div className="authFooter">
               <div className="authFooterContent">
-                <button className="authAltButton" onClick={() => redirectTo("/")}>
+                <button type="button" className="authAltButton" onClick={() => redirectTo("/")}>
                   Cancel
                 </button>
                 <button type="submit">
@@ -82,9 +83,10 @@ function RequestPasswordScreen() {
         )}
         {stage === 2 && (
           <form onSubmit={handleSubmitToken}>
-            <div>
+            <div className="forgotPasswordStep">
+              <span>Enter Token</span>
               <input
-                placeholder="Enter Token"
+                placeholder="token"
                 type="text"
                 id="token"
                 name="token"
@@ -93,7 +95,7 @@ function RequestPasswordScreen() {
             </div>
             <div className="authFooter">
               <div className="authFooterContent">
-                <button className="authAltButton" onClick={() => setStage(1)}>
+                <button type="button" className="authAltButton" onClick={() => setStage(1)}>
                   Back
                 </button>
                 <button type="submit">
@@ -105,7 +107,8 @@ function RequestPasswordScreen() {
         )}
         {stage === 3 &&(
           <form onSubmit={handleResetSubmit}>
-            <div>
+            <div className="forgotPasswordStep">
+              <span>Create New Password</span>
               <input
                 placeholder="new password"
                 type="password"
@@ -125,7 +128,7 @@ function RequestPasswordScreen() {
             </div>
             <div className="authFooter">
               <div className="authFooterContent">
-                <button className="authAltButton" onClick={() => redirectTo('/home')}>Cancel</button>
+                <button type="button" className="authAltButton" onClick={() => redirectTo('/home')}>Cancel</button>
                 <button type="submit">Reset</button>
               </div>
             </div>
