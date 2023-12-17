@@ -70,13 +70,30 @@ function GeoJSONMap({
     originalLatLngsRef.current = originalLatLngs;
   }, [originalLatLngs]);
 
-
+  useEffect(() => {
+    const heatValueProperties = findHeatValueProperties(map.currentMapGeoJSON)
+    const selectedHeatValueProperty = heatValueProperties[0]
+    map.setHeatPropertiesAndSelected(selectedHeatValueProperty, heatValueProperties)
+  },[map.currentMapGeoJSON]);
+  function findHeatValueProperties(geojsonData) {
+    let potentialProperties = new Set();
+  
+    geojsonData.features.forEach(feature => {
+      Object.keys(feature.properties).forEach(key => {
+        if (typeof feature.properties[key] === 'number') {
+          potentialProperties.add(key);
+        }
+      });
+    });
+  
+    return Array.from(potentialProperties);
+  }
   const loadOriginalLayers = () => {
     if (!map.originalLayersGeoJSON || !map.originalLayersGeoJSON.length) {
       return null
     }
     let layers
-    if (map.currentMapProprietaryJSON.templateType !== "heat") {
+    if (map.currentMapProprietaryJSON.templateType !== "choropleth") {
       layers = map.originalLayersGeoJSON.map((layerGeoJSON, index)=> {
         const type = layerGeoJSON.properties.layerType
         let layer
@@ -125,7 +142,7 @@ function GeoJSONMap({
     }
     else {
       const choroplethOptions = {
-        valueProperty: 'density', // TODO: find a way to automatically detect valueProperty
+        valueProperty:  map.heatValueSelectedProperty, // TODO: find a way to automatically detect valueProperty
         scale: map.heatColors, 
         steps: map.numHeatSections,
         mode: 'q',
@@ -185,7 +202,7 @@ function GeoJSONMap({
   //     return
   //   }
 
-  //   if (map.originalLayersGeoJSON && map.currentMapProprietaryJSON.templateType !== "heat") {
+  //   if (map.originalLayersGeoJSON && map.currentMapProprietaryJSON.templateType !== "choropleth") {
   //   }
   // }, [])
 
