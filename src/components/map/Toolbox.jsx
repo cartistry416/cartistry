@@ -324,7 +324,6 @@ const Toolbox = ({ mapRef, featureGroupRef }) => {
               <div>
                 <div className="toolbox-gradient-controls-row">
                   <span className="toolbox-gradient-label">Value Property</span>
-                  {/* radio selection for potential properties here*/}
                   <div>
                     {map.heatValueProperties.map(property => (
                       <div key={property}>
