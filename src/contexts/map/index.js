@@ -334,7 +334,7 @@ function GlobalMapContextProvider(props) {
             catch (err) {
                 console.log('no layers sent, probably not initialized')
             }
-
+            console.log('map loaded')
             mapReducer({
                 type: GlobalMapActionType.LOAD_MAP,
                 payload: {currentGeoJSON, originalGeoJSON, mapMetadata,currentMapProprietaryJSON, 

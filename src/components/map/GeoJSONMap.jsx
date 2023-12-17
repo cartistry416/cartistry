@@ -67,6 +67,12 @@ function GeoJSONMap({
   }, [originalLatLngs]);
   
   useEffect(() => {
+    console.log('hi')
+    console.log(map.originalLayersGeoJSON)
+    console.log(featureGroupRef.current)
+    console.log(!initialGeomanLayersLoaded)
+    console.log(map.currentMapProprietaryJSON.templateType)
+
     if (map.originalLayersGeoJSON && featureGroupRef.current && !initialGeomanLayersLoaded && map.currentMapProprietaryJSON.templateType !== "heat") {
       if (map.originalLayersGeoJSON.length && map.originalLayersGeoJSON.length > 0) {
         map.originalLayersGeoJSON.forEach(layerGeoJSON => {
@@ -510,7 +516,12 @@ function GeoJSONMap({
             
             />
           </FeatureGroup>
-        ) : null}
+        ) 
+          : (<FeatureGroup ref={featureGroupRef}>
+            
+            
+            </FeatureGroup>)
+      }
 
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
