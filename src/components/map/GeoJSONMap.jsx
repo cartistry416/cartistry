@@ -71,7 +71,24 @@ function GeoJSONMap({
     if (map.originalLayersGeoJSON && featureGroupRef.current && !initialGeomanLayersLoaded) {
       if (map.originalLayersGeoJSON.length && map.originalLayersGeoJSON.length > 0) {
         map.originalLayersGeoJSON.forEach(layerGeoJSON => {
-          const layer = L.geoJSON(layerGeoJSON, {pmIgnore: false})
+
+          const type = layerGeoJSON.properties.layerType
+          let layer
+          if (type === "circle") {
+            layer = L.circle([layerGeoJSON.geometry.coordinates[1],layerGeoJSON.geometry.coordinates[0]], layerGeoJSON.properties.options)
+            console.log(layer)
+          }
+          else if (type === "circleMarker") {
+            layer = L.circleMarker([layerGeoJSON.geometry.coordinates[1],layerGeoJSON.geometry.coordinates[0]], layerGeoJSON.properties.options)
+          }
+          else if (type === "marker") {
+            const icon = L.divIcon(layerGeoJSON.properties.options)
+            layer = L.marker([layerGeoJSON.geometry.coordinates[1],layerGeoJSON.geometry.coordinates[0]], { icon })
+          }
+          else {
+            layer = L.geoJSON(layerGeoJSON, {pmIgnore: false, style: feature => feature.properties.option})
+          }
+
           layerEvents(layer, {
             onUpdate: handleLayerUpdate,
             onLayerRemove: handleLayerRemove,
@@ -249,11 +266,17 @@ function GeoJSONMap({
   const handleLayerUpdate = (e) => {
     const layer = e.layer;
     let updatedLatLngs
-    if (layer instanceof L.Marker) {
-      updatedLatLngs = layer.getLatLng()
-    } 
-    else {
-      updatedLatLngs = layer.getLatLngs()
+
+    try {
+      if (layer instanceof L.Marker || layer instanceof L.Circle || layer instanceof L.CircleMarker) {
+        updatedLatLngs = layer.getLatLng()
+      } 
+      else {
+        updatedLatLngs = layer.getLatLngs()
+      }
+    }
+    catch (err) {
+      console.log(layer)
     }
 
     console.log("Original LatLngs:", originalLatLngsRef.current);
@@ -297,7 +320,7 @@ function GeoJSONMap({
   const handleDragStart = (e) => {
     const layer = e.layer;
     let latLngs
-    if (layer instanceof L.Marker) {
+    if (layer instanceof L.Marker || layer instanceof L.Circle || layer instanceof L.CircleMarker) {
       latLngs = layer.getLatLng()
     } 
     else {
