@@ -520,11 +520,46 @@ function GlobalMapContextProvider(props) {
             return
         }
 
-        let layersGeoJSON = {}
-        const layers = featureGroupRef.current.pm.getLayers()
+        let layersGeoJSON = []
+        const layers = featureGroupRef.current.getLayers() //featureGroupRef.current.pm.getLayers()
         if (layers.length > 0) {
-            layersGeoJSON = layers.map(layer => layer.toGeoJSON())
+            layersGeoJSON = layers.map(layer => {
+                const gj = layer.toGeoJSON()
+                if (layer instanceof L.Circle) {
+                    // console.log('circle: ', layer)
+                    gj.properties.options = {...layer.options, pmIgnore: false}
+                    gj.properties.layerType = 'circle'
+                    // gj.geomtery.coordinates [lng, lat]
+                }
+                else if (layer instanceof L.CircleMarker) {
+                    // console.log('circle marker: ', layer)
+                    gj.properties.layerType = 'circleMarker'
+                    gj.properties.options =  {...layer.options, pmIgnore: false}
+                }
+                else if (layer instanceof L.Polygon) {
+                    // console.log('polygon : ', layer) 
+                    gj.properties.layerType = 'polygon'
+                    gj.properties.options =  {...layer.options, pmIgnore: false}
+
+                }
+                else if (layer instanceof L.Polyline) {
+                    // console.log('polyline : ', layer)
+                    gj.properties.layerType = 'polyline'
+                    gj.properties.options =  {...layer.options, pmIgnore: false}
+                }
+                else if (layer instanceof L.Marker) {
+                    // console.log('marker ', layer)
+                    gj.properties.layerType = 'marker'
+                    gj.properties.options =  {...layer.options.icon.options, pmIgnore: false}
+                }
+                else {
+                    console.log('none of the L. whatever')
+                }
+                return gj
+            })
         }
+
+        console.log(layersGeoJSON.length)
         
 
         const delta1 = generateDiff(map.currentMapGeoJSONOriginal, map.currentMapGeoJSON)
@@ -544,7 +579,7 @@ function GlobalMapContextProvider(props) {
             // console.log("size of layers: " + JSON.stringify(layersGeoJSON).length)
 
 
-            const response = await api.saveMapEdits(id, delta1, proprietaryJSON, thumbnail, delta3)
+            const response = await api.saveMapEdits(id, delta1, proprietaryJSON, thumbnail, layersGeoJSON)
             if (response.status === 200) {
                 tps.clearAllTransactions()
                 alert("Map edits saved successfully. Clearing TPS stack and setting original geoJSON to current geoJSON")
@@ -730,15 +765,19 @@ function GlobalMapContextProvider(props) {
     map.addUpdateLayerLatLngsTransaction = (layer, featureGroupRef, oldLatLngs, newLatLngs) => {
         const transaction = new UpdateLayerLatLngs_Transaction(map, layer, featureGroupRef, oldLatLngs, newLatLngs)
         tps.addTransaction(transaction, false)
+
+        //console.log(featureGroupRef.current.getLayers())
     }
 
     map.updateLayerLatLngs = (layer, featureGroupRef, newLatLngs) => {
-        if (layer instanceof L.Marker) {
+        if (layer instanceof L.Marker || layer instanceof L.Circle || layer instanceof L.CircleMarker) {
             layer.setLatLng(newLatLngs)
         } 
         else {
             layer.setLatLngs(newLatLngs)
         }
+
+        // console.log(featureGroupRef.current.getLayers())
 
     }
 

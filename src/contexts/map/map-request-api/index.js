@@ -55,12 +55,12 @@ export const favoriteMap = (id) => {
 export const updateMapPrivacy = (id) => {
     return api.put(`/maps-api/maps/${id}/update-privacy`)
 }
-export const saveMapEdits = (id, delta, proprietaryJSON, thumbnail, layerDelta) => {
+export const saveMapEdits = (id, delta, proprietaryJSON, thumbnail, layersGeoJSON) => {
     return api.put(`/maps-api/maps/${id}/save`, {
         delta,
         proprietaryJSON,
         thumbnail,
-        layerDelta
+        layersGeoJSON
     })
 }
 
