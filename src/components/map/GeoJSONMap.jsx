@@ -65,7 +65,7 @@ function GeoJSONMap({
   useEffect(() => {
     originalLatLngsRef.current = originalLatLngs;
   }, [originalLatLngs]);
-
+  
   useEffect(() => {
     console.log(map.originalLayersGeoJSON)
     if (map.originalLayersGeoJSON && featureGroupRef.current && !initialGeomanLayersLoaded) {
@@ -107,7 +107,7 @@ function GeoJSONMap({
   }, [map.originalLayersGeoJSON, featureGroupRef.current])
   useEffect(() => {
     if (map.currentMapProprietaryJSON.templateType === "heat") {
-      if (mapRef && map.currentMapGeoJSON) {
+      if (featureGroupRef.current && map.currentMapGeoJSON) {
         const choroplethLayer = L.choropleth(map.currentMapGeoJSON, {
           valueProperty: 'density', // TODO: find a way to automatically detect valueProperty
           scale: map.heatColors, 
@@ -123,12 +123,21 @@ function GeoJSONMap({
               click: chroroClick
             }); 
           }
-
         });
-        choroplethLayer.addTo(mapRef);
+  
+        layerEvents(choroplethLayer, {
+          onUpdate: handleLayerUpdate,
+          onLayerRemove: handleLayerRemove,
+          onCreate: handleLayerCreate,
+          onDragStart: handleDragStart,
+          onMarkerDragStart: handleMarkerDragStart,
+          onLayerRotateStart: handleLayerRotateStart
+        }, 'on');
+  
+        featureGroupRef.current.addLayer(choroplethLayer);
       }
     }
-  }, [mapRef, map.currentMapGeoJSON, map.numHeatSections, map.heatColors]);
+  }, [map.currentMapGeoJSON, map.numHeatSections, map.heatColors, map.currentMapProprietaryJSON.templateType, featureGroupRef.current]);  
   function chroroClick(e){
     var layer = e.target;
     layer.bindPopup("Density: " + layer.feature.properties.density)
