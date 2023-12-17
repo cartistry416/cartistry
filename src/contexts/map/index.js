@@ -30,9 +30,11 @@ export const GlobalMapActionType = {
     EDIT_FEATURE_PROPERTY: "EDIT_FEATURE_PROPERTY",
     SET_MARKER_ACTIVE: "SET_MARKER_ACTIVE",
     SET_HEAT_COLORS: "SET_HEAT_COLORS",
-    DELETE_HEAT_COLORS: "DELETE_HEAT_COLORS",
+    DELETE_HEAT_COLORS: "DELETE_HEAT_COLORS", //TODO: make this edit instead of delete
     SET_HEAT_NUM_SECTIONS: "SET_HEAT_NUM_SECTIONS",
-  }
+    SET_HEAT_SELECTED_VALUE_PROPERTY: "SET_HEAT_SELECTED_VALUE_PROPERTY",
+    EDIT_HEAT_VALUE_PROPERTIES: "EDIT_HEAT_VALUE_PROPERTIES",
+}
 
 const tps = new jsTPS();
 
@@ -59,6 +61,8 @@ function GlobalMapContextProvider(props) {
         markerActive: false,
         heatColors: ["#ffffff", "#e08300", "#e90101"],
         numHeatSections: 10,
+        heatValueProperties: ["test"],
+        heatValueSelectedProperty: null
         // mapCardIndexMarkedForDeletion: null, // Don't think we need these
         // mapCardMarkedForDeletion: null,
     });
@@ -264,6 +268,12 @@ function GlobalMapContextProvider(props) {
                 return setMap({
                     ...map,
                     numHeatSections: payload.numHeatSections
+                })
+            }
+            case GlobalMapActionType.SET_HEAT_SELECTED_VALUE_PROPERTY: {
+                return setMap({
+                    ...map,
+                    heatValueSelectedProperty: payload.heatValueSelectedProperty
                 })
             }
             case GlobalMapActionType.EDIT_FEATURE_PROPERTY: {
@@ -815,6 +825,12 @@ function GlobalMapContextProvider(props) {
         mapReducer({
             type: GlobalMapActionType.SET_HEAT_NUM_SECTIONS,
             payload: {numHeatSections}
+        })
+    }
+    map.setHeatValueSelectedProperty = (heatValueSelectedProperty) => {
+        mapReducer({
+            type: GlobalMapActionType.SET_HEAT_SELECTED_VALUE_PROPERTY,
+            payload: {heatValueSelectedProperty}
         })
     }
 

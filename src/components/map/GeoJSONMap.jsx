@@ -110,11 +110,31 @@ function GeoJSONMap({
     }
 
   }, [map.originalLayersGeoJSON, featureGroupRef.current, map.currentMapProprietaryJSON])
+
+  useEffect(() => {
+    const heatValueProperties = findHeatValueProperties(map.currentMapGeoJSON)
+    const selectedHeatValueProperty = heatValueProperties[0]
+    map.setHeatValueSelectedProperty(selectedHeatValueProperty)
+  },[map.currentMapGeoJSON]);
+  function findHeatValueProperties(geojsonData) {
+    let potentialProperties = new Set();
+  
+    geojsonData.features.forEach(feature => {
+      Object.keys(feature.properties).forEach(key => {
+        if (typeof feature.properties[key] === 'number') {
+          potentialProperties.add(key);
+        }
+      });
+    });
+  
+    return Array.from(potentialProperties);
+  }
+  
   useEffect(() => {
     if (map.currentMapProprietaryJSON.templateType === "heat") {
       if (featureGroupRef.current && map.currentMapGeoJSON) {
         const choroplethLayer = L.choropleth(map.currentMapGeoJSON, {
-          valueProperty: 'density', // TODO: find a way to automatically detect valueProperty
+          valueProperty: map.heatValueSelectedProperty, // TODO: find a way to automatically detect valueProperty
           scale: map.heatColors, 
           steps: map.numHeatSections,
           mode: 'q',
@@ -142,7 +162,7 @@ function GeoJSONMap({
         featureGroupRef.current.addLayer(choroplethLayer);
       }
     }
-  }, [map.currentMapGeoJSON, map.numHeatSections, map.heatColors, map.currentMapProprietaryJSON.templateType, featureGroupRef.current]);  
+  }, [map.currentMapGeoJSON, map.heatValueSelectedProperty,map.numHeatSections, map.heatColors, map.currentMapProprietaryJSON.templateType, featureGroupRef.current]);  
   function chroroClick(e){
     var layer = e.target;
     layer.bindPopup("Density: " + layer.feature.properties.density)

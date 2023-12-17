@@ -174,6 +174,9 @@ const Toolbox = ({ mapRef, featureGroupRef }) => {
     setShowOptions(!showOptions);
   };
 
+  const handleHeatValuePropertySelection = (e) => {
+    // console.log("value property change")
+  };
   const handleColorSelectorChange = (e) => {
     map.setColorSelected(e.target.value);
   };
@@ -319,6 +322,25 @@ const Toolbox = ({ mapRef, featureGroupRef }) => {
             {map.currentMapProprietaryJSON &&
             map.currentMapProprietaryJSON.templateType === "heat" ? (
               <div>
+                <div className="toolbox-gradient-controls-row">
+                  <span className="toolbox-gradient-label">Value Property</span>
+                  {/* radio selection for potential properties here*/}
+                  <div>
+                    {map.heatValueProperties.map(property => (
+                      <div key={property}>
+                        <input 
+                          type="radio" 
+                          id={property} 
+                          name="valueProperty" 
+                          value={property} 
+                          checked={map.heatValueSelectedProperty === property}
+                          onChange={handleHeatValuePropertySelection}
+                        />
+                        <label htmlFor={property}>{property}</label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
                 <div className="toolbox-gradient-controls-row">
                   <span className="toolbox-gradient-label"># of Sections</span>
                   <input
