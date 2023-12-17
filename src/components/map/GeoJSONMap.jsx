@@ -106,25 +106,27 @@ function GeoJSONMap({
 
   }, [map.originalLayersGeoJSON, featureGroupRef.current])
   useEffect(() => {
-    if (mapRef && map.currentMapGeoJSON) {
-      const choroplethLayer = L.choropleth(map.currentMapGeoJSON, {
-        valueProperty: 'density', // TODO: find a way to automatically detect valueProperty
-        scale: map.heatColors, 
-        steps: map.numHeatSections,
-        mode: 'q',
-        style: {
-          color: '#fff',
-          weight: 2,
-          fillOpacity: 0.8
-        },
-        onEachFeature: function(feature, layer) {
-          layer.on({
-            click: chroroClick
-          }); 
-        }
+    if (map.currentMapProprietaryJSON.templateType === "heat") {
+      if (mapRef && map.currentMapGeoJSON) {
+        const choroplethLayer = L.choropleth(map.currentMapGeoJSON, {
+          valueProperty: 'density', // TODO: find a way to automatically detect valueProperty
+          scale: map.heatColors, 
+          steps: map.numHeatSections,
+          mode: 'q',
+          style: {
+            color: '#fff',
+            weight: 2,
+            fillOpacity: 0.8
+          },
+          onEachFeature: function(feature, layer) {
+            layer.on({
+              click: chroroClick
+            }); 
+          }
 
-      });
-      choroplethLayer.addTo(mapRef);
+        });
+        choroplethLayer.addTo(mapRef);
+      }
     }
   }, [mapRef, map.currentMapGeoJSON, map.numHeatSections, map.heatColors]);
   function chroroClick(e){
