@@ -69,38 +69,21 @@ function GeoJSONMap({
   useEffect(() => {
     console.log(map.originalLayersGeoJSON)
     if (map.originalLayersGeoJSON && featureGroupRef.current && !initialGeomanLayersLoaded) {
-      map.originalLayersGeoJSON.forEach(layerGeoJSON => {
-        const layer = L.geoJSON(layerGeoJSON, {pmIgnore: false})
-        layerEvents(layer, {
-          onUpdate: handleLayerUpdate,
-          onLayerRemove: handleLayerRemove,
-          onCreate: handleLayerCreate,
-          onDragStart: handleDragStart,
-          onMarkerDragStart: handleMarkerDragStart,
-          onLayerRotateStart: handleLayerRotateStart
-        }, 'on')
-        featureGroupRef.current.addLayer(layer)
-      })
-      setInitialGeomanLayersLoaded(true)
-    }
+      if (map.originalLayersGeoJSON.length && map.originalLayersGeoJSON.length > 0) {
+        map.originalLayersGeoJSON.forEach(layerGeoJSON => {
+          const layer = L.geoJSON(layerGeoJSON, {pmIgnore: false})
+          layerEvents(layer, {
+            onUpdate: handleLayerUpdate,
+            onLayerRemove: handleLayerRemove,
+            onCreate: handleLayerCreate,
+            onDragStart: handleDragStart,
+            onMarkerDragStart: handleMarkerDragStart,
+            onLayerRotateStart: handleLayerRotateStart
+          }, 'on')
+          featureGroupRef.current.addLayer(layer)
+        })
+      }
 
-  }, [map.originalLayersGeoJSON, featureGroupRef.current])
-
-  useEffect(() => {
-    console.log(map.originalLayersGeoJSON)
-    if (map.originalLayersGeoJSON && featureGroupRef.current && !initialGeomanLayersLoaded) {
-      map.originalLayersGeoJSON.forEach(layerGeoJSON => {
-        const layer = L.geoJSON(layerGeoJSON, {pmIgnore: false})
-        layerEvents(layer, {
-          onUpdate: handleLayerUpdate,
-          onLayerRemove: handleLayerRemove,
-          onCreate: handleLayerCreate,
-          onDragStart: handleDragStart,
-          onMarkerDragStart: handleMarkerDragStart,
-          onLayerRotateStart: handleLayerRotateStart
-        }, 'on')
-        featureGroupRef.current.addLayer(layer)
-      })
       setInitialGeomanLayersLoaded(true)
     }
 
