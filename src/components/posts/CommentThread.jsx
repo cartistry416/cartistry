@@ -57,6 +57,33 @@ function Comment({comment, index}) {
     setShowModal(false);
   };
 
+  const timeSinceCommentCreated = (commentTimestamp) => {
+    const now = new Date();
+    const commentDate = new Date(commentTimestamp);
+  
+    const timeDifference = now - commentDate;
+    const seconds = Math.floor(timeDifference / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const months = Math.floor(days / 30);
+    const years = Math.floor(months / 12);
+  
+    if (years > 0) {
+      return `${years}y ago`;
+    } else if (months > 0) {
+      return `${months}m ago`;
+    } else if (days > 0) {
+      return `${days}d ago`;
+    } else if (hours > 0) {
+      return `${hours}h ago`;
+    } else if (minutes > 0) {
+      return `${minutes}m ago`;
+    } else {
+      return `${seconds}s ago`;
+    }
+  }
+
   return (
     <div className="comment-container">
       <div className="comment-header">
@@ -66,7 +93,7 @@ function Comment({comment, index}) {
             <span></span>
           </div>
           <div className="comment-header">
-            <span className="comment-username"> {userName} • 4d</span>
+            <span className="comment-username"> {userName} • {timeSinceCommentCreated(comment.createdAt)}</span>
           </div>
         </div>
         <div className="comment-options">

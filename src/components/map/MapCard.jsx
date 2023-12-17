@@ -124,7 +124,7 @@ function MapCard(props) {
             <div className="mapCardTitle">{title}</div>
           )}
           <div className="mapCardDate">
-            {"Opened "} {formatDate(updatedAt)}
+            {"Updated "} {formatDate(updatedAt)}
           </div>
         </div>
         <div className="mapCardMore" ref={dropdownRef}>
