@@ -3,8 +3,10 @@ import { useContext } from "react";
 import GlobalMapContext from "../../contexts/map";
 
 const EditFeaturePopup = (props) => {
-  const { map } = useContext(GlobalMapContext);
-  const { feature, idx, handlePopupSubmit, layer } = props;
+  // const { map } = useContext(GlobalMapContext);
+  const { feature, idx, handlePopupSubmit, layer, templateType } = props;
+
+  console.log(templateType)
 
   return (
     <div id={`featurePopUp${idx}`}>
@@ -24,53 +26,58 @@ const EditFeaturePopup = (props) => {
               defaultValue={feature.properties.name}
             />
           </label>
-          {(map && map.currentMapProprietaryJSON.templateType === "Choropleth") && (
+          {(templateType === "choropleth") && (
             <label>
               Value
               <input type="number" className="mapEditInput" />
             </label>
           )}
 
-          {/* <label>
+          {(templateType === "bin") && (
+            <>
+            <label>
             Fill Color
             <input
               type="color"
               className='mapEditInput'
               defaultValue={feature.properties.style.fillColor}
             />
-          </label>
-          <label>
+            </label>
+            <label>
             Border Color
             <input
               type="color"
               className='mapEditInput'
               defaultValue={feature.properties.style.color}
             />
-          </label>
-          <label>
+            </label>
+            <label>
             Weight 
             <input
               type="number"
               className='mapEditInput'
               defaultValue={feature.properties.style.weight}
             />
-          </label>
-          <label>
+            </label>
+            <label>
             Opacity
             <input
               type="number"
               className='mapEditInput'
               defaultValue={feature.properties.style.opacity}
             />
-          </label>
-          <label>
+            </label>
+            <label>
             Fill Opacity
             <input
               type="number"
               className='mapEditInput'
               defaultValue={feature.properties.style.fillOpacity}
             />
-          </label> */}
+            </label>
+            </>
+          )}
+
 
           <button type="submit">Save Edit</button>
         </form>

@@ -93,27 +93,27 @@ function MyMapsScreen() {
                 </button>
                 <button
                   className="createMapMenuItem"
-                  onClick={() => setShowUploadModal("heat")}
+                  onClick={() => setShowUploadModal("choropleth")}
                 >
-                  Heat Map
+                  Choropleth Map
                 </button>
                 <button
                   className="createMapMenuItem"
-                  onClick={() => setShowUploadModal("subway")}
+                  onClick={() => setShowUploadModal("gradient")}
                 >
-                  Subway Map
-                </button>
-                <button
-                  className="createMapMenuItem"
-                  onClick={() => setShowUploadModal("cadastral")}
-                >
-                  Cadastral Map
+                  Gradient Map
                 </button>
                 <button
                   className="createMapMenuItem"
                   onClick={() => setShowUploadModal("landmark")}
                 >
                   Landmark Map
+                </button>
+                <button
+                  className="createMapMenuItem"
+                  onClick={() => setShowUploadModal("cadastral")}
+                >
+                  Cadastral Map
                 </button>
               </div>
             )}
