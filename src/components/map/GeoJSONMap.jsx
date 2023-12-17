@@ -1,12 +1,15 @@
 // eslint-disable-next-line
 import GlobalMapContext from "../../contexts/map";
-import React, { useEffect, useState, useContext, useRef } from "react";
+import React, { useEffect, useState, useContext, useRef, useCallback } from "react";
 import {
   MapContainer,
   TileLayer,
   GeoJSON,
   FeatureGroup,
-  useMap,
+  Circle,
+  CircleMarker,
+  Marker,
+  LayerGroup
 } from "react-leaflet";
 
 // import Geoman  from './Geoman';
@@ -19,6 +22,7 @@ import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
 import { GeomanControls, layerEvents } from "react-leaflet-geoman-v2";
 import EditFeaturePopup from "./EditFeaturePopup";
 import 'leaflet-choropleth';
+import { matchPath } from "react-router";
 
 function getNameFromConvertedShapeFile(properties) {
   let keyBase = "NAME_";
@@ -65,122 +69,170 @@ function GeoJSONMap({
   useEffect(() => {
     originalLatLngsRef.current = originalLatLngs;
   }, [originalLatLngs]);
-  
-  useEffect(() => {
-    console.log('hi')
-    console.log(map.originalLayersGeoJSON)
-    console.log(featureGroupRef.current)
-    console.log(!initialGeomanLayersLoaded)
-    console.log(map.currentMapProprietaryJSON.templateType)
 
-    if (map.originalLayersGeoJSON && featureGroupRef.current && !initialGeomanLayersLoaded && map.currentMapProprietaryJSON.templateType !== "heat") {
-      if (map.originalLayersGeoJSON.length && map.originalLayersGeoJSON.length > 0) {
-        map.originalLayersGeoJSON.forEach(layerGeoJSON => {
-          console.log(layerGeoJSON.properties)
-          const type = layerGeoJSON.properties.layerType
-          let layer
-          if (type === "circle") {
-            layer = L.circle([layerGeoJSON.geometry.coordinates[1],layerGeoJSON.geometry.coordinates[0]], layerGeoJSON.properties.options)
-            console.log(layer)
-          }
-          else if (type === "circleMarker") {
-            layer = L.circleMarker([layerGeoJSON.geometry.coordinates[1],layerGeoJSON.geometry.coordinates[0]], layerGeoJSON.properties.options)
-          }
-          else if (type === "marker") {
-            const icon = L.divIcon(layerGeoJSON.properties.options)
-            layer = L.marker([layerGeoJSON.geometry.coordinates[1],layerGeoJSON.geometry.coordinates[0]], { icon })
-          }
-          else {
-            layer = L.geoJSON(layerGeoJSON, {pmIgnore: false, style: feature => feature.properties.option})
-          }
 
-          layerEvents(layer, {
-            onUpdate: handleLayerUpdate,
-            onLayerRemove: handleLayerRemove,
-            onCreate: handleLayerCreate,
-            onDragStart: handleDragStart,
-            onMarkerDragStart: handleMarkerDragStart,
-            onLayerRotateStart: handleLayerRotateStart
-          }, 'on')
-          featureGroupRef.current.addLayer(layer)
-        })
-      }
-
-      setInitialGeomanLayersLoaded(true)
+  const loadOriginalLayers = () => {
+    if (!map.originalLayersGeoJSON || !map.originalLayersGeoJSON.length) {
+      return null
     }
-
-  }, [map.originalLayersGeoJSON, featureGroupRef.current, map.currentMapProprietaryJSON])
-
-  useEffect(() => {
-    const heatValueProperties = findHeatValueProperties(map.currentMapGeoJSON)
-    const selectedHeatValueProperty = heatValueProperties[0]
-    map.setHeatPropertiesAndSelected(selectedHeatValueProperty, heatValueProperties)
-  },[map.currentMapGeoJSON]);
-  function findHeatValueProperties(geojsonData) {
-    let potentialProperties = new Set();
-  
-    geojsonData.features.forEach(feature => {
-      Object.keys(feature.properties).forEach(key => {
-        if (typeof feature.properties[key] === 'number') {
-          potentialProperties.add(key);
+    let layers
+    if (map.currentMapProprietaryJSON.templateType !== "heat") {
+      layers = map.originalLayersGeoJSON.map((layerGeoJSON, index)=> {
+        const type = layerGeoJSON.properties.layerType
+        let layer
+        if (type === "circle") {
+          // layer = L.circle([layerGeoJSON.geometry.coordinates[1],layerGeoJSON.geometry.coordinates[0]], layerGeoJSON.properties.options)
+          layer = <Circle 
+            key={index}
+            center={[layerGeoJSON.geometry.coordinates[1],layerGeoJSON.geometry.coordinates[0]]}
+            radius={layer.properties.options.radius}
+            pathOptions={ {...layer.GeoJSON.properties.options} }
+          />
         }
-      });
-    });
-  
-    return Array.from(potentialProperties);
-  }
-  
-  useEffect(() => {
-    if (map.currentMapProprietaryJSON.templateType === "heat") {
-      if (featureGroupRef.current && map.currentMapGeoJSON) {
-        const choroplethLayer = L.choropleth(map.currentMapGeoJSON, {
-          valueProperty: map.heatValueSelectedProperty, // TODO: find a way to automatically detect valueProperty
-          scale: map.heatColors, 
-          steps: map.numHeatSections,
-          mode: 'q',
-          style: {
-            color: '#fff',
-            weight: 2,
-            fillOpacity: 0.8
-          },
-          onEachFeature: function(feature, layer) {
+        else if (type === "circleMarker") {
+          // layer = L.circleMarker([layerGeoJSON.geometry.coordinates[1],layerGeoJSON.geometry.coordinates[0]], layerGeoJSON.properties.options)
+          layer = <CircleMarker 
+            key={index}
+            center={[layerGeoJSON.geometry.coordinates[1],layerGeoJSON.geometry.coordinates[0]]}
+            radius={layer.properties.options.radius}
+            pathOptions={ {...layer.GeoJSON.properties.options} }
+            />
+        }
+        else if (type === "marker") {
+          const icon = L.divIcon(layerGeoJSON.properties.options)
+          // layer = L.marker([layerGeoJSON.geometry.coordinates[1],layerGeoJSON.geometry.coordinates[0]], { icon })
+          layer = <Marker position={[layerGeoJSON.geometry.coordinates[1],layerGeoJSON.geometry.coordinates[0]]}
+                          icon={icon}/>
+        }
+        else {
+          // layer = L.geoJSON(layerGeoJSON, {pmIgnore: false, style: feature => feature.properties.option})
+          layer = <GeoJSON data={layerGeoJSON} pmIgnore={false} style={feature => feature.properties.option} />
+        }
+        // console.log(layer)
+        // if (editEnabled) {
+        //   layerEvents(layer, {
+        //     onUpdate: handleLayerUpdate,
+        //     onLayerRemove: handleLayerRemove,
+        //     onCreate: handleLayerCreate,
+        //     onDragStart: handleDragStart,
+        //     onMarkerDragStart: handleMarkerDragStart,
+        //     onLayerRotateStart: handleLayerRotateStart
+        //   }, 'on');
+        // }
+        return layer
+
+      })
+    }
+    else {
+      const choroplethOptions = {
+        valueProperty: 'density', // TODO: find a way to automatically detect valueProperty
+        scale: map.heatColors, 
+        steps: map.numHeatSections,
+        mode: 'q',
+        style: {
+          color: '#fff',
+          weight: 2,
+          fillOpacity: 0.8
+        }
+      }
+    layers = (<LayerGroup>
+      <GeoJSON
+        data={map.currentMapGeoJSON}
+        style={(feature) => {
+          const value = feature.properties[choroplethOptions.valueProperty];
+          const color = choroplethOptions.scale[
+            Math.floor((value - choroplethOptions.min) / choroplethOptions.step)
+          ];
+          return { ...choroplethOptions.style, fillColor: color };
+        }}
+        onEachFeature = { function(feature, layer) {
             layer.on({
               click: chroroClick
             }); 
           }
-        });
-  
-        layerEvents(choroplethLayer, {
-          onUpdate: handleLayerUpdate,
-          onLayerRemove: handleLayerRemove,
-          onCreate: handleLayerCreate,
-          onDragStart: handleDragStart,
-          onMarkerDragStart: handleMarkerDragStart,
-          onLayerRotateStart: handleLayerRotateStart
-        }, 'on');
-  
-        featureGroupRef.current.addLayer(choroplethLayer);
-      }
+        }
+      />
+    </LayerGroup>)
+      // layers = L.choropleth(map.currentMapGeoJSON, choroplethOptions,
+      //   onEachFeature: function(feature, layer) {
+      //     layer.on({
+      //       click: chroroClick
+      //     }); 
+      //     }
+      //   )};
+
+      // if (editEnabled) {
+      //     layerEvents(layers, {
+      //       onUpdate: handleLayerUpdate,
+      //       onLayerRemove: handleLayerRemove,
+      //       onCreate: handleLayerCreate,
+      //       onDragStart: handleDragStart,
+      //       onMarkerDragStart: handleMarkerDragStart,
+      //       onLayerRotateStart: handleLayerRotateStart
+      //     }, 'on');
+      //   }
     }
-  }, [map.currentMapGeoJSON, map.heatValueProperties, map.heatValueSelectedProperty, map.numHeatSections, map.heatColors, map.currentMapProprietaryJSON.templateType, featureGroupRef.current]);  
+
+    return layers
+      
+  }
+
+
+  
+  // useEffect(() => {
+  //   if (!featureGroupRef || !featureGroupRef.current) {
+  //     console.log(featureGroupRef)
+  //     return
+  //   }
+
+  //   if (map.originalLayersGeoJSON && map.currentMapProprietaryJSON.templateType !== "heat") {
+  //   }
+  // }, [])
+
+
+  // useEffect(() => {
+
+  //   if (!featureGroupRef || !featureGroupRef) {
+  //     console.log(featureGroupRef)
+  //     return
+  //   }
+  //   if (map.currentMapProprietaryJSON.templateType === "heat") {
+  //     if ( featureGroupRef.current && map.currentMapGeoJSON) {
+  //       const choroplethLayer = L.choropleth(map.currentMapGeoJSON, {
+  //         valueProperty: 'density', // TODO: find a way to automatically detect valueProperty
+  //         scale: map.heatColors, 
+  //         steps: map.numHeatSections,
+  //         mode: 'q',
+  //         style: {
+  //           color: '#fff',
+  //           weight: 2,
+  //           fillOpacity: 0.8
+  //         },
+  //         onEachFeature: function(feature, layer) {
+  //           layer.on({
+  //             click: chroroClick
+  //           }); 
+  //         }
+  //       });
+  
+  //       layerEvents(choroplethLayer, {
+  //         onUpdate: handleLayerUpdate,
+  //         onLayerRemove: handleLayerRemove,
+  //         onCreate: handleLayerCreate,
+  //         onDragStart: handleDragStart,
+  //         onMarkerDragStart: handleMarkerDragStart,
+  //         onLayerRotateStart: handleLayerRotateStart
+  //       }, 'on');
+  
+  //       featureGroupRef.current.addLayer(choroplethLayer);
+  //     }
+  //   }
+  // }, []);  
   function chroroClick(e){
     var layer = e.target;
     layer.bindPopup("Density: " + layer.feature.properties.density)
   }
-  // useEffect(() => {
 
-  //   console.log(mapContainerRef)
-  //   if (selectedFeature && mapContainerRef.current.current) {
-  //     // Create a container for the portal
-  //     console.log('inside if')
-  //     const container = document.createElement('div');
-  //     setPopupContainer(container);
-
-  //     const popup = L.popup().setLatLng(selectedFeature.geometry.coordinates);
-  //     popup.setContent(container);
-  //     popup.openOn(mapContainerRef.current.current.leafletElement);
-  //   }
-  // }, [selectedFeature, mapContainerRef]);
 
   const onEachFeature = (feature, layer) => {
     const idx = map.currentMapGeoJSON.features.indexOf(feature);
@@ -332,7 +384,7 @@ function GeoJSONMap({
 
   const handleLayerRemove = (e) => {
     console.log('remove')
-    map.addDeleteLayerTransaction(e.layer, featureGroupRef)
+    map.addDeleteLayerTransaction(e.layer,  featureGroupRef)
   }
 
   const handleLayerRotateStart = (e) => {
@@ -349,7 +401,7 @@ function GeoJSONMap({
   // };
 
   const handleLayerCreate = (e) => {
-    map.addCreateLayerTransaction(e.layer, featureGroupRef);
+    map.addCreateLayerTransaction(e.layer,  featureGroupRef);
   };
 
   const handleDragStart = (e) => {
@@ -435,10 +487,7 @@ function GeoJSONMap({
           borderRadius: "1rem",
         }}
       >
-        {/* {editEnabled ? 
-                  <Geoman toggleBindPopup={toggleBindPopup} handleLayerCreate={handleLayerCreate} handleLayerUpdate={handleLayerUpdate} 
-                  handleLayerCut={handleLayerCut} handleLayerRemove={handleLayerRemove} handleLayerRotate={handleLayerRotate} icon={currentLIcon}/> : null
-                } */}
+
         {editEnabled ? (
           <FeatureGroup ref={featureGroupRef} pmIgnore={false}>
             <GeomanControls
@@ -478,67 +527,25 @@ function GeoJSONMap({
               }}
               onGlobalEditModeToggled={(e) => {
                       toggleBindPopup(e.enabled)
-                      // if (e.enabled) {
-                      //   enableEdits()
-                      // }
-                      // else {
-                      //   disableAllEdits()
-                      // }
               }}
-              // onGlobalRemovalModeToggled={(e) => {
-              //         toggleBindPopup(e.enabled)
-              //         console.log('toggle remove')
-              //         // if (e.enabled) {
-              //         //   enableEdits({allowRemoval: true, allowEditing: false})
-              //         // }
-              //         // else {
-              //         //   disableAllEdits()
-              //         // }
-              //         // toggleEdits(e.enabled, {allowEditing: false, allowRemoval: true, allowCutting: false, 
-              //         //    draggable: false, allowRotation: false})
-              // }}
+
               onGlobalCutModeToggled = {e => {
                 toggleBindPopup(e.enabled)
-                // if (e.enabled) {
-                //   enableEdits({allowCutting: true, allowEditing: false})
-                // }
-                // else {
-                //   disableAllEdits()
-                // }
-
-                // toggleEdits(e.enabled, {allowEditing: false, allowRemoval: false, allowCutting: true, 
-                //    draggable: false, allowRotation: false})
 
               }}
               onGlobalRotateModeToggled={e => {
                 toggleBindPopup(e.enabled)
-                // if (e.enabled) {
-                //   enableEdits({allowRotation: true, allowEditing: false})
-                // }
-                // else {
-                //   disableAllEdits()
-                // }
-                // toggleEdits(e.enabled, {allowEditing: false, allowRemoval: false, allowCutting: false, 
-                //    draggable: false, allowRotation: true})
 
               }}
               onGlobalDragModeToggled={e => {
                 toggleBindPopup(e.enabled)
-                // if (e.enabled) {
-                //   enableEdits({draggable: true,  allowEditing: false})
-                // }
-                // else {
-                //   disableAllEdits()
-                // }
-                // toggleEdits(e.enabled, {allowEditing: false, allowRemoval: false, allowCutting: false, 
-                //    draggable: true, allowRotation: false})
               }}
-            
             />
+            {loadOriginalLayers(map.originalLayersGeoJSON)}
           </FeatureGroup>
         ) 
           : (<FeatureGroup ref={featureGroupRef}>
-            
+              {loadOriginalLayers(map.originalLayersGeoJSON)}
             
             </FeatureGroup>)
       }
