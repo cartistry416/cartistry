@@ -236,7 +236,6 @@ function GlobalPostContextProvider(props) {
             if (response.status !== 200) {
                 return 
             }
-            console.log(response.data.post)
             postReducer({
                 type: GlobalPostActionType.LOAD_POST,
                 payload: { post: response.data.post }
@@ -372,7 +371,6 @@ function GlobalPostContextProvider(props) {
     post.createComment = async (id, comment) => {
         try {
             const response = await api.commentOnPost(id, comment, auth.user.userId)
-            console.log(response.data.comment)
             if (response.status === 200) {
                 postReducer({
                     type: GlobalPostActionType.CREATE_COMMENT,

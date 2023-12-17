@@ -9,7 +9,7 @@ async function unzipBlobToJSON(blob) {
     try {
         if (firstFileName) {
             let content = await zip.file(firstFileName).async('uint8array')
-            content = new TextDecoder().decode(content)
+            content = new TextDecoder('utf-8').decode(content)
             return {currentGeoJSON: JSON.parse(content), originalGeoJSON: JSON.parse(content)}
           }
     }

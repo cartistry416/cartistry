@@ -16,7 +16,7 @@ import "leaflet/dist/leaflet.css";
 import * as ReactDOM from "react-dom/client";
 
 import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
-import { GeomanControls } from "react-leaflet-geoman-v2";
+import { GeomanControls, layerEvents } from "react-leaflet-geoman-v2";
 import EditFeaturePopup from "./EditFeaturePopup";
 import 'leaflet-choropleth';
 
@@ -46,12 +46,14 @@ function GeoJSONMap({
   setMapRef,
   mapRef,
   currentMarkerIcon,
+  featureGroupRef
 }) {
   const { map } = useContext(GlobalMapContext);
 
-  const featureGroupRef = useRef(null);
 
   const [originalLatLngs, setOriginalLatLngs] = useState(null);
+  const [initialGeomanLayersLoaded, setInitialGeomanLayersLoaded] = useState(false)
+
   const originalLatLngsRef = useRef(null);
 
   useEffect(() => {}, [mapRef]);
@@ -63,6 +65,29 @@ function GeoJSONMap({
   useEffect(() => {
     originalLatLngsRef.current = originalLatLngs;
   }, [originalLatLngs]);
+
+  useEffect(() => {
+    console.log(map.originalLayersGeoJSON)
+    if (map.originalLayersGeoJSON && featureGroupRef.current && !initialGeomanLayersLoaded) {
+      if (map.originalLayersGeoJSON.length && map.originalLayersGeoJSON.length > 0) {
+        map.originalLayersGeoJSON.forEach(layerGeoJSON => {
+          const layer = L.geoJSON(layerGeoJSON, {pmIgnore: false})
+          layerEvents(layer, {
+            onUpdate: handleLayerUpdate,
+            onLayerRemove: handleLayerRemove,
+            onCreate: handleLayerCreate,
+            onDragStart: handleDragStart,
+            onMarkerDragStart: handleMarkerDragStart,
+            onLayerRotateStart: handleLayerRotateStart
+          }, 'on')
+          featureGroupRef.current.addLayer(layer)
+        })
+      }
+
+      setInitialGeomanLayersLoaded(true)
+    }
+
+  }, [map.originalLayersGeoJSON, featureGroupRef.current])
   useEffect(() => {
     if (mapRef && map.currentMapGeoJSON) {
       const choroplethLayer = L.choropleth(map.currentMapGeoJSON, {
@@ -214,11 +239,11 @@ function GeoJSONMap({
     console.log(e);
   };
 
-  const handleVertexClick = (e) => {
-    console.log("vertex clicked");
-    const layer = e.layer;
-    setOriginalLatLngs(layer.getLatLngs());
-  };
+  // const handleVertexClick = (e) => {
+  //   console.log("vertex clicked");
+  //   const layer = e.layer;
+  //   setOriginalLatLngs(layer.getLatLngs());
+  // };
 
   const handleLayerUpdate = (e) => {
     const layer = e.layer;
@@ -237,31 +262,32 @@ function GeoJSONMap({
 
   };
 
-      const handleLayerCut = (e) => {
+      // const handleLayerCut = (e) => {
 
-        // console.log(e.originalLayer)
-        // console.log(e.layer)
+      //   // console.log(e.originalLayer)
+      //   // console.log(e.layer)
 
-        e.layer.alreadyCut = true
-        map.addCutLayerTransaction(e.originalLayer, e.layer, featureGroupRef, mapRef)
-      }
+      //   e.layer.alreadyCut = true
+      //   map.addCutLayerTransaction(e.originalLayer, e.layer, featureGroupRef, mapRef)
+      // }
 
-    const handleLayerRemove = (e) => {
-      map.addDeleteLayerTransaction(e.layer, featureGroupRef)
-    }
+  const handleLayerRemove = (e) => {
+    console.log('remove')
+    map.addDeleteLayerTransaction(e.layer, featureGroupRef)
+  }
 
   const handleLayerRotateStart = (e) => {
     const layer = e.layer;
     setOriginalLatLngs(layer.getLatLngs());
   };
-  const handleLayerRotateEnd = (e) => {
-    console.log("rotate end");
-    // console.log(e.layer)
-    // console.log(e.startAngle)
-    // console.log(e.angle)
-    // console.log(e.originLatLngs)
-    // console.log(e.newLatLngs)
-  };
+  // const handleLayerRotateEnd = (e) => {
+  //   console.log("rotate end");
+  //   console.log(e.layer)
+  //   console.log(e.startAngle)
+  //   console.log(e.angle)
+  //   console.log(e.originLatLngs)
+  //   console.log(e.newLatLngs)
+  // };
 
   const handleLayerCreate = (e) => {
     map.addCreateLayerTransaction(e.layer, featureGroupRef);
@@ -279,9 +305,9 @@ function GeoJSONMap({
     setOriginalLatLngs(latLngs);
   };
 
-    const handleDragEnd = (e) => {
-      console.log(e.layer)
-    }
+    // const handleDragEnd = (e) => {
+    //   console.log(e.layer)
+    // }
 
     // const handleEdit = (e) => {
     //   setOriginalLatLngs(e.layer.getLatLngs());
@@ -329,6 +355,8 @@ function GeoJSONMap({
     setOriginalLatLngs(latLngs);
   }
 
+
+
   const defaultIcon = L.divIcon({
     className: 'custom-icon',
     html: '<span class="material-icons">location_on</span>',
@@ -372,16 +400,16 @@ function GeoJSONMap({
               }}
               // onDrawEnd={handleLayerDraw}
               onCreate={handleLayerCreate}
-              onVertexClick={handleVertexClick}
+              // onVertexClick={handleVertexClick}
               onUpdate={handleLayerUpdate}
               // onMapCut={handleLayerCut}
               // onLayerCut={handleLayerCut}
               onMarkerDragStart={handleMarkerDragStart}
               // onEdit={handleEdit}
               onDragStart={handleDragStart}
-              onDragEnd={handleDragEnd}
+              // onDragEnd={handleDragEnd}
               onLayerRotateStart={handleLayerRotateStart}
-              onLayerRotateEnd={handleLayerRotateEnd}
+              // onLayerRotateEnd={handleLayerRotateEnd}
               onLayerRemove= {handleLayerRemove}
               onGlobalDrawModeToggled={(e) => {
                 if (e.shape === 'Marker') {

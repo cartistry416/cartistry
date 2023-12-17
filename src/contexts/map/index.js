@@ -8,8 +8,6 @@ import _, { after, before, findIndex, update } from 'lodash'
 import EditFeature_Transaction from '../../transactions/EditFeature_Transaction'
 import CreateLayer_Transaction from '../../transactions/CreateLayer_Transaction'
 import RemoveLayer_Transaction from '../../transactions/RemoveLayer_Transaction'
-import { LayerGroup } from 'react-leaflet'
-import CutLayer_Transaction from '../../transactions/CutLayer_Transaction'
 import * as L from "leaflet";
 import UpdateLayerLatLngs_Transaction from '../../transactions/UpdateLayerLatLngs_Transaction'
 
@@ -56,6 +54,7 @@ function GlobalMapContextProvider(props) {
         currentMapGeoJSON: null,
         currentMapProprietaryJSON: null,
         currentMapProprietaryJSONOriginal: null,
+        originalLayersGeoJSON: null,
         colorSelected: "#3388ff",
         markerActive: false,
         heatColors: ["#ffffff", "#e08300", "#e90101"],
@@ -78,7 +77,8 @@ function GlobalMapContextProvider(props) {
                   currentMapGeoJSON: null,
                   currentMapGeoJSONOriginal: null,
                   currentMapProprietaryJSON: null,
-                  currentMapProprietaryJSONOriginal: null
+                  currentMapProprietaryJSONOriginal: null,
+                  originalLayersGeoJSON: null,
                 })
               }
             
@@ -109,8 +109,9 @@ function GlobalMapContextProvider(props) {
                     currentMapGeoJSONOriginal: payload.originalGeoJSON,
                     currentMapGeoJSON: payload.currentGeoJSON,
                     currentMapMetadata: payload.mapMetadata,
-                    currentMapProprietaryJSON: payload.currentProprietaryJSON,
-                    currentMapProprietaryJSONOriginal: payload.originalProprietaryJSON,
+                    currentMapProprietaryJSONOriginal: payload.currentMapProprietaryJSONOriginal,
+                    currentMapProprietaryJSON: payload.currentMapProprietaryJSON,
+                    originalLayersGeoJSON: payload.originalLayersGeoJSON
                 })
             }
 
@@ -165,7 +166,8 @@ function GlobalMapContextProvider(props) {
                     currentMapGeoJSONOriginal: map.currentMapGeoJSON,
                     currentMapGeoJSON: _.cloneDeep(map.currentMapGeoJSON),
                     currentMapProprietaryJSONOriginal: map.currentMapProprietaryJSON,
-                    currentMapProprietaryJSON: _.cloneDeep(map.currentMapProprietaryJSON)
+                    currentMapProprietaryJSON: _.cloneDeep(map.currentMapProprietaryJSON),
+                    originalLayersGeoJSON: payload.layersGeoJSON
                 })
             }
 
@@ -235,7 +237,7 @@ function GlobalMapContextProvider(props) {
             case GlobalMapActionType.SET_COLOR_SELECTED: {
                 return setMap({
                     ...map,
-                    colorSelected: payload.color
+                    colorSelected: payload.color,
                 })
             }
             case GlobalMapActionType.SET_MARKER_ACTIVE: {
@@ -316,24 +318,35 @@ function GlobalMapContextProvider(props) {
                 return
             }
             response = await api.getMapData(id)
-            const {currentGeoJSON, originalGeoJSON} = await unzipBlobToJSON(response.data)
-            response = await api.getMapProprietaryData(id)
+            const responseBodyString = new TextDecoder('utf-8').decode(response.data);
+            const parts = responseBodyString.split(`\r\n--boundary--`)[0].split('--boundary');
+
+            const currentMapProprietaryJSON = JSON.parse(parts[1].split('\r\n\r\n')[1]).proprietaryJSON
+            const currentMapProprietaryJSONOriginal = JSON.parse(parts[1].split('\r\n\r\n')[1]).proprietaryJSON
+
+            const currentGeoJSON = JSON.parse(parts[2].split('\r\n\r\n')[1])
+            const originalGeoJSON = JSON.parse(parts[2].split('\r\n\r\n')[1])
+
+            let originalLayersGeoJSON = null
+            try {
+                originalLayersGeoJSON = JSON.parse(parts[3].split('\r\n\r\n')[1])
+            }
+            catch (err) {
+                console.log('no layers sent, probably not initialized')
+            }
+
             mapReducer({
                 type: GlobalMapActionType.LOAD_MAP,
-                payload: {
-                    currentGeoJSON,
-                    originalGeoJSON,
-                    mapMetadata,
-                    currentProprietaryJSON: response.data.proprietaryJSON,
-                    originalProprietaryJSON: response.data.proprietaryJSON
-                }
+                payload: {currentGeoJSON, originalGeoJSON, mapMetadata,currentMapProprietaryJSON, 
+                    currentMapProprietaryJSONOriginal, originalLayersGeoJSON}
             })
         }
         catch (error) {
-            mapReducer({
-                type: GlobalMapActionType.ERROR_MODAL,
-                payload: { hasError: true, errorMessage: error.response.data.errorMessage }
-            })
+            console.error(error)
+            // mapReducer({
+            //     type: GlobalMapActionType.ERROR_MODAL,
+            //     payload: { hasError: true, errorMessage: error.response.data.errorMessage }
+            // })
         }
     }
 
@@ -500,37 +513,54 @@ function GlobalMapContextProvider(props) {
       }
     }
 
-    map.saveMapEdits = async (id, thumbnail) => {
-        const delta1 = generateDiff(map.currentMapGeoJSONOriginal, map.currentMapGeoJSON)
-        const delta2 = generateDiff(map.currentMapProprietaryJSONOriginal, map.currentMapProprietaryJSON)
-        if (!delta1 && !delta2) {
-            console.error("no deltas created. Was the map even edited to begin with?")
+    map.saveMapEdits = async (id, thumbnail, featureGroupRef) => {
+
+        if (!featureGroupRef.current) {
+            console.error("no feature group for geoman")
             return
         }
 
+        let layersGeoJSON = {}
+        const layers = featureGroupRef.current.pm.getLayers()
+        if (layers.length > 0) {
+            layersGeoJSON = layers.map(layer => layer.toGeoJSON())
+        }
+        
+
+        const delta1 = generateDiff(map.currentMapGeoJSONOriginal, map.currentMapGeoJSON)
+        const delta2 = generateDiff(map.currentMapProprietaryJSONOriginal, map.currentMapProprietaryJSON)
+        const delta3 = generateDiff(map.originalLayersGeoJSON, layersGeoJSON)
+
+        if (!delta1 && !delta2 && !delta3) {
+            alert('no deltas, no edits')
+            return
+        }
 
         try {
             const proprietaryJSON = delta2 ? map.currentMapProprietaryJSON : null
 
-            console.log("Size of geoJSON: " + JSON.stringify(map.currentMapGeoJSON).length) 
-            console.log("Size of delta: " + JSON.stringify(delta1).length) 
+            // console.log("Size of geoJSON: " + JSON.stringify(map.currentMapGeoJSON).length) 
+            // console.log("Size of delta: " + JSON.stringify(delta1).length) 
+            // console.log("size of layers: " + JSON.stringify(layersGeoJSON).length)
 
-            const response = await api.saveMapEdits(id, delta1, proprietaryJSON, thumbnail)
+
+            const response = await api.saveMapEdits(id, delta1, proprietaryJSON, thumbnail, delta3)
             if (response.status === 200) {
                 tps.clearAllTransactions()
                 alert("Map edits saved successfully. Clearing TPS stack and setting original geoJSON to current geoJSON")
                 mapReducer({
                     type: GlobalMapActionType.SAVE_MAP_EDITS, // in the reducer, update original geoJSON and original proprietary geoJSON
-                    payload: {}
+                    payload: {layersGeoJSON}
                 })
             }
 
         }
         catch (error) {
-            mapReducer({
-                type: GlobalMapActionType.ERROR_MODAL,
-                payload: { hasError: true, errorMessage: error.response.data.errorMessage }
-            })
+            console.error(error)
+            // mapReducer({
+            //     type: GlobalMapActionType.ERROR_MODAL,
+            //     payload: { hasError: true, errorMessage: error.response.data.errorMessage }
+            // })
         }
     }
 
@@ -620,7 +650,6 @@ function GlobalMapContextProvider(props) {
     map.addDeleteLayerTransaction = (layer, featureGroupRef) => {
         const transaction = new RemoveLayer_Transaction(map, layer, featureGroupRef)
         tps.addTransaction(transaction, false)
-        console.log('delete transaction added')
     }
 
     map.deleteLayerDo = (layer, featureGroupRef) => {
@@ -637,64 +666,66 @@ function GlobalMapContextProvider(props) {
         featureGroupRef.current.addLayer(layer)
     }
 
-    map.addCutLayerTransaction = (beforeLayer, afterLayer, featureGroupRef, mapRef) => {
 
-        // const beforeLayerGeoJSON = beforeLayer.toGeoJSON()
-        // const options1 = {pmIgnore: false, style: function (feature) {
-        //     return beforeLayer.options;
-        // }}
-        // const beforeLayerClone = L.geoJSON(beforeLayerGeoJSON, options1)
 
-        // featureGroupRef.current.removeLayer(afterLayer)
+    // map.addCutLayerTransaction = (beforeLayer, afterLayer, featureGroupRef, mapRef) => {
 
-        // const afterLayerGeoJSON = afterLayer.toGeoJSON()
-        // const options2 = {pmIgnore: false, style: function (feature) {
-        //     return afterLayer.options;
-        // }}
-        // const afterLayerClone = L.geoJSON(afterLayerGeoJSON, options2)
+    //     // const beforeLayerGeoJSON = beforeLayer.toGeoJSON()
+    //     // const options1 = {pmIgnore: false, style: function (feature) {
+    //     //     return beforeLayer.options;
+    //     // }}
+    //     // const beforeLayerClone = L.geoJSON(beforeLayerGeoJSON, options1)
 
-        // featureGroupRef.current.addLayer(afterLayerClone)
-        const transaction = new CutLayer_Transaction(map, beforeLayer, afterLayer, featureGroupRef, mapRef)
-        tps.addTransaction(transaction, false)
-    }
+    //     // featureGroupRef.current.removeLayer(afterLayer)
 
-    map.cutLayerDo = (beforeLayer, afterLayer, featureGroupRef, mapRef) => {
-        featureGroupRef.current.removeLayer(beforeLayer)
+    //     // const afterLayerGeoJSON = afterLayer.toGeoJSON()
+    //     // const options2 = {pmIgnore: false, style: function (feature) {
+    //     //     return afterLayer.options;
+    //     // }}
+    //     // const afterLayerClone = L.geoJSON(afterLayerGeoJSON, options2)
 
-        // afterLayer.options.pmIgnore = false
-        // L.PM.reInitLayer(afterLayer)
-        // console.log(afterLayer)
-        // afterLayer.pm.enable()
-        featureGroupRef.current.addLayer(afterLayer)
-        afterLayer.pm.enable()
-        // if(!mapRef.pm.globalEditModeEnabled()) {
-        //     // console.log('here2')
-        //     // mapRef.pm.toggleGlobalEditMode()
-        // }
+    //     // featureGroupRef.current.addLayer(afterLayerClone)
+    //     const transaction = new CutLayer_Transaction(map, beforeLayer, afterLayer, featureGroupRef, mapRef)
+    //     tps.addTransaction(transaction, false)
+    // }
 
-    }
-    map.cutLayerUndo = (beforeLayer, afterLayer, featureGroupRef, mapRef) => {
-        featureGroupRef.current.removeLayer(afterLayer)
-        // console.log(beforeLayer)
-        featureGroupRef.current.addLayer(beforeLayer)
-        beforeLayer.pm.enable() 
-        // beforeLayer.pm.setOptions({
-        //     allowEditing: false
-        // })
-        // beforeLayer.pm.setOptions({
-        //     allowEditing: true
-        // })
-        // if(!mapRef.pm.globalEditModeEnabled()) {
-        //     // console.log('here1')
-        //     mapRef.pm.toggleGlobalEditMode()
-        //     mapRef.pm.toggleGlobalEditMode()
-        //     // const button = document.querySelector('.leaflet-pm-action.action-finishMode')
-        //     // console.log(button)
-        //     // button.click()
-        // }
-        // beforeLayer.options.pmIgnore = false
-        // L.PM.reInitLayer(beforeLayer)
-    }
+    // map.cutLayerDo = (beforeLayer, afterLayer, featureGroupRef, mapRef) => {
+    //     featureGroupRef.current.removeLayer(beforeLayer)
+
+    //     // afterLayer.options.pmIgnore = false
+    //     // L.PM.reInitLayer(afterLayer)
+    //     // console.log(afterLayer)
+    //     // afterLayer.pm.enable()
+    //     featureGroupRef.current.addLayer(afterLayer)
+    //     afterLayer.pm.enable()
+    //     // if(!mapRef.pm.globalEditModeEnabled()) {
+    //     //     // console.log('here2')
+    //     //     // mapRef.pm.toggleGlobalEditMode()
+    //     // }
+
+    // }
+    // map.cutLayerUndo = (beforeLayer, afterLayer, featureGroupRef, mapRef) => {
+    //     featureGroupRef.current.removeLayer(afterLayer)
+    //     // console.log(beforeLayer)
+    //     featureGroupRef.current.addLayer(beforeLayer)
+    //     beforeLayer.pm.enable() 
+    //     // beforeLayer.pm.setOptions({
+    //     //     allowEditing: false
+    //     // })
+    //     // beforeLayer.pm.setOptions({
+    //     //     allowEditing: true
+    //     // })
+    //     // if(!mapRef.pm.globalEditModeEnabled()) {
+    //     //     // console.log('here1')
+    //     //     mapRef.pm.toggleGlobalEditMode()
+    //     //     mapRef.pm.toggleGlobalEditMode()
+    //     //     // const button = document.querySelector('.leaflet-pm-action.action-finishMode')
+    //     //     // console.log(button)
+    //     //     // button.click()
+    //     // }
+    //     // beforeLayer.options.pmIgnore = false
+    //     // L.PM.reInitLayer(beforeLayer)
+    // }
 
     map.addUpdateLayerLatLngsTransaction = (layer, featureGroupRef, oldLatLngs, newLatLngs) => {
         const transaction = new UpdateLayerLatLngs_Transaction(map, layer, featureGroupRef, oldLatLngs, newLatLngs)

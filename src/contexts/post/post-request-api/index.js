@@ -66,10 +66,10 @@ export const updatePostLikes = (id) => {
     return api.put(`/posts-api/posts/${id}/likes`)
 }
 
-export const commentOnPost = (id, textContent, userId) => {
+export const commentOnPost = (id, textContent, ownerId) => {
     return api.put(`/posts-api/posts/${id}/comment`, {
       textContent,
-      userId,
+      ownerId,
     })
 }
 

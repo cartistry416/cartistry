@@ -1,37 +1,54 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
 import "../../static/css/comment.css";
 import AuthContext from "../../auth";
 import GlobalPostContext from "../../contexts/post";
 import ConfirmDeleteModal from "../modals/ConfirmDeleteModal";
+import { useNavigate } from "react-router";
 
-function Comment({comment, index}) {
-  const {auth} = useContext(AuthContext)
-  const {post} = useContext(GlobalPostContext)
-  const [showOptions, setShowOptions] = useState(false)
+function Comment({ comment, index }) {
+  const { auth } = useContext(AuthContext);
+  const { post } = useContext(GlobalPostContext);
+  const [showOptions, setShowOptions] = useState(false);
+  const optionsRef = useRef(null);
   const [isEditing, setIsEditing] = useState(false);
   const [newComment, setNewComment] = useState(comment.textContent);
-  const [showModal, setShowModal] = useState(false)
+  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
-  let userName = ""
-  let text = ""
-  let likes = 0
+  let userName = "";
+  let text = "";
+  let ownerId = "";
 
   if (comment) {
-    userName = comment.ownerUserName
-    text = comment.textContent
-    likes = comment.likes
+    userName = comment.ownerUserName;
+    text = comment.textContent;
+    ownerId = comment.ownerId;
   }
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
+
+  const handleOutsideClick = (event) => {
+    if (optionsRef.current && !optionsRef.current.contains(event.target)) {
+      setShowOptions(false);
+    }
+  };
 
   const handleEditClick = (e) => {
     e.stopPropagation();
     setShowOptions(false);
     setIsEditing(true);
-  }
+  };
 
   const handleCommentChange = (event) => {
     event.stopPropagation();
     setNewComment(event.target.value);
-  }
+  };
 
   const handleCommentSubmit = (event) => {
     if (event.key === "Enter") {
@@ -43,7 +60,7 @@ function Comment({comment, index}) {
       post.editComment(post.currentPost._id, newComment, index);
       setIsEditing(false);
     }
-  }
+  };
 
   const onDeleteClick = (e) => {
     e.stopPropagation();
@@ -60,7 +77,7 @@ function Comment({comment, index}) {
   const timeSinceCommentCreated = (commentTimestamp) => {
     const now = new Date();
     const commentDate = new Date(commentTimestamp);
-  
+
     const timeDifference = now - commentDate;
     const seconds = Math.floor(timeDifference / 1000);
     const minutes = Math.floor(seconds / 60);
@@ -68,7 +85,7 @@ function Comment({comment, index}) {
     const days = Math.floor(hours / 24);
     const months = Math.floor(days / 30);
     const years = Math.floor(months / 12);
-  
+
     if (years > 0) {
       return `${years}y ago`;
     } else if (months > 0) {
@@ -82,7 +99,12 @@ function Comment({comment, index}) {
     } else {
       return `${seconds}s ago`;
     }
-  }
+  };
+
+  const visitProfile = (e) => {
+    e.stopPropagation();
+    navigate(`/profile/${userName}/${ownerId}`);
+  };
 
   return (
     <div className="comment-container">
@@ -90,18 +112,26 @@ function Comment({comment, index}) {
         <div className="comment-details">
           <div className="comment-avatar">
             <span className="material-icons">account_circle</span>
-            <span></span>
           </div>
-          <div className="comment-header">
-            <span className="comment-username"> {userName} • {timeSinceCommentCreated(comment.createdAt)}</span>
+          <div className="commentDetails">
+          <div onClick={visitProfile} className="username">
+            @{userName}
+          </div>
+          <div className="dividerCircle"></div>
+          <div>{timeSinceCommentCreated(comment.createdAt)}</div>
           </div>
         </div>
         <div className="comment-options">
-        {(auth.user && auth.user.userName === userName) && (
-          <span className="material-icons comment-options" onClick={() => setShowOptions(!showOptions)}>more_vert</span>
-        )}
+          {auth.user && auth.user.userName === userName && (
+            <span
+              className="material-icons comment-options"
+              onClick={() => setShowOptions(!showOptions)}
+            >
+              more_vert
+            </span>
+          )}
           {showOptions && (
-            <div className="dropdown">
+            <div ref={optionsRef} className="dropdown">
               <div className="dropdown-list">
                 <div className="dropdown-option" onClick={handleEditClick}>
                   <span className="material-icons option-icon">edit</span>
@@ -117,21 +147,18 @@ function Comment({comment, index}) {
         </div>
       </div>
       <div className="comment-body">
-          {isEditing ? (
-              <input
-                className="comment-body-input"
-                value={newComment}
-                onClick={(e) => e.stopPropagation()}
-                onChange={handleCommentChange}
-                onKeyDown={handleCommentSubmit}
-                autoFocus
-              />
-            ) : (
-              <div className="comment-content">{text}</div>
-          )}
-        <div className="comment-footer">
-          <button className="comment-likes"><span className="material-icons">favorite</span> {likes}</button>
-        </div>
+        {isEditing ? (
+          <input
+            className="comment-body-input"
+            value={newComment}
+            onClick={(e) => e.stopPropagation()}
+            onChange={handleCommentChange}
+            onKeyDown={handleCommentSubmit}
+            autoFocus
+          />
+        ) : (
+          <div className="comment-content">{text}</div>
+        )}
       </div>
       {showModal && (
         <ConfirmDeleteModal
@@ -146,7 +173,7 @@ function Comment({comment, index}) {
   );
 }
 
-function CommentThread({comment, replies, index}) {
+function CommentThread({ comment, replies, index }) {
   return (
     <div className="comment-thread">
       <Comment comment={comment} index={index} />
@@ -159,4 +186,4 @@ function CommentThread({comment, replies, index}) {
   );
 }
 
-export default CommentThread
+export default CommentThread;
