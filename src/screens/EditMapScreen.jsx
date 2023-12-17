@@ -3,7 +3,7 @@ import Toolbox from '../components/map/Toolbox';
 import GeoJSONMap from "../components/map/GeoJSONMap";
 
 import { useParams } from "react-router";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import GlobalPostContext from "../contexts/post";
 import GlobalMapContext from "../contexts/map";
 // import GeoJSONMapPureLeaflet from "../components/map/GeoJSONMapPureLeaflet";
@@ -17,6 +17,7 @@ const EditMapScreen = () =>{
     const {post} = useContext(GlobalPostContext)
     const {map} = useContext(GlobalMapContext)
     const [mapRef, setMapRef] = useState(null)
+    const featureGroupRef = useRef(null);
 
     useEffect(() => {
         post.exitCurrentPost()
@@ -45,10 +46,10 @@ const EditMapScreen = () =>{
         <div className="editMapWrapper">
             <div className="mapScreen">
                 {/* <GeoJSONMapPureLeaflet  className="mapOverlay" position={[39.74739, -105]} setMapRef={setMapRef} mapRef={mapRef} mapMetadataId={id} editEnabled={true} width="100vw" height="100vh"/>  */}
-                <GeoJSONMap className="mapOverlay" position={[39.74739, -105]} setMapRef={setMapRef} mapRef={mapRef} mapMetadataId={id} editEnabled={true} width="100vw" height="94vh"
+                <GeoJSONMap className="mapOverlay" position={[39.74739, -105]} setMapRef={setMapRef} mapRef={mapRef} mapMetadataId={id} editEnabled={true} featureGroupRef={featureGroupRef} width="100vw" height="94vh"
                 />
                 <div className="rightPanel">
-                    <Toolbox mapId={id} mapRef={mapRef}/>
+                    <Toolbox mapId={id} mapRef={mapRef} featureGroupRef={featureGroupRef}/>
                     {/* <Legend /> */}
                     <div className="sideControls">
                     <div className="iconGroup">
