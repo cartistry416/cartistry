@@ -67,11 +67,10 @@ function GeoJSONMap({
   }, [originalLatLngs]);
   
   useEffect(() => {
-    console.log(map.originalLayersGeoJSON)
-    if (map.originalLayersGeoJSON && featureGroupRef.current && !initialGeomanLayersLoaded) {
+    if (map.originalLayersGeoJSON && featureGroupRef.current && !initialGeomanLayersLoaded && map.currentMapProprietaryJSON.templateType !== "heat") {
       if (map.originalLayersGeoJSON.length && map.originalLayersGeoJSON.length > 0) {
         map.originalLayersGeoJSON.forEach(layerGeoJSON => {
-
+          console.log(layerGeoJSON.properties)
           const type = layerGeoJSON.properties.layerType
           let layer
           if (type === "circle") {
@@ -104,7 +103,7 @@ function GeoJSONMap({
       setInitialGeomanLayersLoaded(true)
     }
 
-  }, [map.originalLayersGeoJSON, featureGroupRef.current])
+  }, [map.originalLayersGeoJSON, featureGroupRef.current, map.currentMapProprietaryJSON])
   useEffect(() => {
     if (map.currentMapProprietaryJSON.templateType === "heat") {
       if (featureGroupRef.current && map.currentMapGeoJSON) {

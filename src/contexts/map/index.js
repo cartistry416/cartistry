@@ -552,6 +552,10 @@ function GlobalMapContextProvider(props) {
                     gj.properties.layerType = 'marker'
                     gj.properties.options =  {...layer.options.icon.options, pmIgnore: false}
                 }
+                else if (layer instanceof L.FeatureGroup) {
+                    console.log('feature group')
+
+                }
                 else {
                     console.log('none of the L. whatever')
                 }
@@ -559,9 +563,8 @@ function GlobalMapContextProvider(props) {
             })
         }
 
-        console.log(layersGeoJSON.length)
+        console.log('layers sent: ',layersGeoJSON)
         
-
         const delta1 = generateDiff(map.currentMapGeoJSONOriginal, map.currentMapGeoJSON)
         const delta2 = generateDiff(map.currentMapProprietaryJSONOriginal, map.currentMapProprietaryJSON)
         const delta3 = generateDiff(map.originalLayersGeoJSON, layersGeoJSON)
