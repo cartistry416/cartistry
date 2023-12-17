@@ -246,10 +246,10 @@ function GeoJSONMap({
       permanent: true,
       direction: "center",
     });
-    layer.bindPopup(renderPopupForm(feature, idx, layer));
+    layer.bindPopup(renderPopupForm(feature, idx, layer, map.currentMapProprietaryJSON.templateType));
   };
 
-  const renderPopupForm = (feature, idx, layer) => {
+  const renderPopupForm = (feature, idx, layer, templateType) => {
     const popup = L.popup();
     const container = L.DomUtil.create("div");
     popup.setContent(container);
@@ -260,6 +260,7 @@ function GeoJSONMap({
         idx={idx}
         handlePopupSubmit={handlePopupSubmit}
         layer={layer}
+        templateType={templateType}
       >
         {" "}
       </EditFeaturePopup>
