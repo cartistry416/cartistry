@@ -14,7 +14,7 @@ import GlobalMapContext from "../../contexts/map";
 import { SimpleMapScreenshoter } from "leaflet-simple-map-screenshoter";
 import * as L from "leaflet";
 
-const Toolbox = ({ mapRef }) => {
+const Toolbox = ({ mapRef, featureGroupRef }) => {
   const { auth } = useContext(AuthContext);
   const { map } = useContext(GlobalMapContext);
   const [showOptions, setShowOptions] = useState(false);
@@ -84,7 +84,7 @@ const Toolbox = ({ mapRef }) => {
   useEffect(() => {
     if (mapRef) {
       const markerHandler = mapRef.pm.Draw.Marker;
-      console.log("test");
+      // console.log("test");
       if (markerHandler) {
         markerHandler.setOptions({
           markerStyle: {
@@ -165,7 +165,7 @@ const Toolbox = ({ mapRef }) => {
     const screenshotter = new SimpleMapScreenshoter(snapshotOptions);
     screenshotter.addTo(mapRef);
     screenshotter.takeScreen("image").then((image) => {
-      map.saveMapEdits(mapId, image);
+      map.saveMapEdits(mapId, image, featureGroupRef);
       setShowOptions(false);
     });
   };
