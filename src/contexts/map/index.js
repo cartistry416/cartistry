@@ -4,7 +4,7 @@ import api from './map-request-api'
 import AuthContext from '../../auth'
 import jsTPS from '../../common/jsTPS'
 import { generateDiff, unzipBlobToJSON, jsonToZip, deepCopyLayer} from '../../utils/utils'
-import _ from 'lodash'
+import _, { after, before, findIndex, update } from 'lodash'
 import EditFeature_Transaction from '../../transactions/EditFeature_Transaction'
 import CreateLayer_Transaction from '../../transactions/CreateLayer_Transaction'
 import RemoveLayer_Transaction from '../../transactions/RemoveLayer_Transaction'
@@ -29,7 +29,9 @@ export const GlobalMapActionType = {
     SET_COLOR_SELECTED: "SET_COLOR_SELECTED",
     EDIT_FEATURE_PROPERTY: "EDIT_FEATURE_PROPERTY",
     SET_MARKER_ACTIVE: "SET_MARKER_ACTIVE",
-    SET_HEAT_COLORS: "SET_HEAT_COLORS"
+    SET_HEAT_COLORS: "SET_HEAT_COLORS",
+    DELETE_HEAT_COLORS: "DELETE_HEAT_COLORS",
+    SET_HEAT_NUM_SECTIONS: "SET_HEAT_NUM_SECTIONS",
   }
 
 const tps = new jsTPS();
@@ -55,7 +57,8 @@ function GlobalMapContextProvider(props) {
         originalLayersGeoJSON: null,
         colorSelected: "#3388ff",
         markerActive: false,
-        heatColors: [],
+        heatColors: ["#ffffff", "#e08300", "#e90101"],
+        numHeatSections: 10,
         // mapCardIndexMarkedForDeletion: null, // Don't think we need these
         // mapCardMarkedForDeletion: null,
     });
@@ -196,6 +199,8 @@ function GlobalMapContextProvider(props) {
                     currentMapProprietaryJSON: null,
                     currentMapProprietaryJSONOriginal: null,
                     colorSelected: '#3388ff',
+                    heatColors: ["#ffffff", "#e08300", "#e90101"],
+                    numHeatSections: 10,
                     markerActive: false
                 })
             }
@@ -247,6 +252,18 @@ function GlobalMapContextProvider(props) {
                 return setMap({
                     ...map,
                     heatColors: updatedHeatColors
+                })
+            }
+            case GlobalMapActionType.DELETE_HEAT_COLORS: {
+                return setMap({
+                    ...map,
+                    heatColors: map.heatColors.slice(0, payload.newNumHeatColors)
+                })
+            }
+            case GlobalMapActionType.SET_HEAT_NUM_SECTIONS: {
+                return setMap({
+                    ...map,
+                    numHeatSections: payload.numHeatSections
                 })
             }
             case GlobalMapActionType.EDIT_FEATURE_PROPERTY: {
@@ -782,6 +799,19 @@ function GlobalMapContextProvider(props) {
         mapReducer({
             type: GlobalMapActionType.SET_HEAT_COLORS,
             payload: {index, color, numColors}
+        })
+    }
+    map.deleteHeatColors = (newNumHeatColors) => {
+        console.log(newNumHeatColors);
+        mapReducer({
+            type: GlobalMapActionType.DELETE_HEAT_COLORS,
+            payload: { newNumHeatColors }
+        });
+    }
+    map.setHeatNumSections = (numHeatSections) => {
+        mapReducer({
+            type: GlobalMapActionType.SET_HEAT_NUM_SECTIONS,
+            payload: {numHeatSections}
         })
     }
 
