@@ -495,7 +495,13 @@ function GeoJSONMap({
               options={{
                 position: "topleft",
                 drawText: false,
-                cutPolygon: false
+                cutPolygon: false,
+                drawCircle: map.currentMapProprietaryJSON.templateType === "cadastral",
+                drawRectangle: map.currentMapProprietaryJSON.templateType === "cadastral",
+                drawPolygon: map.currentMapProprietaryJSON.templateType === "cadastral", 
+                drawMarker: map.currentMapProprietaryJSON.templateType === "landmark",
+                drawPolyline: true,
+                drawCircleMarker: true,
               }}
               globalOptions={{
                 continueDrawing: false,
