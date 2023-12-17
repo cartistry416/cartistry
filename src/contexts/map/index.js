@@ -62,7 +62,7 @@ function GlobalMapContextProvider(props) {
         markerActive: false,
         heatColors: ["#ffffff", "#e08300", "#e90101"],
         numHeatSections: 10,
-        featureGroupRef: useRef(null)
+        featureGroupRef: useRef(null),
         heatValueProperties: [],
         heatValueSelectedProperty: null
         // mapCardIndexMarkedForDeletion: null, // Don't think we need these
