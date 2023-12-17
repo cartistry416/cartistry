@@ -10,8 +10,8 @@ function PostScreen() {
   const { id } = useParams();
   const { post } = useContext(GlobalPostContext);
   const [loaded, setLoaded] = useState(false);
+  // const [featureGroupRef, setFeatureGroupRef] = useState(null)
   const featureGroupRef = useRef(null)
-
   useEffect(() => {
     post.loadPost(id).then(() => {
       setLoaded(true);

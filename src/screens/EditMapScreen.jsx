@@ -17,7 +17,9 @@ const EditMapScreen = () =>{
     const {post} = useContext(GlobalPostContext)
     const {map} = useContext(GlobalMapContext)
     const [mapRef, setMapRef] = useState(null)
-    const featureGroupRef = useRef(null);
+
+    // const [featureGroupRef, setFeatureGroupRef] = useState(null)
+    const featureGroupRef = useRef(null)
 
     useEffect(() => {
         post.exitCurrentPost()
@@ -46,7 +48,10 @@ const EditMapScreen = () =>{
         <div className="editMapWrapper">
             <div className="mapScreen">
                 {/* <GeoJSONMapPureLeaflet  className="mapOverlay" position={[39.74739, -105]} setMapRef={setMapRef} mapRef={mapRef} mapMetadataId={id} editEnabled={true} width="100vw" height="100vh"/>  */}
-                <GeoJSONMap className="mapOverlay" position={[39.74739, -105]} setMapRef={setMapRef} mapRef={mapRef} mapMetadataId={id} editEnabled={true} featureGroupRef={featureGroupRef} width="100vw" height="94vh"
+                <GeoJSONMap className="mapOverlay" position={[39.74739, -105]} setMapRef={setMapRef} mapRef={mapRef} mapMetadataId={id} 
+                editEnabled={true}
+                featureGroupRef={featureGroupRef}
+                width="100vw" height="94vh"
                 />
                 <div className="rightPanel">
                     <Toolbox mapId={id} mapRef={mapRef} featureGroupRef={featureGroupRef}/>

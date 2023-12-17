@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useRef, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import api from './map-request-api'
 import AuthContext from '../../auth'
@@ -62,6 +62,7 @@ function GlobalMapContextProvider(props) {
         markerActive: false,
         heatColors: ["#ffffff", "#e08300", "#e90101"],
         numHeatSections: 10,
+        featureGroupRef: useRef(null)
         heatValueProperties: [],
         heatValueSelectedProperty: null
         // mapCardIndexMarkedForDeletion: null, // Don't think we need these
@@ -358,7 +359,7 @@ function GlobalMapContextProvider(props) {
             catch (err) {
                 console.log('no layers sent, probably not initialized')
             }
-            console.log('map loaded')
+
             mapReducer({
                 type: GlobalMapActionType.LOAD_MAP,
                 payload: {currentGeoJSON, originalGeoJSON, mapMetadata,currentMapProprietaryJSON, 
