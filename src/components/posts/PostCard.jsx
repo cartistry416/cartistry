@@ -20,14 +20,14 @@ function PostCard({
 }) {
   const { post } = useContext(GlobalPostContext);
   const { auth } = useContext(AuthContext);
-
-  const alreadyLiked = auth.loggedIn && auth.likedPosts.has(postId);
-
   const [showOptions, setShowOptions] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const dropdownRef = useRef(null);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [alreadyLiked, setAlreadyLiked] = useState(
+    auth.loggedIn && auth.likedPosts.has(postId)
+  );
 
   const navigate = useNavigate();
 
@@ -51,6 +51,7 @@ function PostCard({
     e.stopPropagation();
     if (auth.loggedIn) {
       await post.updatePostLikes(postId);
+      setAlreadyLiked(!alreadyLiked);
     } else {
       setErrorMessage("Please log in to like");
       setShowError(true);
@@ -94,13 +95,13 @@ function PostCard({
   };
 
   const handleReset = () => {
-    setShowError(false)
-  }
+    setShowError(false);
+  };
 
   const timeSincePostCreated = (postTimestamp) => {
     const now = new Date();
     const postDate = new Date(postTimestamp);
-  
+
     const timeDifference = now - postDate;
     const seconds = Math.floor(timeDifference / 1000);
     const minutes = Math.floor(seconds / 60);
@@ -108,7 +109,7 @@ function PostCard({
     const days = Math.floor(hours / 24);
     const months = Math.floor(days / 30);
     const years = Math.floor(months / 12);
-  
+
     if (years > 0) {
       return `${years}y ago`;
     } else if (months > 0) {
@@ -122,7 +123,7 @@ function PostCard({
     } else {
       return `${seconds}s ago`;
     }
-  }
+  };
 
   return (
     <div className="postCardWrapper">
@@ -132,7 +133,9 @@ function PostCard({
       <div className="postCardDescription">
         <div className="postCardTitle">{title}</div>
         <div className="postCardDescription2">
-          <div onClick={visitProfile} className="username">@{username}</div>
+          <div onClick={visitProfile} className="username">
+            @{username}
+          </div>
           <div className="dividerCircle"></div>
           <div>{timeSincePostCreated(time)}</div>
           {tags.map((tag, index) => (
