@@ -295,6 +295,7 @@ const Toolbox = ({ mapRef }) => {
                 <span className="toolbox-gradient-label"># of Colors</span>
                 <input
                   type="number"
+                  defaultValue={1}
                   className="toolbox-gradient-controls-numberInput"
                   onChange={handleNumColorsChange}
                 />
