@@ -2,7 +2,7 @@ import CommentThread from "../components/posts/CommentThread";
 import Post from "../components/posts/Post";
 import "../static/css/post.css";
 import { useParams } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import GlobalPostContext from "../contexts/post";
 import GeoJSONMap from "../components/map/GeoJSONMap";
 
@@ -10,6 +10,7 @@ function PostScreen() {
   const { id } = useParams();
   const { post } = useContext(GlobalPostContext);
   const [loaded, setLoaded] = useState(false);
+  const featureGroupRef = useRef(null)
 
   useEffect(() => {
     post.loadPost(id).then(() => {
@@ -49,6 +50,7 @@ function PostScreen() {
                 mapMetadataId={post.currentPost.mapMetadata}
                 position={[39.74739, -105]}
                 editEnabled={false}
+                featureGroupRef={featureGroupRef}
                 width="100%"
                 height="100%"
               />
