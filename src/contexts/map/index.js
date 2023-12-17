@@ -32,8 +32,9 @@ export const GlobalMapActionType = {
     SET_HEAT_COLORS: "SET_HEAT_COLORS",
     DELETE_HEAT_COLORS: "DELETE_HEAT_COLORS", //TODO: make this edit instead of delete
     SET_HEAT_NUM_SECTIONS: "SET_HEAT_NUM_SECTIONS",
-    SET_HEAT_SELECTED_VALUE_PROPERTY: "SET_HEAT_SELECTED_VALUE_PROPERTY",
+    SET_HEAT_PROPERTIES_AND_SELECTED: "SET_HEAT_PROPERTIES_AND_SELECTED",
     EDIT_HEAT_VALUE_PROPERTIES: "EDIT_HEAT_VALUE_PROPERTIES",
+    EDIT_HEAT_VALUE_SELECTED: "EDIT_HEAT_VALUE_SELECTED",
 }
 
 const tps = new jsTPS();
@@ -61,7 +62,7 @@ function GlobalMapContextProvider(props) {
         markerActive: false,
         heatColors: ["#ffffff", "#e08300", "#e90101"],
         numHeatSections: 10,
-        heatValueProperties: ["test"],
+        heatValueProperties: [],
         heatValueSelectedProperty: null
         // mapCardIndexMarkedForDeletion: null, // Don't think we need these
         // mapCardMarkedForDeletion: null,
@@ -270,9 +271,22 @@ function GlobalMapContextProvider(props) {
                     numHeatSections: payload.numHeatSections
                 })
             }
-            case GlobalMapActionType.SET_HEAT_SELECTED_VALUE_PROPERTY: {
+            case GlobalMapActionType.EDIT_HEAT_VALUE_PROPERTIES: {
                 return setMap({
                     ...map,
+                    heatValueProperties: payload.heatValueProperties
+                })
+            }
+            case GlobalMapActionType.EDIT_HEAT_VALUE_SELECTED: {
+                return setMap({
+                    ...map,
+                    heatValueSelectedProperty: payload.heatValueSelectedProperty
+                })
+            }
+            case GlobalMapActionType.SET_HEAT_PROPERTIES_AND_SELECTED: {
+                return setMap({
+                    ...map,
+                    heatValueProperties: payload.heatValueProperties,
                     heatValueSelectedProperty: payload.heatValueSelectedProperty
                 })
             }
@@ -827,10 +841,22 @@ function GlobalMapContextProvider(props) {
             payload: {numHeatSections}
         })
     }
-    map.setHeatValueSelectedProperty = (heatValueSelectedProperty) => {
+    map.editHeatValueProperties = (heatValueProperties) => {
         mapReducer({
-            type: GlobalMapActionType.SET_HEAT_SELECTED_VALUE_PROPERTY,
+            type: GlobalMapActionType.EDIT_HEAT_VALUE_PROPERTIES,
+            payload: {heatValueProperties}
+        })
+    }
+    map.editHeatValueSelectedProperty = (heatValueSelectedProperty) => {
+        mapReducer({
+            type: GlobalMapActionType.EDIT_HEAT_VALUE_SELECTED,
             payload: {heatValueSelectedProperty}
+        })
+    }
+    map.setHeatPropertiesAndSelected = (heatValueSelectedProperty, heatValueProperties) => {
+        mapReducer({
+            type: GlobalMapActionType.SET_HEAT_PROPERTIES_AND_SELECTED,
+            payload: {heatValueSelectedProperty, heatValueProperties}
         })
     }
 
