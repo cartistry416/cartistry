@@ -130,7 +130,6 @@ const EditPostScreen = () => {
       if (!success) {
         throw new Error("unsuccessful response") // this seems a bit redundant, but idk if we needed to surround this with try catch in the first place
       }
-      console.log(mapMetadataId)
       if (mapMetadataId) {
         await map.loadMap(mapMetadataId)
       }

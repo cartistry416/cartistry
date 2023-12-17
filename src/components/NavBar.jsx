@@ -30,6 +30,7 @@ function NavBar() {
   };
 
   const logoutUser = () => {
+    setShowDropdown(false);
     auth.logoutUser();
     navigate("/");
   };

@@ -1,4 +1,11 @@
-import { useState, useRef, useEffect, useContext, useCallback, useMemo } from "react";
+import {
+  useState,
+  useRef,
+  useEffect,
+  useContext,
+  useCallback,
+  useMemo,
+} from "react";
 import { useNavigate } from "react-router";
 import "../../static/css/editMap/toolBox.css";
 import ConfirmDeleteModal from "../modals/ConfirmDeleteModal";
@@ -17,56 +24,62 @@ const Toolbox = ({ mapRef }) => {
   const [newTitle, setNewTitle] = useState("");
   const [mapId, setMapId] = useState("");
   const navigate = useNavigate();
-  const [currentMarkerIcon, setCurrentMarkerIcon] = useState('defaultIcon');
+  const [currentMarkerIcon, setCurrentMarkerIcon] = useState("defaultIcon");
   const [numColors, setNumColors] = useState(1);
-  
+
   useEffect(() => {
     document.addEventListener("mousedown", handleOutsideClick);
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
-      map.setColorSelected('#3388ff')
+      map.setColorSelected("#3388ff");
     };
   }, []);
 
   useEffect(() => {
     if (map.currentMapMetadata) {
       // console.log("switched map, title is: "+ map.currentMapMetadata.title)
-      setNewTitle(map.currentMapMetadata.title)
-      setMapId(map.currentMapMetadata._id)
+      setNewTitle(map.currentMapMetadata.title);
+      setMapId(map.currentMapMetadata._id);
     }
   }, [map.currentMapMetadata]);
 
   useEffect(() => {
     if (mapRef) {
-      mapRef.pm.Draw.shapes.map((shape) => (
+      mapRef.pm.Draw.shapes.map((shape) =>
         mapRef.pm.Draw[shape].setOptions({
           templineStyle: { color: map.colorSelected },
           hintlineStyle: { color: map.colorSelected },
         })
-      ))
+      );
     }
   }, [map.colorSelected]);
 
-  const createIcon = useCallback((iconName) => {
-    return L.divIcon({
-      className: 'custom-icon',
-      html: `<span class="material-icons" style="color: ${map.colorSelected};">${iconName}</span>`,
-      iconSize: L.point(50, 50),
-    });
-  }, [map.colorSelected]);
+  const createIcon = useCallback(
+    (iconName) => {
+      return L.divIcon({
+        className: "custom-icon",
+        html: `<span class="material-icons" style="color: ${map.colorSelected};">${iconName}</span>`,
+        iconSize: L.point(50, 50),
+      });
+    },
+    [map.colorSelected]
+  );
 
-  const icons = useMemo(() => ({
-    'default': createIcon('location_on'),
-    'apartment': createIcon('apartment'),
-    'restaurant': createIcon('restaurant'),
-    'school': createIcon('school'),
-    'museum': createIcon('museum'),
-    'store': createIcon('store'),
-    'home': createIcon('home'),
-    'church': createIcon('church'),
-  }), [map.colorSelected]);
-  
-  const currentLIcon = icons[currentMarkerIcon] || icons['default'];
+  const icons = useMemo(
+    () => ({
+      default: createIcon("location_on"),
+      apartment: createIcon("apartment"),
+      restaurant: createIcon("restaurant"),
+      school: createIcon("school"),
+      museum: createIcon("museum"),
+      store: createIcon("store"),
+      home: createIcon("home"),
+      church: createIcon("church"),
+    }),
+    [map.colorSelected]
+  );
+
+  const currentLIcon = icons[currentMarkerIcon] || icons["default"];
 
   useEffect(() => {
     if (mapRef) {
@@ -74,9 +87,9 @@ const Toolbox = ({ mapRef }) => {
       console.log("test");
       if (markerHandler) {
         markerHandler.setOptions({
-            markerStyle: {
-              icon: currentLIcon
-          }
+          markerStyle: {
+            icon: currentLIcon,
+          },
         });
       }
     }
@@ -163,7 +176,6 @@ const Toolbox = ({ mapRef }) => {
   };
 
   const handleColorSelectorChange = (e) => {
-    console.log(map)
     map.setColorSelected(e.target.value);
   };
 
@@ -173,7 +185,7 @@ const Toolbox = ({ mapRef }) => {
 
   const handleHeatColorSelectorChange = (index, color) => {
     map.setHeatColors(index, color, numColors);
-  }
+  };
 
   const handleIconClick = (e, iconType) => {
     // console.log(e);
@@ -290,7 +302,8 @@ const Toolbox = ({ mapRef }) => {
             </>
           )}
           <div className="toolbox-gradient-controls">
-            {(map.currentMapProprietaryJSON && map.currentMapProprietaryJSON.templateType === "heat")? (
+            {map.currentMapProprietaryJSON &&
+            map.currentMapProprietaryJSON.templateType === "heat" ? (
               <div className="toolbox-gradient-controls-row">
                 <span className="toolbox-gradient-label"># of Colors</span>
                 <input
@@ -311,21 +324,26 @@ const Toolbox = ({ mapRef }) => {
                 />
               </div>
             )}
-            {(map.currentMapProprietaryJSON && map.currentMapProprietaryJSON.templateType === "heat") && (
-              <div>
-                {Array.from({ length: numColors }, (v, index) => (
-                  <div className="heatColorInput">
-                    <span className="toolbox-gradient-label">Color {index+1}</span>
-                    <input
-                      type="color"
-                      defaultValue={"#3388ff"}
-                      className="toolbox-gradient-controls-colorInput"
-                      onChange={(e) => handleHeatColorSelectorChange(index, e.target.value)}
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
+            {map.currentMapProprietaryJSON &&
+              map.currentMapProprietaryJSON.templateType === "heat" && (
+                <div>
+                  {Array.from({ length: numColors }, (v, index) => (
+                    <div className="heatColorInput">
+                      <span className="toolbox-gradient-label">
+                        Color {index + 1}
+                      </span>
+                      <input
+                        type="color"
+                        defaultValue={"#3388ff"}
+                        className="toolbox-gradient-controls-colorInput"
+                        onChange={(e) =>
+                          handleHeatColorSelectorChange(index, e.target.value)
+                        }
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
             <div className="toolbox-gradient-controls-row">
               <span className="toolbox-gradient-label">Min</span>
               <input
