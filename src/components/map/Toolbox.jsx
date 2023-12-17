@@ -25,7 +25,6 @@ const Toolbox = ({ mapRef }) => {
   const [mapId, setMapId] = useState("");
   const navigate = useNavigate();
   const [currentMarkerIcon, setCurrentMarkerIcon] = useState("defaultIcon");
-  const [numColors, setNumColors] = useState(1);
 
   useEffect(() => {
     document.addEventListener("mousedown", handleOutsideClick);
@@ -179,12 +178,27 @@ const Toolbox = ({ mapRef }) => {
     map.setColorSelected(e.target.value);
   };
 
-  const handleNumColorsChange = (e) => {
-    setNumColors(e.target.value);
+  const handleNumColorsChange = (newNumColors) => {
+    newNumColors = parseInt(newNumColors, 10); // Ensure it's an integer
+  
+    if (newNumColors < 1) {
+      newNumColors = 1; // Minimum number of colors is 1
+    }
+  
+    const currentLength = map.heatColors.length;
+    if (newNumColors > currentLength) {
+      // Add new colors by duplicating the last one
+      for (let i = currentLength; i < newNumColors; i++) {
+        const lastColor = map.heatColors[currentLength - 1] || '#ffffff';
+        map.setHeatColors(i, lastColor, newNumColors);
+      }
+    } else if (newNumColors < currentLength) {
+      map.deleteHeatColors(newNumColors);
+    }
   };
 
-  const handleHeatColorSelectorChange = (index, color) => {
-    map.setHeatColors(index, color, numColors);
+  const handleHeatNumSectionsChange = (numHeatSections) => {
+    map.setHeatNumSections(numHeatSections);
   };
 
   const handleIconClick = (e, iconType) => {
@@ -304,14 +318,35 @@ const Toolbox = ({ mapRef }) => {
           <div className="toolbox-gradient-controls">
             {map.currentMapProprietaryJSON &&
             map.currentMapProprietaryJSON.templateType === "heat" ? (
-              <div className="toolbox-gradient-controls-row">
-                <span className="toolbox-gradient-label"># of Colors</span>
-                <input
-                  type="number"
-                  defaultValue={1}
-                  className="toolbox-gradient-controls-numberInput"
-                  onChange={handleNumColorsChange}
-                />
+              <div>
+                <div className="toolbox-gradient-controls-row">
+                  <span className="toolbox-gradient-label"># of Sections</span>
+                  <input
+                    type="number"
+                    defaultValue={10}
+                    className="toolbox-gradient-controls-numberInput"
+                    onChange={(e) => handleHeatNumSectionsChange(e.target.value)}
+                    onInput={(e) => {
+                      if (e.target.value < 1) {
+                        e.target.value = 1;
+                      }
+                    }}
+                  />
+                </div>
+                <div className="toolbox-gradient-controls-row">
+                  <span className="toolbox-gradient-label"># of Colors</span>
+                  <input
+                    type="number"
+                    defaultValue={3}
+                    className="toolbox-gradient-controls-numberInput"
+                    onChange={(e) => handleNumColorsChange(e.target.value)}
+                    onInput={(e) => {
+                      if (e.target.value < 1) {
+                        e.target.value = 1;
+                      }
+                    }}
+                  />
+                </div>
               </div>
             ) : (
               <div className="toolbox-gradient-controls-row">
@@ -327,44 +362,23 @@ const Toolbox = ({ mapRef }) => {
             {map.currentMapProprietaryJSON &&
               map.currentMapProprietaryJSON.templateType === "heat" && (
                 <div>
-                  {Array.from({ length: numColors }, (v, index) => (
-                    <div className="heatColorInput">
+                  {map.heatColors.map((color, index) => (
+                    <div className="heatColorInput" key={index}>
                       <span className="toolbox-gradient-label">
                         Color {index + 1}
                       </span>
                       <input
                         type="color"
-                        defaultValue={"#3388ff"}
+                        defaultValue={color}
                         className="toolbox-gradient-controls-colorInput"
                         onChange={(e) =>
-                          handleHeatColorSelectorChange(index, e.target.value)
+                          map.setHeatColors(index, e.target.value, map.heatColors.length)
                         }
                       />
                     </div>
                   ))}
                 </div>
               )}
-            <div className="toolbox-gradient-controls-row">
-              <span className="toolbox-gradient-label">Min</span>
-              <input
-                type="number"
-                className="toolbox-gradient-controls-numberInput"
-              />
-            </div>
-            <div className="toolbox-gradient-controls-row">
-              <span className="toolbox-gradient-label">Max</span>
-              <input
-                type="number"
-                className="toolbox-gradient-controls-numberInput"
-              />
-            </div>
-            <div className="toolbox-gradient-controls-row">
-              <span className="toolbox-gradient-label">Sections</span>
-              <input
-                type="number"
-                className="toolbox-gradient-controls-numberInput"
-              />
-            </div>
           </div>
         </div>
         {/* <input type="text" placeholder="Label" className="textInput" />
