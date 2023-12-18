@@ -130,6 +130,18 @@ function GlobalMapContextProvider(props) {
             }
 
             case GlobalMapActionType.LOAD_MAP: {
+
+                let heatColors = []
+                if (payload.gradientOptions && payload.gradientOptions.options.gradient) {
+                    console.log(payload.gradientOptions)
+                    Object.entries(payload.gradientOptions.options.gradient).forEach(([k,v]) => {
+                        heatColors.push(v)
+                    })
+                }
+                else {
+                    heatColors = ["#ffffff", "#e08300", "#e90101"]
+                }
+
                 return setMap({
                     ...map,
                     currentMapGeoJSONOriginal: payload.originalGeoJSON,
@@ -138,7 +150,9 @@ function GlobalMapContextProvider(props) {
                     currentMapProprietaryJSONOriginal: payload.currentMapProprietaryJSONOriginal,
                     currentMapProprietaryJSON: payload.currentMapProprietaryJSON,
                     originalLayersGeoJSON: payload.originalLayersGeoJSON,
-                    gradientLayers: payload.gradientLayers
+                    gradientLayers: payload.gradientLayers,
+                    gradientOptions: payload.gradientOptions,
+                    heatColors
                 })
             }
 
@@ -419,7 +433,11 @@ function GlobalMapContextProvider(props) {
             const responseBodyString = new TextDecoder('utf-8').decode(response.data);
             const parts = responseBodyString.split(`\r\n--boundary--`)[0].split('--boundary');
 
-            const gradientLayers = JSON.parse(parts[1].split('\r\n\r\n')[1]).gradientLayers
+
+            const obj = JSON.parse(parts[1].split('\r\n\r\n')[1])
+            const gradientLayers = obj.gradientLayers
+            const gradientOptions = obj.gradientOptions
+            console.log(obj)
 
             const currentMapProprietaryJSON = JSON.parse(parts[1].split('\r\n\r\n')[1]).proprietaryJSON
             const currentMapProprietaryJSONOriginal = JSON.parse(parts[1].split('\r\n\r\n')[1]).proprietaryJSON
@@ -439,7 +457,7 @@ function GlobalMapContextProvider(props) {
             mapReducer({
                 type: GlobalMapActionType.LOAD_MAP,
                 payload: {currentGeoJSON, originalGeoJSON, mapMetadata,currentMapProprietaryJSON, 
-                    currentMapProprietaryJSONOriginal, originalLayersGeoJSON, gradientLayers}
+                    currentMapProprietaryJSONOriginal, originalLayersGeoJSON, gradientLayers, gradientOptions}
             })
         }
         catch (error) {
@@ -687,10 +705,10 @@ function GlobalMapContextProvider(props) {
         const delta2 = generateDiff(map.currentMapProprietaryJSONOriginal, map.currentMapProprietaryJSON)
         const delta3 = generateDiff(map.originalLayersGeoJSON, layersGeoJSON)
 
-        if (!delta1 && !delta2 && !delta3) {
-            alert('no deltas, no edits')
-            return
-        }
+        // if (!delta1 && !delta2 && !delta3) {
+        //     alert('no deltas, no edits')
+        //     return
+        // }
 
         try {
             const proprietaryJSON = delta2 ? map.currentMapProprietaryJSON : null
@@ -698,6 +716,8 @@ function GlobalMapContextProvider(props) {
             // console.log("Size of geoJSON: " + JSON.stringify(map.currentMapGeoJSON).length) 
             // console.log("Size of delta: " + JSON.stringify(delta1).length) 
             // console.log("size of layers: " + JSON.stringify(layersGeoJSON).length)
+
+            console.log(map.gradientOptions)
 
             const response = await api.saveMapEdits(id, delta1, proprietaryJSON, thumbnail, layersGeoJSON, gradientLayersGeoJSON, map.gradientOptions)
             if (response.status === 200) {
