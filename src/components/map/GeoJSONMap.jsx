@@ -54,7 +54,7 @@ function GeoJSONMap({
   currentMarkerIcon,
   featureGroupRef
 }) {
-  const { map } = useContext(GlobalMapContext);
+  const { map, gradientLayersRef} = useContext(GlobalMapContext);
 
 
   const [originalLatLngs, setOriginalLatLngs] = useState(null);
@@ -91,15 +91,11 @@ function GeoJSONMap({
     return Array.from(potentialProperties);
   }
   const loadOriginalLayers = () => {
-    console.log(map.currentMapGeoJSON);
-    if (!map.originalLayersGeoJSON || !map.originalLayersGeoJSON.length) {
+    if (!map.originalLayersGeoJSON || !map.originalLayersGeoJSON.length || initialGeomanLayersLoaded) {
       return null
     }
     let layers
-    if (map.currentMapProprietaryJSON.templateType === "gradient") {
-      console.log('load original gradient layers')
-    }
-    else if (map.currentMapProprietaryJSON.templateType === "choropleth") {
+    if (map.currentMapProprietaryJSON.templateType === "choropleth") {
       const choroplethOptions = {
         valueProperty: 'density', // TODO: find a way to automatically detect valueProperty
         scale: map.heatColors, 
@@ -185,6 +181,8 @@ function GeoJSONMap({
 
       })
     }
+
+    setInitialGeomanLayersLoaded(true)
     return layers
       
   }
@@ -487,15 +485,24 @@ function GeoJSONMap({
 
 
   const [heatmapData, setHeatmapData] = useState([])
-  const heatLayersRef = useRef([])
+
+  useEffect(() => {
+    if (map.currentMapProprietaryJSON && map.currentMapProprietaryJSON.templateType === "gradient") {
+      map.loadGradientLayers(setHeatmapData)
+    }
+
+
+  },[]) 
 
   const addDataPointToHeatmap = (lat, lng) => {
     setHeatmapData((prevData) => [...prevData, [lat, lng, map.gradientOptions.intensity]]);
+    gradientLayersRef.current.push([lat, lng, map.gradientOptions.intensity])
   };
 
   const popDataFromHeatMap = () => {
     const newData = [...heatmapData]
     newData.pop()
+    gradientLayersRef.current.pop()
     setHeatmapData(newData);
   }
 
@@ -513,9 +520,11 @@ function GeoJSONMap({
           delete modifiedOptions.gradient[k]
         })
 
+
+        console.log(heatData)
         const heatLayer = L.heatLayer(heatData, modifiedOptions).addTo(map);
-        heatLayersRef.current.push(heatLayer)
-  
+        console.log(heatLayer)
+
         return () => {
           map.removeLayer(heatLayer);
         };

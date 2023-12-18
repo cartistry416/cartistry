@@ -65,7 +65,6 @@ function GlobalMapContextProvider(props) {
         markerActive: false,
         heatColors: ["#ffffff", "#e08300", "#e90101"],
         numHeatSections: 10,
-        featureGroupRef: useRef(null),
         heatValueProperties: [],
         heatValueSelectedProperty: null,
         gradientOptions: {
@@ -81,6 +80,8 @@ function GlobalMapContextProvider(props) {
             },
             intensity: 50
         }, 
+        gradientLayers: null,
+
         // mapCardIndexMarkedForDeletion: null, // Don't think we need these
         // mapCardMarkedForDeletion: null,
     });
@@ -88,6 +89,9 @@ function GlobalMapContextProvider(props) {
     const navigate = useNavigate();
     const location = useLocation()
     const { auth } = useContext(AuthContext);
+
+    const gradientLayersRef = useRef([])
+
     const mapReducer = (action) => {
         const { type, payload } = action;
         switch (type) {
@@ -133,7 +137,8 @@ function GlobalMapContextProvider(props) {
                     currentMapMetadata: payload.mapMetadata,
                     currentMapProprietaryJSONOriginal: payload.currentMapProprietaryJSONOriginal,
                     currentMapProprietaryJSON: payload.currentMapProprietaryJSON,
-                    originalLayersGeoJSON: payload.originalLayersGeoJSON
+                    originalLayersGeoJSON: payload.originalLayersGeoJSON,
+                    gradientLayers: payload.gradientLayers
                 })
             }
 
@@ -213,6 +218,7 @@ function GlobalMapContextProvider(props) {
               })
             }
             case GlobalMapActionType.EXIT_CURRENT_MAP: {
+                gradientLayersRef.current = []
                 return setMap({
                     ...map, 
                     currentMapMetadata: null,
@@ -413,6 +419,8 @@ function GlobalMapContextProvider(props) {
             const responseBodyString = new TextDecoder('utf-8').decode(response.data);
             const parts = responseBodyString.split(`\r\n--boundary--`)[0].split('--boundary');
 
+            const gradientLayers = JSON.parse(parts[1].split('\r\n\r\n')[1]).gradientLayers
+
             const currentMapProprietaryJSON = JSON.parse(parts[1].split('\r\n\r\n')[1]).proprietaryJSON
             const currentMapProprietaryJSONOriginal = JSON.parse(parts[1].split('\r\n\r\n')[1]).proprietaryJSON
 
@@ -422,6 +430,7 @@ function GlobalMapContextProvider(props) {
             let originalLayersGeoJSON = null
             try {
                 originalLayersGeoJSON = JSON.parse(parts[3].split('\r\n\r\n')[1])
+                //console.log(originalLayersGeoJSON)
             }
             catch (err) {
                 console.log('no layers sent, probably not initialized')
@@ -430,7 +439,7 @@ function GlobalMapContextProvider(props) {
             mapReducer({
                 type: GlobalMapActionType.LOAD_MAP,
                 payload: {currentGeoJSON, originalGeoJSON, mapMetadata,currentMapProprietaryJSON, 
-                    currentMapProprietaryJSONOriginal, originalLayersGeoJSON}
+                    currentMapProprietaryJSONOriginal, originalLayersGeoJSON, gradientLayers}
             })
         }
         catch (error) {
@@ -655,8 +664,25 @@ function GlobalMapContextProvider(props) {
             })
         }
 
-        console.log('layers sent: ',layersGeoJSON)
-        
+        // console.log('layers sent: ',layersGeoJSON)
+        let gradientLayersGeoJSON = []
+        if (gradientLayersRef.current && gradientLayersRef.current.length > 0) {
+            gradientLayersGeoJSON = gradientLayersRef.current.map(layer => {
+                const pointFeature = {
+                    type: 'Feature',
+                    geometry: {
+                      type: 'Point',
+                      coordinates: [layer[0], layer[1]], // Replace with your desired coordinates
+                    },
+                    properties: {
+                      templateType: 'gradient',
+                      intensity: layer[2]
+                    },
+                  };
+                  return pointFeature
+            })
+        }
+
         const delta1 = generateDiff(map.currentMapGeoJSONOriginal, map.currentMapGeoJSON)
         const delta2 = generateDiff(map.currentMapProprietaryJSONOriginal, map.currentMapProprietaryJSON)
         const delta3 = generateDiff(map.originalLayersGeoJSON, layersGeoJSON)
@@ -673,8 +699,7 @@ function GlobalMapContextProvider(props) {
             // console.log("Size of delta: " + JSON.stringify(delta1).length) 
             // console.log("size of layers: " + JSON.stringify(layersGeoJSON).length)
 
-
-            const response = await api.saveMapEdits(id, delta1, proprietaryJSON, thumbnail, layersGeoJSON)
+            const response = await api.saveMapEdits(id, delta1, proprietaryJSON, thumbnail, layersGeoJSON, gradientLayersGeoJSON, map.gradientOptions)
             if (response.status === 200) {
                 tps.clearAllTransactions()
                 alert("Map edits saved successfully. Clearing TPS stack and setting original geoJSON to current geoJSON")
@@ -959,9 +984,16 @@ function GlobalMapContextProvider(props) {
     map.addCreateGradientPointTransaction = (lat, lng, addDataPointToHeatmap, popDataFromHeatMap) => {
         const transaction = new CreateGradientPoint_Transaction(lat, lng, addDataPointToHeatmap, popDataFromHeatMap)
         tps.addTransaction(transaction, true)
-
     }
 
+    map.loadGradientLayers = (setHeatmapData) => {
+        map.gradientLayers.forEach(feature => {
+            gradientLayersRef.current.push([feature.geometry.coordinates[0], 
+                feature.geometry.coordinates[1], feature.properties.intensity])
+        })
+        setHeatmapData([...gradientLayersRef.current])
+    }
+ 
     map.canUndo = function() {
         return ((map.currentMapGeoJSONOriginal !== null) && tps.hasTransactionToUndo())
     }
@@ -978,7 +1010,7 @@ function GlobalMapContextProvider(props) {
     }
 
     return (
-        <GlobalMapContext.Provider value={{map}}>
+        <GlobalMapContext.Provider value={{map, gradientLayersRef}}>
             {props.children}
         </GlobalMapContext.Provider>
     )
