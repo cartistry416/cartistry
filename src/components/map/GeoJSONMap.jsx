@@ -487,10 +487,17 @@ function GeoJSONMap({
 
 
   const [heatmapData, setHeatmapData] = useState([])
+  const heatLayersRef = useRef([])
 
   const addDataPointToHeatmap = (lat, lng) => {
     setHeatmapData((prevData) => [...prevData, [lat, lng, map.gradientOptions.intensity]]);
   };
+
+  const popDataFromHeatMap = () => {
+    const newData = [...heatmapData]
+    newData.pop()
+    setHeatmapData(newData);
+  }
 
   const HeatLayer = ({data, options}) => {
     const map = useMap();
@@ -507,6 +514,7 @@ function GeoJSONMap({
         })
 
         const heatLayer = L.heatLayer(heatData, modifiedOptions).addTo(map);
+        heatLayersRef.current.push(heatLayer)
   
         return () => {
           map.removeLayer(heatLayer);
@@ -522,7 +530,7 @@ function GeoJSONMap({
   const HandleGradientClick = () => {
     useMapEvents({
       click: (e) => {
-        addDataPointToHeatmap(e.latlng.lat, e.latlng.lng)
+        map.addCreateGradientPointTransaction(e.latlng.lat, e.latlng.lng, addDataPointToHeatmap, popDataFromHeatMap)
       },
     });
 
