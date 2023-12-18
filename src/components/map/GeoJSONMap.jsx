@@ -19,6 +19,7 @@ import {
 import * as L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import * as ReactDOM from "react-dom/client";
+import chroma from 'chroma-js';
 
 import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
 import { GeomanControls, layerEvents } from "react-leaflet-geoman-v2";
@@ -71,8 +72,26 @@ function GeoJSONMap({
     originalLatLngsRef.current = originalLatLngs;
   }, [originalLatLngs]);
 
-
+  useEffect(() => {
+    const heatValueProperties = findHeatValueProperties(map.currentMapGeoJSON)
+    const selectedHeatValueProperty = heatValueProperties[0]
+    map.setHeatPropertiesAndSelected(selectedHeatValueProperty, heatValueProperties)
+  },[map.currentMapGeoJSON]);
+  function findHeatValueProperties(geojsonData) {
+    let potentialProperties = new Set();
+  
+    geojsonData.features.forEach(feature => {
+      Object.keys(feature.properties).forEach(key => {
+        if (typeof feature.properties[key] === 'number') {
+          potentialProperties.add(key);
+        }
+      });
+    });
+  
+    return Array.from(potentialProperties);
+  }
   const loadOriginalLayers = () => {
+    console.log(map.currentMapGeoJSON);
     if (!map.originalLayersGeoJSON || !map.originalLayersGeoJSON.length) {
       return null
     }
@@ -158,7 +177,63 @@ function GeoJSONMap({
 
       })
     }
+    else {
+      const choroplethOptions = {
+        valueProperty: map.heatValueSelectedProperty, // TODO: find a way to automatically detect valueProperty
+        scale: map.heatColors, 
+        steps: map.numHeatSections,
+        mode: 'q',
+        style: {
+          color: '#fff',
+          weight: 2,
+          fillOpacity: 0.8
+        }
+      }
+    const calculateChoroplethStyle = (geojson, options) => {
+      const values = geojson.features.map(feature =>
+        feature.properties[options.valueProperty]
+      );
+      const limits = chroma.limits(values, options.mode, options.steps - 1);
+      const colors = chroma.scale(options.scale).colors(limits.length);
+    
+      return { limits, colors };
+    };
+    const { limits, colors } = calculateChoroplethStyle(map.currentMapGeoJSON, choroplethOptions);
+    layers = (<LayerGroup>
+      <GeoJSON
+        data={map.currentMapGeoJSON}
+        style={(feature) => {
+          const value = feature.properties[choroplethOptions.valueProperty];
+          let fillColor = '#fff'; // Default color
+          for (let i = 0; i < limits.length; i++) {
+            if (value <= limits[i]) {
+              fillColor = colors[i];
+              break;
+            }
+          }
+          return { ...choroplethOptions.style, fillColor };
+        }}
+      />
+    </LayerGroup>)
+      // layers = L.choropleth(map.currentMapGeoJSON, choroplethOptions,
+      //   onEachFeature: function(feature, layer) {
+      //     layer.on({
+      //       click: chroroClick
+      //     }); 
+      //     }
+      //   )};
 
+      // if (editEnabled) {
+      //     layerEvents(layers, {
+      //       onUpdate: handleLayerUpdate,
+      //       onLayerRemove: handleLayerRemove,
+      //       onCreate: handleLayerCreate,
+      //       onDragStart: handleDragStart,
+      //       onMarkerDragStart: handleMarkerDragStart,
+      //       onLayerRotateStart: handleLayerRotateStart
+      //     }, 'on');
+      //   }
+    }
     return layers
       
   }
@@ -171,7 +246,7 @@ function GeoJSONMap({
   //     return
   //   }
 
-  //   if (map.originalLayersGeoJSON && map.currentMapProprietaryJSON.templateType !== "heat") {
+  //   if (map.originalLayersGeoJSON && map.currentMapProprietaryJSON.templateType !== "choropleth") {
   //   }
   // }, [])
 
@@ -214,10 +289,6 @@ function GeoJSONMap({
   //     }
   //   }
   // }, []);  
-  function chroroClick(e){
-    var layer = e.target;
-    layer.bindPopup("Density: " + layer.feature.properties.density)
-  }
 
 
   const onEachFeature = (feature, layer) => {
