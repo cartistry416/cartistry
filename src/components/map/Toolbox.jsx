@@ -83,7 +83,6 @@ const Toolbox = ({ mapRef, featureGroupRef }) => {
   useEffect(() => {
     if (mapRef) {
       const markerHandler = mapRef.pm.Draw.Marker;
-      // console.log("test");
       if (markerHandler) {
         markerHandler.setOptions({
           markerStyle: {
@@ -92,7 +91,7 @@ const Toolbox = ({ mapRef, featureGroupRef }) => {
         });
       }
     }
-  }, [mapRef, currentLIcon, map.colorSelected]);
+  }, [mapRef, currentLIcon]);
 
   const handleOutsideClick = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -182,7 +181,12 @@ const Toolbox = ({ mapRef, featureGroupRef }) => {
   };
 
   const handleNumColorsChange = (newNumColors) => {
-    newNumColors = parseInt(newNumColors, 10); // Ensure it's an integer
+    try {
+      newNumColors = parseInt(newNumColors, 10);
+    }
+    catch (err) {
+      alert('not a positive integer')
+    }
   
     if (newNumColors < 1) {
       newNumColors = 1; // Minimum number of colors is 1
@@ -193,11 +197,15 @@ const Toolbox = ({ mapRef, featureGroupRef }) => {
       // Add new colors by duplicating the last one
       for (let i = currentLength; i < newNumColors; i++) {
         const lastColor = map.heatColors[currentLength - 1] || '#ffffff';
+        const upper = Math.round(((1 / newNumColors) * (i + 1)) * 100)
         map.setHeatColors(i, lastColor, newNumColors);
       }
     } else if (newNumColors < currentLength) {
       map.deleteHeatColors(newNumColors);
     }
+
+    // map.recalculateGradient()
+
   };
 
   const handleHeatNumSectionsChange = (numHeatSections) => {
@@ -209,6 +217,32 @@ const Toolbox = ({ mapRef, featureGroupRef }) => {
     // console.log(iconType);
     setCurrentMarkerIcon(iconType);
   };
+
+
+  const renderColorInputs = () => {
+    const len = map.heatColors.length
+    const newColorInputs = map.heatColors.map((color, index) => {
+          const lower = Math.round(((1 / len) * index) * 100)
+          const upper = Math.round(((1 / len) * (index + 1)) * 100)
+          return (
+          <div className="heatColorInput" key={index}>
+            <span className="toolbox-gradient-label">
+              {`${lower} - ${upper}` }
+            </span>
+            <input
+              type="color"
+              defaultValue={color}
+              className="toolbox-gradient-controls-colorInput"
+              onChange={(e) => {
+                map.setHeatColors(index, e.target.value, map.heatColors.length)
+                }
+              }
+            />
+          </div>
+        )
+        })
+    return newColorInputs
+  }
 
   return (
     <div className="toolbox">
@@ -320,7 +354,7 @@ const Toolbox = ({ mapRef, featureGroupRef }) => {
           )}
           <div className="toolbox-gradient-controls">
             {map.currentMapProprietaryJSON &&
-            map.currentMapProprietaryJSON.templateType === "choropleth" ? (
+            map.currentMapProprietaryJSON.templateType === "gradient" ? (
               <div>
                 <div className="toolbox-gradient-controls-row">
                   <span className="toolbox-gradient-label">Value Property</span>
@@ -368,6 +402,51 @@ const Toolbox = ({ mapRef, featureGroupRef }) => {
                     }}
                   />
                 </div>
+                <div className="toolbox-gradient-controls-row">
+                  <span className="toolbox-gradient-label"> Point Radius </span>
+                  <input
+                    type="number"
+                    defaultValue={25}
+                    className="toolbox-gradient-controls-numberInput"
+                    onChange={(e) => map.setGradientRadius(e.target.value)}
+                    onInput={(e) => {
+                      if (e.target.value < 1) {
+                        e.target.value = 1;
+                      }
+                    }}
+                  />
+                </div>
+                <div className="toolbox-gradient-controls-row">
+                  <span className="toolbox-gradient-label"> Blur </span>
+                  <input
+                    type="number"
+                    defaultValue={15}
+                    className="toolbox-gradient-controls-numberInput"
+                    onChange={(e) => map.setGradientBlur(e.target.value)}
+                    onInput={(e) => {
+                      if (e.target.value < 1) {
+                        e.target.value = 1;
+                      }
+                    }}
+                  />
+                </div>
+                <div className="toolbox-gradient-controls-row">
+                  <span className="toolbox-gradient-label"> Point Intensity </span>
+                  <input
+                    type="number"
+                    defaultValue={50}
+                    min={0}
+                    max={100}
+                    step={5}
+                    className="toolbox-gradient-controls-numberInput"
+                    onChange={(e) => map.setGradientIntensity(parseInt(e.target.value))}
+                    onInput={(e) => {
+                      if (e.target.value < 1) {
+                        e.target.value = 0;
+                      }
+                    }}
+                  />
+                </div>
               </div>
             ) : (
               <div className="toolbox-gradient-controls-row">
@@ -381,23 +460,9 @@ const Toolbox = ({ mapRef, featureGroupRef }) => {
               </div>
             )}
             {map.currentMapProprietaryJSON &&
-              map.currentMapProprietaryJSON.templateType === "choropleth" && (
+              map.currentMapProprietaryJSON.templateType === "gradient" && (
                 <div>
-                  {map.heatColors.map((color, index) => (
-                    <div className="heatColorInput" key={index}>
-                      <span className="toolbox-gradient-label">
-                        Color {index + 1}
-                      </span>
-                      <input
-                        type="color"
-                        defaultValue={color}
-                        className="toolbox-gradient-controls-colorInput"
-                        onChange={(e) =>
-                          map.setHeatColors(index, e.target.value, map.heatColors.length)
-                        }
-                      />
-                    </div>
-                  ))}
+                  {renderColorInputs()}
                 </div>
               )}
           </div>

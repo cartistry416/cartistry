@@ -35,6 +35,8 @@ export const GlobalMapActionType = {
     SET_HEAT_PROPERTIES_AND_SELECTED: "SET_HEAT_PROPERTIES_AND_SELECTED",
     EDIT_HEAT_VALUE_PROPERTIES: "EDIT_HEAT_VALUE_PROPERTIES",
     EDIT_HEAT_VALUE_SELECTED: "EDIT_HEAT_VALUE_SELECTED",
+    SET_GRADIENT_OPTIONS: "SET_GRADIENT_OPTIONS",
+    RECALCULATE_GRADIENT: "RECALCULATE_GRADIENT", 
 }
 
 const tps = new jsTPS();
@@ -64,7 +66,20 @@ function GlobalMapContextProvider(props) {
         numHeatSections: 10,
         featureGroupRef: useRef(null),
         heatValueProperties: [],
-        heatValueSelectedProperty: null
+        heatValueSelectedProperty: null,
+        gradientOptions: {
+            options: {
+                radius: 25,
+                blur: 15,
+                max: 100,
+                gradient: {
+                    33: '#ffffff',
+                    67: '#e08300',
+                    100: '#e90101',
+                }
+            },
+            intensity: 50
+        }, 
         // mapCardIndexMarkedForDeletion: null, // Don't think we need these
         // mapCardMarkedForDeletion: null,
     });
@@ -255,9 +270,24 @@ function GlobalMapContextProvider(props) {
             case GlobalMapActionType.SET_HEAT_COLORS: {
                 const updatedHeatColors = map.heatColors.slice(0, payload.numColors);
                 updatedHeatColors[payload.index] = payload.color;
+
+                const updatedGradient = {}
+                const len = updatedHeatColors.length
+                updatedHeatColors.forEach((color, index) => {
+                    const upper = Math.round(((1 / len) * (index + 1)) * 100)
+                    updatedGradient[upper] = color
+                })
+               
                 return setMap({
                     ...map,
-                    heatColors: updatedHeatColors
+                    heatColors: updatedHeatColors,
+                    gradientOptions: {
+                        ...map.gradientOptions,
+                        options: {
+                            ...map.gradientOptions.options,
+                            gradient: updatedGradient
+                        }
+                    }
                 })
             }
             case GlobalMapActionType.DELETE_HEAT_COLORS: {
@@ -300,6 +330,42 @@ function GlobalMapContextProvider(props) {
                 return setMap({
                     ...map,
                     currentMapGeoJSON: updatedGeoJSON
+                })
+            }
+            case GlobalMapActionType.SET_GRADIENT_OPTIONS: {
+                const radius = payload.radius ? payload.radius : map.gradientOptions.options.radius
+                const blur = payload.blur? payload.blur : map.gradientOptions.options.blur
+                const intensity = payload.intensity? payload.intensity: map.gradientOptions.intensity
+                const gradient = payload.gradient ? payload.gradient: map.gradientOptions.options.gradient
+                return setMap({
+                    ...map,
+                    gradientOptions: {
+                        options: {
+                            radius,
+                            blur,
+                            gradient
+                        },
+                        intensity
+                    }
+                })
+            }
+            case GlobalMapActionType.RECALCULATE_GRADIENT: {
+                const updatedGradient = {}
+                const len = map.heatColors.length
+                map.heatColors.forEach((color, index) => {
+                    const upper = Math.round(((1 / len) * (index + 1)) * 100)
+                    updatedGradient[upper] = color
+                })
+               
+                return setMap({
+                    ...map,
+                    gradientOptions: {
+                        ...map.gradientOptions,
+                        options: {
+                            ...map.gradientOptions.options,
+                            gradient: updatedGradient
+                        }
+                    }
                 })
             }
             default:
@@ -830,7 +896,6 @@ function GlobalMapContextProvider(props) {
         })
     }
     map.deleteHeatColors = (newNumHeatColors) => {
-        console.log(newNumHeatColors);
         mapReducer({
             type: GlobalMapActionType.DELETE_HEAT_COLORS,
             payload: { newNumHeatColors }
@@ -858,6 +923,35 @@ function GlobalMapContextProvider(props) {
         mapReducer({
             type: GlobalMapActionType.SET_HEAT_PROPERTIES_AND_SELECTED,
             payload: {heatValueSelectedProperty, heatValueProperties}
+        })
+    }
+
+    map.setGradientRadius = (radius) => {
+        mapReducer({
+            type: GlobalMapActionType.SET_GRADIENT_OPTIONS,
+            payload: {radius}
+        })
+
+    }
+
+    map.setGradientBlur = (blur) => {
+        mapReducer({
+            type: GlobalMapActionType.SET_GRADIENT_OPTIONS,
+            payload: {blur}
+        })
+    }
+
+    map.setGradientIntensity = (intensity) => {
+        mapReducer({
+            type: GlobalMapActionType.SET_GRADIENT_OPTIONS,
+            payload: {intensity}
+        })
+    }
+    
+    map.recalculateGradient = () => {
+        mapReducer({
+            type: GlobalMapActionType.RECALCULATE_GRADIENT,
+            payload: {}
         })
     }
 

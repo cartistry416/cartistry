@@ -9,7 +9,9 @@ import {
   Circle,
   CircleMarker,
   Marker,
-  LayerGroup
+  LayerGroup,
+  useMapEvents,
+  useMap
 } from "react-leaflet";
 
 // import Geoman  from './Geoman';
@@ -23,8 +25,7 @@ import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
 import { GeomanControls, layerEvents } from "react-leaflet-geoman-v2";
 import EditFeaturePopup from "./EditFeaturePopup";
 import 'leaflet-choropleth';
-import { matchPath } from "react-router";
-
+import 'leaflet.heat'
 function getNameFromConvertedShapeFile(properties) {
   let keyBase = "NAME_";
 
@@ -95,7 +96,49 @@ function GeoJSONMap({
       return null
     }
     let layers
-    if (map.currentMapProprietaryJSON.templateType !== "choropleth") {
+    if (map.currentMapProprietaryJSON.templateType === "gradient") {
+      console.log('load original gradient layers')
+    }
+    else if (map.currentMapProprietaryJSON.templateType === "choropleth") {
+      const choroplethOptions = {
+        valueProperty: 'density', // TODO: find a way to automatically detect valueProperty
+        scale: map.heatColors, 
+        steps: map.numHeatSections,
+        mode: 'q',
+        style: {
+          color: '#fff',
+          weight: 2,
+          fillOpacity: 0.8
+        }
+      }
+      const calculateChoroplethStyle = (geojson, options) => {
+        const values = geojson.features.map(feature =>
+          feature.properties[options.valueProperty]
+        );
+        const limits = chroma.limits(values, options.mode, options.steps - 1);
+        const colors = chroma.scale(options.scale).colors(limits.length);
+      
+        return { limits, colors };
+      };
+      const { limits, colors } = calculateChoroplethStyle(map.currentMapGeoJSON, choroplethOptions);
+      layers = (<LayerGroup>
+        <GeoJSON
+          data={map.currentMapGeoJSON}
+          style={(feature) => {
+            const value = feature.properties[choroplethOptions.valueProperty];
+            let fillColor = '#fff'; // Default color
+            for (let i = 0; i < limits.length; i++) {
+              if (value <= limits[i]) {
+                fillColor = colors[i];
+                break;
+              }
+            }
+            return { ...choroplethOptions.style, fillColor };
+          }}
+        />
+      </LayerGroup>)
+    }
+    else {
       layers = map.originalLayersGeoJSON.map((layerGeoJSON, index)=> {
         const type = layerGeoJSON.properties.layerType
         let layer
@@ -141,63 +184,6 @@ function GeoJSONMap({
         return layer
 
       })
-    }
-    else {
-      const choroplethOptions = {
-        valueProperty: map.heatValueSelectedProperty, // TODO: find a way to automatically detect valueProperty
-        scale: map.heatColors, 
-        steps: map.numHeatSections,
-        mode: 'q',
-        style: {
-          color: '#fff',
-          weight: 2,
-          fillOpacity: 0.8
-        }
-      }
-    const calculateChoroplethStyle = (geojson, options) => {
-      const values = geojson.features.map(feature =>
-        feature.properties[options.valueProperty]
-      );
-      const limits = chroma.limits(values, options.mode, options.steps - 1);
-      const colors = chroma.scale(options.scale).colors(limits.length);
-    
-      return { limits, colors };
-    };
-    const { limits, colors } = calculateChoroplethStyle(map.currentMapGeoJSON, choroplethOptions);
-    layers = (<LayerGroup>
-      <GeoJSON
-        data={map.currentMapGeoJSON}
-        style={(feature) => {
-          const value = feature.properties[choroplethOptions.valueProperty];
-          let fillColor = '#fff'; // Default color
-          for (let i = 0; i < limits.length; i++) {
-            if (value <= limits[i]) {
-              fillColor = colors[i];
-              break;
-            }
-          }
-          return { ...choroplethOptions.style, fillColor };
-        }}
-      />
-    </LayerGroup>)
-      // layers = L.choropleth(map.currentMapGeoJSON, choroplethOptions,
-      //   onEachFeature: function(feature, layer) {
-      //     layer.on({
-      //       click: chroroClick
-      //     }); 
-      //     }
-      //   )};
-
-      // if (editEnabled) {
-      //     layerEvents(layers, {
-      //       onUpdate: handleLayerUpdate,
-      //       onLayerRemove: handleLayerRemove,
-      //       onCreate: handleLayerCreate,
-      //       onDragStart: handleDragStart,
-      //       onMarkerDragStart: handleMarkerDragStart,
-      //       onLayerRotateStart: handleLayerRotateStart
-      //     }, 'on');
-      //   }
     }
     return layers
       
@@ -268,7 +254,9 @@ function GeoJSONMap({
       permanent: true,
       direction: "center",
     });
-    layer.bindPopup(renderPopupForm(feature, idx, layer, map.currentMapProprietaryJSON.templateType));
+    if (map.currentMapProprietaryJSON && map.currentMapProprietaryJSON.templateType !== "gradient") {
+      layer.bindPopup(renderPopupForm(feature, idx, layer, map.currentMapProprietaryJSON.templateType));
+    }
   };
 
   const renderPopupForm = (feature, idx, layer, templateType) => {
@@ -497,6 +485,52 @@ function GeoJSONMap({
     iconSize: L.point(50, 50),
   });
 
+
+  const [heatmapData, setHeatmapData] = useState([])
+
+  const addDataPointToHeatmap = (lat, lng) => {
+    setHeatmapData((prevData) => [...prevData, [lat, lng, map.gradientOptions.intensity]]);
+  };
+
+  const HeatLayer = ({data, options}) => {
+    const map = useMap();
+
+    useEffect(() => {
+      if (map && data && data.length > 0) {
+        const heatData = data.map(([lat, lng, intensity]) => [lat, lng, intensity]);
+
+        const modifiedOptions = JSON.parse(JSON.stringify(options))
+        Object.entries(modifiedOptions.gradient).forEach(([k,v]) => {
+          const newKey = k/100
+          modifiedOptions.gradient[newKey] = v
+          delete modifiedOptions.gradient[k]
+        })
+
+        const heatLayer = L.heatLayer(heatData, modifiedOptions).addTo(map);
+  
+        return () => {
+          map.removeLayer(heatLayer);
+        };
+      }
+    }, [map, data, options]);
+  
+    return null; 
+  }
+
+
+  
+  const HandleGradientClick = () => {
+    useMapEvents({
+      click: (e) => {
+        addDataPointToHeatmap(e.latlng.lat, e.latlng.lng)
+      },
+    });
+
+    return null;
+  };
+
+
+
   return (
     <div className="mapContainerSize">
       <MapContainer
@@ -522,8 +556,12 @@ function GeoJSONMap({
                 drawRectangle: map.currentMapProprietaryJSON.templateType === "cadastral",
                 drawPolygon: map.currentMapProprietaryJSON.templateType === "cadastral", 
                 drawMarker: map.currentMapProprietaryJSON.templateType === "landmark",
-                drawPolyline: true,
-                drawCircleMarker: true,
+                drawPolyline: map.currentMapProprietaryJSON.templateType !== "gradient",
+                drawCircleMarker: map.currentMapProprietaryJSON.templateType !== "gradient",
+                removalMode: map.currentMapProprietaryJSON.templateType !== "gradient",
+                dragMode:map.currentMapProprietaryJSON.templateType !== "gradient",
+                editMode: map.currentMapProprietaryJSON.templateType !== "gradient",
+                rotateMode: map.currentMapProprietaryJSON.templateType !== "gradient"
               }}
               globalOptions={{
                 continueDrawing: false,
@@ -583,6 +621,17 @@ function GeoJSONMap({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           maxZoom={19}
         />
+
+      {(map.currentMapProprietaryJSON && map.currentMapProprietaryJSON.templateType === "gradient") ? 
+        <>
+
+          <HeatLayer data={heatmapData} options={map.gradientOptions.options}/>
+          <HandleGradientClick />
+        </>
+      
+      
+      : null}
+
         {map.currentMapGeoJSON && (
           <GeoJSON
             data={map.currentMapGeoJSON}
