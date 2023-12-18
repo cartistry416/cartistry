@@ -58,7 +58,7 @@ function RequestPasswordScreen() {
         {stage === 1 && (
           <form onSubmit={handleSubmitEmail}>
             <div className="forgotPasswordStep">
-              <span>Enter Token</span>
+              <span>Enter Email</span>
               <input
                 placeholder="email"
                 type="email"

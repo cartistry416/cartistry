@@ -440,7 +440,7 @@ const Toolbox = ({ mapRef, featureGroupRef }) => {
               </div>
             ) : (
               <div className="toolbox-gradient-controls-row">
-                <span className="toolbox-gradient-label">Color</span>
+                <span className="toolbox-gradient-label">Tool Color</span>
                 <input
                   type="color"
                   defaultValue={"#3388ff"}
