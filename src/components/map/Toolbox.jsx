@@ -358,72 +358,12 @@ const Toolbox = ({ mapRef, featureGroupRef }) => {
             (map.currentMapProprietaryJSON.templateType === "gradient" ? (
               <div>
                 <div className="toolbox-gradient-controls-row">
-                  <span className="toolbox-gradient-label">Value Property</span>
-                  <div>
-                    {map.heatValueProperties.map(property => (
-                      <div key={property}>
-                        <input 
-                          type="radio" 
-                          id={property} 
-                          name="valueProperty" 
-                          value={property} 
-                          checked={map.heatValueSelectedProperty === property}
-                          onChange={handleHeatValuePropertySelection}
-                        />
-                        <label htmlFor={property}>{property}</label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="toolbox-gradient-controls-row">
-                  <span className="toolbox-gradient-label"># of Sections</span>
-                  <input
-                    type="number"
-                    defaultValue={10}
-                    className="toolbox-gradient-controls-numberInput"
-                    onChange={(e) => handleHeatNumSectionsChange(e.target.value)}
-                    onInput={(e) => {
-                      if (e.target.value < 1) {
-                        e.target.value = 1;
-                      }
-                    }}
-                  />
-                </div>
-                <div className="toolbox-gradient-controls-row">
                   <span className="toolbox-gradient-label"># of Colors</span>
                   <input
                     type="number"
                     defaultValue={3}
                     className="toolbox-gradient-controls-numberInput"
                     onChange={(e) => handleNumColorsChange(e.target.value)}
-                    onInput={(e) => {
-                      if (e.target.value < 1) {
-                        e.target.value = 1;
-                      }
-                    }}
-                  />
-                </div>
-                <div className="toolbox-gradient-controls-row">
-                  <span className="toolbox-gradient-label"> Point Radius </span>
-                  <input
-                    type="number"
-                    defaultValue={25}
-                    className="toolbox-gradient-controls-numberInput"
-                    onChange={(e) => map.setGradientRadius(e.target.value)}
-                    onInput={(e) => {
-                      if (e.target.value < 1) {
-                        e.target.value = 1;
-                      }
-                    }}
-                  />
-                </div>
-                <div className="toolbox-gradient-controls-row">
-                  <span className="toolbox-gradient-label"> Blur </span>
-                  <input
-                    type="number"
-                    defaultValue={15}
-                    className="toolbox-gradient-controls-numberInput"
-                    onChange={(e) => map.setGradientBlur(e.target.value)}
                     onInput={(e) => {
                       if (e.target.value < 1) {
                         e.target.value = 1;
