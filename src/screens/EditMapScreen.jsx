@@ -62,7 +62,7 @@ const EditMapScreen = () => {
             featureGroupRef={featureGroupRef}
           />
         </div>
-        <Legend />
+        <Legend editEnabled={true} x='1.25rem' y='1.25rem' position={'fixed'}/>
         <div className="sideControls">
           <div className="iconGroup">
             <span className={`material-icons ${((!map.canUndo())) ? ('disabled') : ('')}`} onClick={handleUndo}>
