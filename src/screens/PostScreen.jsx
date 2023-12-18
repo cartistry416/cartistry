@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { useContext, useEffect, useState, useRef } from "react";
 import GlobalPostContext from "../contexts/post";
 import GeoJSONMap from "../components/map/GeoJSONMap";
+import Legend from "../components/map/Legend";
 
 function PostScreen() {
   const { id } = useParams();
@@ -46,14 +47,18 @@ function PostScreen() {
             {post.currentPost &&
             post.currentPost.mapMetadata &&
             post.currentPost.mapMetadata !== "" ? (
-              <GeoJSONMap
+              <>
+                <GeoJSONMap
                 mapMetadataId={post.currentPost.mapMetadata}
                 position={[39.74739, -105]}
                 editEnabled={false}
                 featureGroupRef={featureGroupRef}
                 width="100%"
                 height="100%"
-              />
+                />
+                <Legend editEnabled={false} x='' y=''/>
+              </>
+
             ) : (
               <div className="post-img" />
             )}
