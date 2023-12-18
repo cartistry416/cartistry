@@ -111,24 +111,32 @@ function GeoJSONMap({
           fillOpacity: 0.8
         }
       }
-    layers = (<LayerGroup>
-      <GeoJSON
-        data={map.currentMapGeoJSON}
-        style={(feature) => {
-          const value = feature.properties[choroplethOptions.valueProperty];
-          const color = choroplethOptions.scale[
-            Math.floor((value - choroplethOptions.min) / choroplethOptions.step)
-          ];
-          return { ...choroplethOptions.style, fillColor: color };
-        }}
-        onEachFeature = { function(feature, layer) {
-            layer.on({
-              click: chroroClick
-            }); 
-          }
-        }
-      />
-    </LayerGroup>)
+      const calculateChoroplethStyle = (geojson, options) => {
+        const values = geojson.features.map(feature =>
+          feature.properties[options.valueProperty]
+        );
+        const limits = chroma.limits(values, options.mode, options.steps - 1);
+        const colors = chroma.scale(options.scale).colors(limits.length);
+      
+        return { limits, colors };
+      };
+      const { limits, colors } = calculateChoroplethStyle(map.currentMapGeoJSON, choroplethOptions);
+      layers = (<LayerGroup>
+        <GeoJSON
+          data={map.currentMapGeoJSON}
+          style={(feature) => {
+            const value = feature.properties[choroplethOptions.valueProperty];
+            let fillColor = '#fff'; // Default color
+            for (let i = 0; i < limits.length; i++) {
+              if (value <= limits[i]) {
+                fillColor = colors[i];
+                break;
+              }
+            }
+            return { ...choroplethOptions.style, fillColor };
+          }}
+        />
+      </LayerGroup>)
     }
     else {
       layers = map.originalLayersGeoJSON.map((layerGeoJSON, index)=> {
@@ -176,63 +184,6 @@ function GeoJSONMap({
         return layer
 
       })
-    }
-    else {
-      const choroplethOptions = {
-        valueProperty: map.heatValueSelectedProperty, // TODO: find a way to automatically detect valueProperty
-        scale: map.heatColors, 
-        steps: map.numHeatSections,
-        mode: 'q',
-        style: {
-          color: '#fff',
-          weight: 2,
-          fillOpacity: 0.8
-        }
-      }
-    const calculateChoroplethStyle = (geojson, options) => {
-      const values = geojson.features.map(feature =>
-        feature.properties[options.valueProperty]
-      );
-      const limits = chroma.limits(values, options.mode, options.steps - 1);
-      const colors = chroma.scale(options.scale).colors(limits.length);
-    
-      return { limits, colors };
-    };
-    const { limits, colors } = calculateChoroplethStyle(map.currentMapGeoJSON, choroplethOptions);
-    layers = (<LayerGroup>
-      <GeoJSON
-        data={map.currentMapGeoJSON}
-        style={(feature) => {
-          const value = feature.properties[choroplethOptions.valueProperty];
-          let fillColor = '#fff'; // Default color
-          for (let i = 0; i < limits.length; i++) {
-            if (value <= limits[i]) {
-              fillColor = colors[i];
-              break;
-            }
-          }
-          return { ...choroplethOptions.style, fillColor };
-        }}
-      />
-    </LayerGroup>)
-      // layers = L.choropleth(map.currentMapGeoJSON, choroplethOptions,
-      //   onEachFeature: function(feature, layer) {
-      //     layer.on({
-      //       click: chroroClick
-      //     }); 
-      //     }
-      //   )};
-
-      // if (editEnabled) {
-      //     layerEvents(layers, {
-      //       onUpdate: handleLayerUpdate,
-      //       onLayerRemove: handleLayerRemove,
-      //       onCreate: handleLayerCreate,
-      //       onDragStart: handleDragStart,
-      //       onMarkerDragStart: handleMarkerDragStart,
-      //       onLayerRotateStart: handleLayerRotateStart
-      //     }, 'on');
-      //   }
     }
     return layers
       
