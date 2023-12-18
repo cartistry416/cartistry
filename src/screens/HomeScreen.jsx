@@ -6,6 +6,7 @@ import { GlobalPostContext } from "../contexts/post";
 import GlobalMapContext from "../contexts/map";
 import AuthContext from "../auth";
 import AlertModal from "../components/modals/AlertModal";
+import { getAllTags } from "../utils/utils";
 
 export function formatTime(timeString) {
   const date = new Date(timeString);
@@ -45,6 +46,9 @@ function HomeScreen() {
   const navigate = useNavigate();
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const allTags = getAllTags()
+  const [selectedTags, setSelectedTags] = useState([])
+  const [unselectedTags, setUnselectedTags] = useState(allTags)
 
 
   useEffect(() => {
@@ -56,6 +60,13 @@ function HomeScreen() {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, []);
+
+  useEffect(() => {
+    const newSelectedTags = post.selectedTags
+    const newUnselectedTags = allTags.filter(tag => !post.selectedTags.includes(tag))
+    setSelectedTags(newSelectedTags)
+    setUnselectedTags(newUnselectedTags)
+  }, [post.selectedTags])
 
   //TODO, handle limit differently, maybe have pages
   useEffect(() => {
@@ -124,6 +135,14 @@ function HomeScreen() {
       setShowError(true)
     }
   }
+
+  const addTag = (tagToAdd) => {
+    post.addFilterTag(tagToAdd)
+  };
+
+  const removeTag = (tagToRemove) => {
+    post.removeFilterTag(tagToRemove)
+  };
   
   const handleReset = () => {
     setShowError(false)
@@ -170,6 +189,9 @@ function HomeScreen() {
             if (mapSelected === "mapOnlySelected" && (postCard.mapMetadata === "" || !postCard.mapMetadata)) {
               return null
             }
+            if (post.selectedTags.length > 0 && !postCard.tags.some(tag => post.selectedTags.includes(tag))) {
+              return null;
+            }
             return (
             <div onClick={() => handlePostCardClick(postCard._id, postCard.mapMetadata)} key={index}>
               <PostCard
@@ -190,6 +212,29 @@ function HomeScreen() {
           )}
         </div>
         <div className="tagWrapperHome">
+          <div className="tagTitle">Tags</div>
+          <div className="tagList">
+            <div className="tags">
+              {selectedTags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="tag selected"
+                  onClick={() => removeTag(tag)}
+                >
+                  {tag}<span className="material-icons">remove</span>
+                </span>
+              ))}
+              {unselectedTags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="tag"
+                  onClick={() => addTag(tag)}
+                >
+                  {tag} <span className="material-icons">add</span>
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
       {showError && (

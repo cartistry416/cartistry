@@ -82,15 +82,19 @@ const EditPostScreen = () => {
 
   const addTag = (tagToAdd) => {
     if (postTags.indexOf(tagToAdd) === -1) {
-      setPostTags([...postTags, tagToAdd]);
+      const newPostTags = [...postTags, tagToAdd]
+      setPostTags(newPostTags.sort());
     }
-    setAvailTags(availTags.filter((tag) => tag !== tagToAdd));
+    const newAvailTags = availTags.filter((tag) => tag !== tagToAdd)
+    setAvailTags(newAvailTags.sort());
   };
 
   const removeTag = (tagToRemove) => {
-    setPostTags(postTags.filter((tag) => tag !== tagToRemove));
+    const newPostTags = postTags.filter((tag) => tag !== tagToRemove)
+    setPostTags(newPostTags.sort());
     if (availTags.indexOf(tagToRemove) === -1) {
-      setAvailTags([...availTags, tagToRemove]);
+      const newAvailTags = [...availTags, tagToRemove]
+      setAvailTags(newAvailTags.sort());
     }
   };
 
@@ -198,7 +202,7 @@ const EditPostScreen = () => {
                   {postTags.map((tag, index) => (
                     <span
                       key={index}
-                      className="tag"
+                      className="post-tag"
                       onClick={() => removeTag(tag)}
                     >
                       {tag}
@@ -219,7 +223,6 @@ const EditPostScreen = () => {
           <div className="tags-container">
             <div id="tag-title">Tags</div>
             <div className="avail-tags-list">
-              <input type="text" placeholder="Search Tag" />
               <div className="avail-tags">
                 {availTags.map((tag, index) => (
                   <span

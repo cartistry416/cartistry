@@ -2,8 +2,6 @@ import { createContext, useContext, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import api, { getMostRecentPosts } from './post-request-api'
 import AuthContext from '../../auth'
-import { update } from 'lodash';
-
 export const GlobalPostContext = createContext({});
 export const GlobalPostActionType = {
     DELETE_COMMENT: "DELETE_COMMENT",
@@ -16,7 +14,8 @@ export const GlobalPostActionType = {
     UPDATE_POST_LIKES: "UPDATE_POST_LIKES",
     HIDE_MODALS: "HIDE_MODALS",
     EXIT_CURRENT_POST: "EXIT_CURRENT_POST",
-    SORT_POST_CARDS: "SORT_POST_CARDS"
+    SORT_POST_CARDS: "SORT_POST_CARDS",
+    UPDATE_TAGS: "UPDATE_TAGS",
 }
 
 const CurrentModal = {
@@ -36,6 +35,7 @@ function GlobalPostContextProvider(props) {
         postCardMarkedForDeletion: null,
         commentIndexMarkedForDeletion: null,
         commentMarkedForDeletion: null,
+        selectedTags: [],
     });
 
     const navigate = useNavigate();
@@ -112,7 +112,6 @@ function GlobalPostContextProvider(props) {
 
             case GlobalPostActionType.SORT_POST_CARDS: {
                 const updatedPostCardsInfo = [...post.postCardsInfo]
-                console.log(updatedPostCardsInfo)
                 if (payload.sortType === "mostRecent") {
                     updatedPostCardsInfo.sort((a, b) => {
                         const date1 = new Date(a.createdAt)
@@ -136,6 +135,13 @@ function GlobalPostContextProvider(props) {
                 return setPost({
                     ...post,
                     postCardsInfo: updatedPostCardsInfo
+                })
+            }
+            
+            case GlobalPostActionType.UPDATE_TAGS: {
+                return setPost({
+                    ...post,
+                    selectedTags: payload.tags
                 })
             }
 
@@ -291,24 +297,46 @@ function GlobalPostContextProvider(props) {
         })
     }
 
-    post.searchPostsByTags = async (tags, limit) => {
-        try {
-            const response = await api.searchPostsByTags(tags, limit)
-            if (response.status === 200) {
-                postReducer({
-                    type: GlobalPostActionType.LOAD_POST_CARDS,
-                    payload: { postCards: response.data.posts }
-                }) 
-            }
-        }
-        catch (error) {
-            postReducer({
-                type: GlobalPostActionType.ERROR_MODAL,
-                payload: { hasError: true, errorMessage: error.response.data.errorMessage }
-            })
-        }
+    // post.searchPostsByTags = async (tags, limit) => {
+    //     try {
+    //         const response = await api.searchPostsByTags(tags, limit)
+    //         if (response.status === 200) {
+    //             postReducer({
+    //                 type: GlobalPostActionType.LOAD_POST_CARDS,
+    //                 payload: { postCards: response.data.posts }
+    //             }) 
+    //         }
+    //     }
+    //     catch (error) {
+    //         postReducer({
+    //             type: GlobalPostActionType.ERROR_MODAL,
+    //             payload: { hasError: true, errorMessage: error.response.data.errorMessage }
+    //         })
+    //     }
         
-    }
+    // }
+
+    post.addFilterTag = (tagToAdd) => {
+        let newSelectedTags;
+        if (post.selectedTags.indexOf(tagToAdd) === -1) {
+            newSelectedTags = [...post.selectedTags, tagToAdd]
+            newSelectedTags.sort()
+        }
+        console.log(newSelectedTags)
+        postReducer({
+            type: GlobalPostActionType.UPDATE_TAGS,
+            payload: { tags: newSelectedTags }
+        })
+      };
+    
+    post.removeFilterTag = (tagToRemove) => {
+        const newSelectedTags = post.selectedTags.filter((tag) => tag !== tagToRemove).sort()
+        postReducer({
+            type: GlobalPostActionType.UPDATE_TAGS,
+            payload: { tags: newSelectedTags }
+        })
+    };
+
     post.searchPostsByTitle = async (title, limit) => {
 
         try {
