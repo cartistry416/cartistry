@@ -44,7 +44,7 @@
     align-items: center; /* This will align your items vertically */
     justify-content: space-between; /* This will space your items evenly */
   }
-.toolbox-pan-controls-buttons, .toolbox-pan-zoom-value, .toolbox-gradient-controls-numberInput { 
+.toolbox-pan-controls-buttons, .toolbox-pan-zoom-value, .toolbox-gradient-controls-numberInput, .toolbox-choropleth-controls-numberInput { 
     margin: 1rem 1rem 1rem 1rem;
     display: flex;
     align-items: center; /* Centers the icons vertically */
@@ -57,7 +57,7 @@
 .toolbox-pan-controls-buttons{
     width: 40%;
 }
-.toolbox-pan-zoom-value, .toolbox-gradient-controls-numberInput { 
+.toolbox-pan-zoom-value, .toolbox-gradient-controls-numberInput, .toolbox-choropleth-controls-numberInput { 
     -webkit-appearance: none; /* Removes default browser styling */
     -moz-appearance: none; /* Removes default browser styling */
     appearance: none;
@@ -87,7 +87,7 @@
 .toolbox-pan-controls-buttons .material-icons:last-child {
     padding-left: 0.625rem; /* Adjust the padding to match the left icon */
 }
-.toolbox-bin-controls, .toolbox-gradient-controls-row {
+.toolbox-bin-controls, .toolbox-gradient-controls-row, .toolbox-choropleth-controls-row{
     display: flex;
     padding: 1rem;
     align-items: center; /* This will vertically center align the items */
@@ -104,7 +104,7 @@
     box-sizing: border-box; /* Makes sure padding is included in width */
     cursor: pointer;
 }
-.toolbox-gradient-controls-row{
+.toolbox-gradient-controls-row, .toolbox-choropleth-controls-row{
     padding: 0 1rem 0 1rem;
 }
 
