@@ -354,7 +354,7 @@ const Toolbox = ({ mapRef, featureGroupRef }) => {
           )}
           <div className="toolbox-gradient-controls">
             {map.currentMapProprietaryJSON &&
-            map.currentMapProprietaryJSON.templateType === "gradient" ? (
+            (map.currentMapProprietaryJSON.templateType === "gradient" ? (
               <div>
                 <div className="toolbox-gradient-controls-row">
                   <span className="toolbox-gradient-label">Value Property</span>
@@ -448,6 +448,55 @@ const Toolbox = ({ mapRef, featureGroupRef }) => {
                   />
                 </div>
               </div>
+            ) : map.currentMapProprietaryJSON.templateType === "choropleth" ? (
+              <div>
+                <div className="toolbox-choropleth-controls-row">
+                  <span className="toolbox-choropleth-label">Value Property</span>
+                  <div>
+                    {map.heatValueProperties.map(property => (
+                      <div key={property}>
+                        <input 
+                          type="radio" 
+                          id={property} 
+                          name="valueProperty" 
+                          value={property} 
+                          checked={map.heatValueSelectedProperty === property}
+                          onChange={handleHeatValuePropertySelection}
+                        />
+                        <label htmlFor={property}>{property}</label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="toolbox-choropleth-controls-row">
+                  <span className="toolbox-choropleth-label"># of Sections</span>
+                  <input
+                    type="number"
+                    defaultValue={10}
+                    className="toolbox-choropleth-controls-numberInput"
+                    onChange={(e) => handleHeatNumSectionsChange(e.target.value)}
+                    onInput={(e) => {
+                      if (e.target.value < 1) {
+                        e.target.value = 1;
+                      }
+                    }}
+                  />
+                </div>
+                <div className="toolbox-choropleth-controls-row">
+                  <span className="toolbox-choropleth-label"># of Colors</span>
+                  <input
+                    type="number"
+                    defaultValue={3}
+                    className="toolbox-choropleth-controls-numberInput"
+                    onChange={(e) => handleNumColorsChange(e.target.value)}
+                    onInput={(e) => {
+                      if (e.target.value < 1) {
+                        e.target.value = 1;
+                      }
+                    }}
+                  />
+                </div>
+              </div>
             ) : (
               <div className="toolbox-gradient-controls-row">
                 <span className="toolbox-gradient-label">Color</span>
@@ -458,6 +507,7 @@ const Toolbox = ({ mapRef, featureGroupRef }) => {
                   onChange={handleColorSelectorChange}
                 />
               </div>
+              )
             )}
             {map.currentMapProprietaryJSON &&
               map.currentMapProprietaryJSON.templateType === "gradient" && (
@@ -465,9 +515,29 @@ const Toolbox = ({ mapRef, featureGroupRef }) => {
                   {renderColorInputs()}
                 </div>
               )}
+            {map.currentMapProprietaryJSON &&
+              map.currentMapProprietaryJSON.templateType === "choropleth" && (
+                <div>
+                  {map.heatColors.map((color, index) => (
+                    <div className="heatColorInput" key={index}>
+                      <span className="toolbox-choropleth-label">
+                        Color {index + 1}
+                      </span>
+                      <input
+                        type="color"
+                        defaultValue={color}
+                        className="toolbox-choropleth-controls-colorInput"
+                        onChange={(e) =>
+                          map.setHeatColors(index, e.target.value, map.heatColors.length)
+                        }
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
           </div>
         </div>
-        {/* <input type="text" placeholder="Label" className="textInput" />
+{/* <input type="text" placeholder="Label" className="textInput" />
             <input type="color" className="colorInput" /> */}
       </div>
       {showModal && (
