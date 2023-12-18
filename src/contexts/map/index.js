@@ -208,7 +208,7 @@ function GlobalMapContextProvider(props) {
                     currentMapGeoJSON: _.cloneDeep(map.currentMapGeoJSON),
                     currentMapProprietaryJSONOriginal: map.currentMapProprietaryJSON,
                     currentMapProprietaryJSON: _.cloneDeep(map.currentMapProprietaryJSON),
-                    originalLayersGeoJSON: payload.layersGeoJSON
+                    // originalLayersGeoJSON: payload.layersGeoJSON
                 })
             }
 
