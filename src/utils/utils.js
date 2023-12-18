@@ -56,7 +56,7 @@ function formatDate(dateStr) {
 }
 
 function getAllTags() {
-  return [
+  const tags = [
     "Bin Map",
     "Heat Map",
     "Subway Map",
@@ -70,6 +70,7 @@ function getAllTags() {
     "South America",
     "Africa",
   ]
+  return tags.sort()
 }
 
 

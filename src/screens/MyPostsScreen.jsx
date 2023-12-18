@@ -6,6 +6,7 @@ import { GlobalPostContext } from "../contexts/post";
 import { AuthContext } from "../auth";
 import { useNavigate } from "react-router";
 import GlobalMapContext from "../contexts/map";
+import { getAllTags } from "../utils/utils";
 
 function MyPostsScreen() {
   const { map } = useContext(GlobalMapContext)
@@ -15,6 +16,9 @@ function MyPostsScreen() {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+  const allTags = getAllTags()
+  const [selectedTags, setSelectedTags] = useState([])
+  const [unselectedTags, setUnselectedTags] = useState(allTags)
 
   useEffect(() => {
     document.addEventListener("mousedown", handleOutsideClick);
@@ -24,6 +28,13 @@ function MyPostsScreen() {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, []);
+
+  useEffect(() => {
+    const newSelectedTags = post.selectedTags
+    const newUnselectedTags = allTags.filter(tag => !post.selectedTags.includes(tag))
+    setSelectedTags(newSelectedTags)
+    setUnselectedTags(newUnselectedTags)
+  }, [post.selectedTags])
   
   //TODO, filter users to current logged in for this
   useEffect(() => {
@@ -68,6 +79,14 @@ function MyPostsScreen() {
     }
   }
 
+  const addTag = (tagToAdd) => {
+    post.addFilterTag(tagToAdd)
+  };
+
+  const removeTag = (tagToRemove) => {
+    post.removeFilterTag(tagToRemove)
+  };
+
   // const myPosts = post.postCardsInfo.filter(postCard => postCard.ownerUserId === auth.user);
 
   return (
@@ -107,6 +126,9 @@ function MyPostsScreen() {
             if(postCard && postCard.owner !== auth.user.userId){
               return null
             }
+            if (post.selectedTags.length > 0 && !postCard.tags.some(tag => post.selectedTags.includes(tag))) {
+              return null;
+            }
             return (
               <div onClick={() => handlePostCardClick(postCard._id, postCard.mapMetadata)} key={index}>
                 <PostCard
@@ -125,6 +147,29 @@ function MyPostsScreen() {
           })}
         </div>
         <div className="tagWrapperHome">
+          <div className="tagTitle">Tags</div>
+          <div className="tagList">
+            <div className="tags">
+              {selectedTags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="tag selected"
+                  onClick={() => removeTag(tag)}
+                >
+                  {tag}<span className="material-icons">remove</span>
+                </span>
+              ))}
+              {unselectedTags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="tag"
+                  onClick={() => addTag(tag)}
+                >
+                  {tag} <span className="material-icons">add</span>
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>

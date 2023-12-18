@@ -27,8 +27,8 @@
 
 .toolbox-header, .legend-header {
     padding: 1rem 1rem 1rem 1.5rem;
-    background-color: var(--background-color);
-    color: white;
+    background-color: var(--accent2);
+    color: var(--accent3);
     display: flex;
     justify-content: space-between;
     align-items: center;
