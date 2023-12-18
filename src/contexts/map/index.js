@@ -10,6 +10,7 @@ import CreateLayer_Transaction from '../../transactions/CreateLayer_Transaction'
 import RemoveLayer_Transaction from '../../transactions/RemoveLayer_Transaction'
 import * as L from "leaflet";
 import UpdateLayerLatLngs_Transaction from '../../transactions/UpdateLayerLatLngs_Transaction'
+import CreateGradientPoint_Transaction from '../../transactions/CreateGradientPoint_Transaction'
 
 export const GlobalMapContext = createContext({});
 export const GlobalMapActionType = {
@@ -953,6 +954,12 @@ function GlobalMapContextProvider(props) {
             type: GlobalMapActionType.RECALCULATE_GRADIENT,
             payload: {}
         })
+    }
+
+    map.addCreateGradientPointTransaction = (lat, lng, addDataPointToHeatmap, popDataFromHeatMap) => {
+        const transaction = new CreateGradientPoint_Transaction(lat, lng, addDataPointToHeatmap, popDataFromHeatMap)
+        tps.addTransaction(transaction, true)
+
     }
 
     map.canUndo = function() {
