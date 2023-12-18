@@ -4,9 +4,10 @@ import GlobalMapContext from "../../contexts/map";
 
 const EditFeaturePopup = (props) => {
   // const { map } = useContext(GlobalMapContext);
-  const { feature, idx, handlePopupSubmit, layer, templateType } = props;
+  const { feature, idx, handlePopupSubmit, layer, templateType, test, selectedHeatValueProperty } = props;
 
-  console.log(templateType)
+  // console.log(templateType)
+  // console.log(selectedHeatValueProperty)
 
   return (
     <div id={`featurePopUp${idx}`}>
@@ -24,12 +25,15 @@ const EditFeaturePopup = (props) => {
               type="text"
               className="mapEditInput"
               defaultValue={feature.properties.name}
+              disabled={templateType === "choropleth"}
             />
           </label>
           {(templateType === "choropleth") && (
             <label>
               Value
-              <input type="number" className="mapEditInput" />
+              <input type="number" className="mapEditInput" 
+              defaultValue={feature.properties[selectedHeatValueProperty]}
+              />
             </label>
           )}
 

@@ -36,6 +36,7 @@ export const GlobalMapActionType = {
     SET_HEAT_PROPERTIES_AND_SELECTED: "SET_HEAT_PROPERTIES_AND_SELECTED",
     EDIT_HEAT_VALUE_PROPERTIES: "EDIT_HEAT_VALUE_PROPERTIES",
     EDIT_HEAT_VALUE_SELECTED: "EDIT_HEAT_VALUE_SELECTED",
+    EDIT_CHORO_FEATURE_PROPERTY_VALUE: "EDIT_CHORO_FEATURE_PROPERTY_VALUE",
     SET_GRADIENT_OPTIONS: "SET_GRADIENT_OPTIONS",
     RECALCULATE_GRADIENT: "RECALCULATE_GRADIENT", 
 }
@@ -67,6 +68,12 @@ function GlobalMapContextProvider(props) {
         numHeatSections: 10,
         heatValueProperties: [],
         heatValueSelectedProperty: null,
+        choroplethOptions: {
+            options: {
+                numChoroplethSections: 10,
+                choroplethColors: ["#ffffff", "#e08300", "#e90101"]
+            }
+        },
         gradientOptions: {
             options: {
                 radius: 25,
@@ -81,6 +88,7 @@ function GlobalMapContextProvider(props) {
             intensity: 50
         }, 
         gradientLayers: null,
+        choroplethLayers: null,
 
         // mapCardIndexMarkedForDeletion: null, // Don't think we need these
         // mapCardMarkedForDeletion: null,
@@ -92,6 +100,7 @@ function GlobalMapContextProvider(props) {
 
     const gradientLayersRef = useRef([])
     const legendRef = useRef(null)
+    const choroplethLayersRef = useRef([])
 
     const mapReducer = (action) => {
         const { type, payload } = action;
@@ -153,7 +162,8 @@ function GlobalMapContextProvider(props) {
                     originalLayersGeoJSON: payload.originalLayersGeoJSON,
                     gradientLayers: payload.gradientLayers,
                     gradientOptions: payload.gradientOptions,
-                    heatColors
+                    choroplethLayers: payload.choroplethLayers,
+                    heatColors,
                 })
             }
 
@@ -234,6 +244,7 @@ function GlobalMapContextProvider(props) {
             }
             case GlobalMapActionType.EXIT_CURRENT_MAP: {
                 gradientLayersRef.current = []
+                choroplethLayersRef.current = []
                 return setMap({
                     ...map, 
                     currentMapMetadata: null,
@@ -439,6 +450,7 @@ function GlobalMapContextProvider(props) {
             const gradientLayers = obj.gradientLayers
             const gradientOptions = obj.gradientOptions
             console.log(obj)
+            const choroplethLayers = JSON.parse(parts[1].split('\r\n\r\n')[1]).choroplethLayers
 
             const currentMapProprietaryJSON = JSON.parse(parts[1].split('\r\n\r\n')[1]).proprietaryJSON
             const currentMapProprietaryJSONOriginal = JSON.parse(parts[1].split('\r\n\r\n')[1]).proprietaryJSON
@@ -473,7 +485,7 @@ function GlobalMapContextProvider(props) {
             mapReducer({
                 type: GlobalMapActionType.LOAD_MAP,
                 payload: {currentGeoJSON, originalGeoJSON, mapMetadata,currentMapProprietaryJSON, 
-                    currentMapProprietaryJSONOriginal, originalLayersGeoJSON, gradientLayers, gradientOptions}
+                    currentMapProprietaryJSONOriginal, originalLayersGeoJSON, gradientLayers, gradientOptions, choroplethLayers}
             })
         }
         catch (error) {
@@ -1038,7 +1050,17 @@ function GlobalMapContextProvider(props) {
             setHeatmapData([...gradientLayersRef.current])
         }
     }
- 
+    map.loadChoroplethLayers = (setChoroplethData) => {
+        // map.choroplethLayers.forEach(feature => {
+        //     // choroplethLayersRef.current.push([feature.geometry.coordinates[0], 
+        //     //     feature.geometry.coordinates[1], feature.properties.intensity])
+        // })
+        // setChoroplethData([...choroplethLayersRef.current])
+    }
+    // map.addEditChoroFeaturePropertiesTransaction = (map, newValue, oldValue, idx) => {
+    //     const transaction = new EditFeature_Transaction(map, idx, oldValue, newValue)
+    //     tps.addTransaction(transaction, true)
+    // }
     map.canUndo = function() {
         return ((map.currentMapGeoJSONOriginal !== null) && tps.hasTransactionToUndo())
     }
@@ -1055,7 +1077,7 @@ function GlobalMapContextProvider(props) {
     }
 
     return (
-        <GlobalMapContext.Provider value={{map, gradientLayersRef, legendRef}}>
+        <GlobalMapContext.Provider value={{map, gradientLayersRef, choroplethLayersRef, legendRef}}>
             {props.children}
         </GlobalMapContext.Provider>
     )
