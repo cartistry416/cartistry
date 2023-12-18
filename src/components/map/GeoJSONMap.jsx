@@ -54,7 +54,7 @@ function GeoJSONMap({
   currentMarkerIcon,
   featureGroupRef
 }) {
-  const { map, gradientLayersRef} = useContext(GlobalMapContext);
+  const { map, gradientLayersRef, choroplethLayersRef} = useContext(GlobalMapContext);
 
 
   const [originalLatLngs, setOriginalLatLngs] = useState(null);
@@ -72,14 +72,13 @@ function GeoJSONMap({
     originalLatLngsRef.current = originalLatLngs;
   }, [originalLatLngs]);
 
-  useEffect(() => {
-    const heatValueProperties = findHeatValueProperties(map.currentMapGeoJSON)
-    const selectedHeatValueProperty = heatValueProperties[0]
-    map.setHeatPropertiesAndSelected(selectedHeatValueProperty, heatValueProperties)
-  },[map.currentMapGeoJSON]);
+  // useEffect(() => {
+  //   const heatValueProperties = findHeatValueProperties(map.currentMapGeoJSON)
+  //   const selectedHeatValueProperty = heatValueProperties[0]
+  //   map.setHeatPropertiesAndSelected(selectedHeatValueProperty, heatValueProperties)
+  // },[map.currentMapGeoJSON]);
   function findHeatValueProperties(geojsonData) {
     let potentialProperties = new Set();
-  
     geojsonData.features.forEach(feature => {
       Object.keys(feature.properties).forEach(key => {
         if (typeof feature.properties[key] === 'number') {
@@ -252,16 +251,18 @@ function GeoJSONMap({
       permanent: true,
       direction: "center",
     });
-    if (map.currentMapProprietaryJSON && map.currentMapProprietaryJSON.templateType !== "gradient") {
+    if (map.currentMapProprietaryJSON && map.currentMapProprietaryJSON.templateType !== "gradient"
+    && map.currentMapProprietaryJSON.templateType !== "choropleth") {
       layer.bindPopup(renderPopupForm(feature, idx, layer, map.currentMapProprietaryJSON.templateType));
     }
   };
 
-  const renderPopupForm = (feature, idx, layer, templateType) => {
+  const renderPopupForm = (feature, idx, layer, templateType, selectedHeatValueProperty) => {
     const popup = L.popup();
     const container = L.DomUtil.create("div");
     popup.setContent(container);
     const root = ReactDOM.createRoot(container);
+    console.log(selectedHeatValueProperty);
     root.render(
       <EditFeaturePopup
         feature={feature}
@@ -269,6 +270,7 @@ function GeoJSONMap({
         handlePopupSubmit={handlePopupSubmit}
         layer={layer}
         templateType={templateType}
+        selectedHeatValueProperty={selectedHeatValueProperty}
       >
         {" "}
       </EditFeaturePopup>
@@ -277,42 +279,58 @@ function GeoJSONMap({
   };
 
   const handlePopupSubmit = (e, feature, idx, layer) => {
-    try {
-      const oldStyle = feature.properties.style;
-
-      const weight = parseInt(e.target[3].value);
-      const opacity = parseInt(e.target[4].value);
-      const fillOpacity = parseInt(e.target[5].value);
-
-      if (weight > 100 || opacity > 100 || fillOpacity > 100) {
+    if(map.currentMapProprietaryJSON.templateType === "choropleth"){
+      try {
+        const newValue = parseInt(e.target[1].value);
+        if (newValue < 0) {
+          alert("invalid input");
+          return;
+        }
+        const oldValue = feature.properties[map.heatValueSelectedProperty];
+        // map.addEditChoroFeaturePropertiesTransaction(choroplethData, newValue, oldValue, idx);
+      } catch (err) {
         alert("invalid input");
         return;
       }
-
-      if (weight < 0 || opacity < 0 || fillOpacity < 0) {
+     
+    } else {
+      try {
+        const oldStyle = feature.properties.style;
+  
+        const weight = parseInt(e.target[3].value);
+        const opacity = parseInt(e.target[4].value);
+        const fillOpacity = parseInt(e.target[5].value);
+  
+        if (weight > 100 || opacity > 100 || fillOpacity > 100) {
+          alert("invalid input");
+          return;
+        }
+  
+        if (weight < 0 || opacity < 0 || fillOpacity < 0) {
+          alert("invalid input");
+          return;
+        }
+  
+        const newStyle = {
+          fillColor: e.target[1].value,
+          color: e.target[2].value,
+          weight,
+          opacity,
+          fillOpacity,
+          name: e.target[0].value,
+        };
+        map.addEditFeaturePropertiesTransaction(newStyle, oldStyle, idx);
+      } catch (err) {
         alert("invalid input");
         return;
       }
-
-      const newStyle = {
-        fillColor: e.target[1].value,
-        color: e.target[2].value,
-        weight,
-        opacity,
-        fillOpacity,
-        name: e.target[0].value,
-      };
-      map.addEditFeaturePropertiesTransaction(newStyle, oldStyle, idx);
-    } catch (err) {
-      alert("invalid input");
-      return;
+  
+      layer.unbindTooltip();
+      layer.bindTooltip(feature.properties.name, {
+        permanent: true,
+        direction: "center",
+      });
     }
-
-    layer.unbindTooltip();
-    layer.bindTooltip(feature.properties.name, {
-      permanent: true,
-      direction: "center",
-    });
   };
 
   const getFeatureStyle = (feature) => {
@@ -483,16 +501,58 @@ function GeoJSONMap({
     iconSize: L.point(50, 50),
   });
 
-
   const [heatmapData, setHeatmapData] = useState([])
+  const [choroplethData, setChoroplethData] = useState([])
 
   useEffect(() => {
     if (map.currentMapProprietaryJSON && map.currentMapProprietaryJSON.templateType === "gradient") {
       map.loadGradientLayers(setHeatmapData)
     }
-
-
+    if (map.currentMapProprietaryJSON && map.currentMapProprietaryJSON.templateType === "choropleth")
+      if (choroplethData.length === 0) {
+        const heatValueProperties = findHeatValueProperties(map.currentMapGeoJSON)
+        const selectedHeatValueProperty = heatValueProperties[0]
+        map.setHeatPropertiesAndSelected(selectedHeatValueProperty, heatValueProperties)
+        setChoroplethData(map.currentMapGeoJSON);
+      } else {
+        map.loadChoroplethLayers(setChoroplethData)
+      }
+      
   },[]) 
+
+  const ChoroplethLayer = ({data, options}) => {
+    const choroMap = useMap();
+    useEffect(() => {
+      console.log(choroMap);
+      console.log(data);
+      console.log(data && data.features && data.features.length > 0);
+      if (choroMap && data && Array.isArray(data.features) && data.features.length > 0) {
+        const choroplethLayer = L.choropleth(map.currentMapGeoJSON, {
+          valueProperty: map.heatValueSelectedProperty,
+          scale: map.heatColors, 
+          steps: map.numHeatSections,
+          mode: 'q',
+          style: {
+            color: '#fff',
+            weight: 2,
+            fillOpacity: 0.8
+          },
+          onEachFeature: function(feature, layer) {
+            const idx = data.features.indexOf(feature);
+
+            layer.bindPopup(renderPopupForm(feature, idx, layer, map.currentMapProprietaryJSON.templateType, map.heatValueSelectedProperty));
+          }
+        });
+        choroplethLayer.addTo(choroMap);
+        return () => {
+          choroMap.removeLayer(choroplethLayer);
+        }
+      }
+    }, [choroMap, data, options]);
+    
+    return null; 
+
+  }
 
   const addDataPointToHeatmap = (lat, lng) => {
     setHeatmapData((prevData) => [...prevData, [lat, lng, map.gradientOptions.intensity]]);
@@ -648,7 +708,11 @@ function GeoJSONMap({
       
       
       : null}
-
+      {(map.currentMapProprietaryJSON && map.currentMapProprietaryJSON.templateType === "choropleth") ? 
+        <>
+         <ChoroplethLayer data={choroplethData} options={map.choroplethOptions.options}/>
+        </>
+      : null}
         {map.currentMapGeoJSON && (
           <GeoJSON
             data={map.currentMapGeoJSON}
