@@ -322,7 +322,6 @@ function GlobalPostContextProvider(props) {
             newSelectedTags = [...post.selectedTags, tagToAdd]
             newSelectedTags.sort()
         }
-        console.log(newSelectedTags)
         postReducer({
             type: GlobalPostActionType.UPDATE_TAGS,
             payload: { tags: newSelectedTags }

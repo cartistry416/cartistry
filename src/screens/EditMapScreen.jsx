@@ -6,10 +6,8 @@ import { useParams } from "react-router";
 import { useContext, useEffect, useState, useRef } from "react";
 import GlobalPostContext from "../contexts/post";
 import GlobalMapContext from "../contexts/map";
+import Legend from "../components/map/Legend";
 // import GeoJSONMapPureLeaflet from "../components/map/GeoJSONMapPureLeaflet";
-
-
-
 
 //https://stackoverflow.com/questions/66704970/take-a-screenshot-of-leaflet-map
 const EditMapScreen = () =>{
@@ -55,7 +53,7 @@ const EditMapScreen = () =>{
                 />
                 <div className="rightPanel">
                     <Toolbox mapId={id} mapRef={mapRef} featureGroupRef={featureGroupRef}/>
-                    {/* <Legend /> */}
+                    <Legend />
                     <div className="sideControls">
                     <div className="iconGroup">
                         <span className="material-icons" onClick={handleUndo} >undo</span>
