@@ -66,7 +66,7 @@ function ImportModal({onClose, templateType}) {
             />
             <label htmlFor="file-upload" className="uploadMapLabel">
               <span className="material-icons">upload</span>
-              <div>Choose a file or Drag it here</div>
+              {!selectedFile ? (<div>Choose a file</div>) : (<div>Ready to Upload {selectedFile.name}</div>)}
             </label>
           </div>
         </div>

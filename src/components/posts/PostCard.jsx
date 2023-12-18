@@ -97,34 +97,7 @@ function PostCard({
   const handleReset = () => {
     setShowError(false);
   };
-
-  const timeSincePostCreated = (postTimestamp) => {
-    const now = new Date();
-    const postDate = new Date(postTimestamp);
-
-    const timeDifference = now - postDate;
-    const seconds = Math.floor(timeDifference / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-    const months = Math.floor(days / 30);
-    const years = Math.floor(months / 12);
-
-    if (years > 0) {
-      return `${years}y ago`;
-    } else if (months > 0) {
-      return `${months}m ago`;
-    } else if (days > 0) {
-      return `${days}d ago`;
-    } else if (hours > 0) {
-      return `${hours}h ago`;
-    } else if (minutes > 0) {
-      return `${minutes}m ago`;
-    } else {
-      return `${seconds}s ago`;
-    }
-  };
-
+  
   return (
     <div className="postCardWrapper">
       {thumbnail && thumbnail.imageData && (
@@ -137,7 +110,7 @@ function PostCard({
             @{username}
           </div>
           <div className="dividerCircle"></div>
-          <div>{timeSincePostCreated(time)}</div>
+          <div>{time}</div>
           {tags.map((tag, index) => (
             <button key={index} className="tag">
               {tag}

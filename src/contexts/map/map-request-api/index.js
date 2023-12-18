@@ -55,13 +55,14 @@ export const favoriteMap = (id) => {
 export const updateMapPrivacy = (id) => {
     return api.put(`/maps-api/maps/${id}/update-privacy`)
 }
-export const saveMapEdits = (id, delta, proprietaryJSON, thumbnail, layersGeoJSON, gradientLayersGeoJSON) => {
+export const saveMapEdits = (id, delta, proprietaryJSON, thumbnail, layersGeoJSON, gradientLayersGeoJSON, gradientOptions) => {
     return api.put(`/maps-api/maps/${id}/save`, {
         delta,
         proprietaryJSON,
         thumbnail,
         layersGeoJSON,
-        gradientLayersGeoJSON
+        gradientLayersGeoJSON,
+        gradientOptions
     })
 }
 

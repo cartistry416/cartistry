@@ -59,7 +59,8 @@ function Post({ postId }) {
   };
 
   const generateImageSrc = (image) => {
-    const blob = new Blob([new Uint8Array(image.imageData.data)], {
+    console.log(image)
+    const blob = new Blob([new Uint8Array(image.imageData)], {
       type: image.contentType,
     });
     return URL.createObjectURL(blob);
@@ -119,8 +120,9 @@ function Post({ postId }) {
           images.map((image, index) => (
             <img
               key={index}
-              src={generateImageSrc(image)}
+              src={`data:${image.contentType};base64,${image.imageData}`}
               alt={`img ${index} of this post`}
+              style={{maxWidth: 300, maxHeight: 300}}
             />
           ))}
       </div>

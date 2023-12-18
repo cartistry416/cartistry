@@ -79,20 +79,27 @@ function GeoJSONMap({
   // },[map.currentMapGeoJSON]);
   function findHeatValueProperties(geojsonData) {
     let potentialProperties = new Set();
-    geojsonData.features.forEach(feature => {
-      Object.keys(feature.properties).forEach(key => {
-        if (typeof feature.properties[key] === 'number') {
-          potentialProperties.add(key);
-        }
+  
+    if (geojsonData) {
+      geojsonData.features.forEach(feature => {
+        Object.keys(feature.properties).forEach(key => {
+          if (typeof feature.properties[key] === 'number') {
+            potentialProperties.add(key);
+          }
+        });
       });
-    });
+    }
   
     return Array.from(potentialProperties);
   }
   const loadOriginalLayers = () => {
-    if (!map.originalLayersGeoJSON || !map.originalLayersGeoJSON.length || initialGeomanLayersLoaded) {
+
+
+    if (!map.originalLayersGeoJSON || !map.originalLayersGeoJSON.length) {
       return null
     }
+
+
     let layers
     if (map.currentMapProprietaryJSON.templateType === "choropleth") {
       const choroplethOptions = {
@@ -134,7 +141,9 @@ function GeoJSONMap({
       </LayerGroup>)
     }
     else {
+
       layers = map.originalLayersGeoJSON.map((layerGeoJSON, index)=> {
+        console.log(layerGeoJSON)
         const type = layerGeoJSON.properties.layerType
         let layer
         if (type === "circle") {
@@ -142,8 +151,8 @@ function GeoJSONMap({
           layer = <Circle 
             key={index}
             center={[layerGeoJSON.geometry.coordinates[1],layerGeoJSON.geometry.coordinates[0]]}
-            radius={layer.properties.options.radius}
-            pathOptions={ {...layer.GeoJSON.properties.options} }
+            radius={ layerGeoJSON.properties.options.radius}
+            pathOptions={ {...layerGeoJSON.properties.options} }
           />
         }
         else if (type === "circleMarker") {
@@ -151,8 +160,8 @@ function GeoJSONMap({
           layer = <CircleMarker 
             key={index}
             center={[layerGeoJSON.geometry.coordinates[1],layerGeoJSON.geometry.coordinates[0]]}
-            radius={layer.properties.options.radius}
-            pathOptions={ {...layer.GeoJSON.properties.options} }
+            radius={layerGeoJSON.properties.options.radius}
+            pathOptions={ {...layerGeoJSON.properties.options} }
             />
         }
         else if (type === "marker") {
@@ -166,22 +175,12 @@ function GeoJSONMap({
           layer = <GeoJSON data={layerGeoJSON} pmIgnore={false} style={feature => feature.properties.option} />
         }
         // console.log(layer)
-        // if (editEnabled) {
-        //   layerEvents(layer, {
-        //     onUpdate: handleLayerUpdate,
-        //     onLayerRemove: handleLayerRemove,
-        //     onCreate: handleLayerCreate,
-        //     onDragStart: handleDragStart,
-        //     onMarkerDragStart: handleMarkerDragStart,
-        //     onLayerRotateStart: handleLayerRotateStart
-        //   }, 'on');
-        // }
         return layer
 
       })
     }
 
-    setInitialGeomanLayersLoaded(true)
+    //setInitialGeomanLayersLoaded(true)
     return layers
       
   }
