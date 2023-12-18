@@ -4,12 +4,18 @@ import "../../static/css/editMap/legend.css";
 //TODO: will need to redo this, legend is hardcoded for now
 
 const Legend = () => {
-    const { map } = useContext(GlobalMapContext);
-    const [title, setTitle] = useState(map.currentMapProprietaryJSON.legend.title)
+    const { map, legendRef } = useContext(GlobalMapContext);
+    const [title, setTitle] = useState(map.currentMapProprietaryJSONOriginal.legend.title)
     // pull legendPairs from global state
-    const [legendPairs, setLegendPairs] = useState({})
+    const [legendPairs, setLegendPairs] = useState(map.currentMapProprietaryJSONOriginal.legend.keyValueLabels)
     const [isEditing, setIsEditing] = useState(true)
     
+    useEffect(() => {
+      legendRef.current = {
+        keyValueLabels: legendPairs,
+        title
+      }
+    }, [legendPairs, title])
 
     const markers = [
       "location_on",

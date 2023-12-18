@@ -91,6 +91,7 @@ function GlobalMapContextProvider(props) {
     const { auth } = useContext(AuthContext);
 
     const gradientLayersRef = useRef([])
+    const legendRef = useRef(null)
 
     const mapReducer = (action) => {
         const { type, payload } = action;
@@ -441,6 +442,21 @@ function GlobalMapContextProvider(props) {
 
             const currentMapProprietaryJSON = JSON.parse(parts[1].split('\r\n\r\n')[1]).proprietaryJSON
             const currentMapProprietaryJSONOriginal = JSON.parse(parts[1].split('\r\n\r\n')[1]).proprietaryJSON
+            
+            try {
+                const kv1 = JSON.parse(currentMapProprietaryJSON.legend.keyValueLabels)
+                const kv2 = JSON.parse(currentMapProprietaryJSON.legend.keyValueLabels)
+                delete currentMapProprietaryJSON.legend.keyValueLabels
+                delete currentMapProprietaryJSONOriginal.legend.keyValueLabels
+                currentMapProprietaryJSON.legend.keyValueLabels = kv1
+                currentMapProprietaryJSONOriginal.legend.keyValueLabels = kv2
+            }
+            catch (e) {
+                console.log(e)
+            }
+
+            
+
 
             const currentGeoJSON = JSON.parse(parts[2].split('\r\n\r\n')[1])
             const originalGeoJSON = JSON.parse(parts[2].split('\r\n\r\n')[1])
@@ -698,14 +714,24 @@ function GlobalMapContextProvider(props) {
             })
         }
 
+
+
+
+
         const delta1 = generateDiff(map.currentMapGeoJSONOriginal, map.currentMapGeoJSON)
+
+        // console.log(legendRef.current)
+        // console.log(map.currentMapProprietaryJSON)
+        map.currentMapProprietaryJSON.legend = legendRef.current
+        // console.log(map.currentMapProprietaryJSON)
         const delta2 = generateDiff(map.currentMapProprietaryJSONOriginal, map.currentMapProprietaryJSON)
-        const delta3 = generateDiff(map.originalLayersGeoJSON, layersGeoJSON)
+        //const delta3 = generateDiff(map.originalLayersGeoJSON, layersGeoJSON)
 
         // if (!delta1 && !delta2 && !delta3) {
         //     alert('no deltas, no edits')
         //     return
         // }
+        // return
 
         try {
             const proprietaryJSON = delta2 ? map.currentMapProprietaryJSON : null
@@ -1029,7 +1055,7 @@ function GlobalMapContextProvider(props) {
     }
 
     return (
-        <GlobalMapContext.Provider value={{map, gradientLayersRef}}>
+        <GlobalMapContext.Provider value={{map, gradientLayersRef, legendRef}}>
             {props.children}
         </GlobalMapContext.Provider>
     )
