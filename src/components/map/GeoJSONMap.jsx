@@ -80,13 +80,15 @@ function GeoJSONMap({
   function findHeatValueProperties(geojsonData) {
     let potentialProperties = new Set();
   
-    geojsonData.features.forEach(feature => {
-      Object.keys(feature.properties).forEach(key => {
-        if (typeof feature.properties[key] === 'number') {
-          potentialProperties.add(key);
-        }
+    if (geojsonData) {
+      geojsonData.features.forEach(feature => {
+        Object.keys(feature.properties).forEach(key => {
+          if (typeof feature.properties[key] === 'number') {
+            potentialProperties.add(key);
+          }
+        });
       });
-    });
+    }
   
     return Array.from(potentialProperties);
   }

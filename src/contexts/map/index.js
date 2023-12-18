@@ -511,10 +511,7 @@ function GlobalMapContextProvider(props) {
         try {
             const response = await api.forkMap(id)
             if (response.status === 200) {
-                mapReducer({
-                    type: GlobalMapActionType.SET_CURRENT_MAP_METADATA,
-                    payload: {mapMetadata: response.data.mapMetadata}
-                })
+                await map.loadMap(id)
 
                 navigate(`/editMap/${response.data.mapMetadata._id}`)
             }
@@ -1007,11 +1004,13 @@ function GlobalMapContextProvider(props) {
     }
 
     map.loadGradientLayers = (setHeatmapData) => {
-        map.gradientLayers.forEach(feature => {
-            gradientLayersRef.current.push([feature.geometry.coordinates[0], 
-                feature.geometry.coordinates[1], feature.properties.intensity])
-        })
-        setHeatmapData([...gradientLayersRef.current])
+        if (map.gradientLayers) {
+            map.gradientLayers.forEach(feature => {
+                gradientLayersRef.current.push([feature.geometry.coordinates[0], 
+                    feature.geometry.coordinates[1], feature.properties.intensity])
+            })
+            setHeatmapData([...gradientLayersRef.current])
+        }
     }
  
     map.canUndo = function() {
