@@ -204,7 +204,7 @@ const Toolbox = ({ mapRef, featureGroupRef }) => {
       map.deleteHeatColors(newNumColors);
     }
 
-    // map.recalculateGradient()
+    //map.recalculateGradient()
 
   };
 
@@ -241,6 +241,7 @@ const Toolbox = ({ mapRef, featureGroupRef }) => {
           </div>
         )
         })
+    
     return newColorInputs
   }
 
