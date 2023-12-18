@@ -320,7 +320,7 @@ const Toolbox = ({ mapRef, featureGroupRef }) => {
           )}
           <div className="toolbox-gradient-controls">
             {map.currentMapProprietaryJSON &&
-            map.currentMapProprietaryJSON.templateType === "heat" ? (
+            map.currentMapProprietaryJSON.templateType === "choropleth" ? (
               <div>
                 <div className="toolbox-gradient-controls-row">
                   <span className="toolbox-gradient-label">Value Property</span>
@@ -381,7 +381,7 @@ const Toolbox = ({ mapRef, featureGroupRef }) => {
               </div>
             )}
             {map.currentMapProprietaryJSON &&
-              map.currentMapProprietaryJSON.templateType === "heat" && (
+              map.currentMapProprietaryJSON.templateType === "choropleth" && (
                 <div>
                   {map.heatColors.map((color, index) => (
                     <div className="heatColorInput" key={index}>
